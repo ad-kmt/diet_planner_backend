@@ -21,6 +21,7 @@
   "homepage": "https://github.com/Hitesh-Kumawat/developer-connector-backend#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "brain.js": "^2.0.0-beta.2",
     "config": "^3.3.3",
     "express": "^4.17.1",
     "express-validator": "^6.9.2",
