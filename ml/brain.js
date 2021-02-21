@@ -16,9 +16,9 @@ module.exports=function(input){
     { input: [0,1,1,0,0,0,1,0,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0], output: {"NoP": 1} },
   ]);
   
-  var output = net.run(input);
+  const output = net.run(input);
   
-  console.log(output);
+  return output;
 };
 
 
