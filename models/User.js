@@ -1,70 +1,48 @@
 const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
-    Fname: {
-        type: String,
-        required: true
-    },
-    Lname: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    password: {
-        type: String,
-        required: true
-    },
-    contact: {
-        type: Number,
-        required: true
-    },
-    dateOfBirth: {
-        type: Date,
-        required: true
-    },
-    gender: {
-        type: String,
-        required: true
-    },
-    address: {
-        area: {
+    local:{
+        firstName: {
             type: String,
-            required: true
         },
-        city: {
-            type: String,
-            required: true
+        lastName: {
+            type: String
         },
-        country: {
-            type: String,
-            required: true
+        email: {
+            type: String
         },
-        pincode: {
+        password: {
             type: String,
-            required: true
         }
     },
-    quizResponse: {
-        questions: [{
-            question: {
-                type: String
-            },
-            options: {
-                type: [{
-                    symptom:{
-                        type: String
-                    },
-                    selected: {
-                        type: Boolean
-                    }
-                }]
-            }
-        }]
-    }
+    google:{
+        id: {
+            type: String,
+        },
+        token: {
+            type: String
+        },
+        name: {
+            type: String,
+        },
+        firstName: {
+            type: String,
+        },
+        lastName: {
+            type: String,
+        },
+        email: {
+            type: String,
+        }
+    },
+    facebook:{
+        id: String,
+        token: String,
+        firstName: String,
+        lastName: String,
+        email: String
+    },
+        
 });
 
 module.exports = mongoose.model('user', UserSchema);

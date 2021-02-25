@@ -1,7 +1,5 @@
 {
     "Customer": {
-        "mongoURI": "mongodb+srv://fitgut4lifeadmin:Atlantic1904@fitgut4life.x3jbe.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-        "jwtSecret": "mySecretToken",
         "conclusion": {
             "PDC": "Poor Dietary Choices",
             "IP": "Intestinal Permeability/Leaky Gut Syndrome",
@@ -14,7 +12,8 @@
             "MA": "Mal-Absorption",
             "NoP": "No Problem"
         }
-    }
-    
+    },
+    "mongoURI": "mongodb+srv://fitgut4lifeadmin:Atlantic1904@fitgut4life.x3jbe.mongodb.net/project?retryWrites=true&w=majority",
+    "jwtSecret": "mySecretToken"
     
 }
