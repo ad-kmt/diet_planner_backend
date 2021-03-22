@@ -9,17 +9,17 @@ const HealthRecord = new mongoose.Schema({
     allergies: [                            // includes allergies from food materials and surrounding environment
         {
             Allergy: { type: String }
-        } 
+        }
     ],
     ailments: [                             // Ailments and diseases that the user might have like Diabetes, defficiency diseases etc.
         {
             ailment: { type: String }
-        } 
+        }
     ],
     foodPreferences: [
         {
             foodPreference: { type: String }
-        } 
+        }
     ]
 });
 

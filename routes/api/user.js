@@ -80,4 +80,38 @@ router.post('/', [
     }
 );
 
+// @route    GET /api/admin/user
+// @desc     Get all users
+// @access   Public
+router.get('/', async (req, res) => {
+    try {
+      const users = await User.find();
+      res.json(users);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+});
+
+// @route    DELETE api/posts/:id
+// @desc     Delete a post
+// @access   Private
+router.delete('/:id', [auth, checkObjectId('id')], async (req, res) => {
+    try {
+      const user = await User.findById(req.params.id);
+  
+      if (!user) {
+        return res.status(404).json({ msg: 'User not found' });
+      }
+  
+      await user.remove();
+  
+      res.json({ msg: 'User removed' });
+    } catch (err) {
+      console.error(err.message);
+  
+      res.status(500).send('Server Error');
+    }
+});
+
 module.exports = router;

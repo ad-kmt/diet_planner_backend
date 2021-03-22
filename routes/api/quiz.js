@@ -32,11 +32,12 @@ router.post('/', async (req, res) => {
     }
 
     try {
+      const {symptoms, input} = req.body;
       // const input=req.body.map(question => question.options.map(option=> option.selected));
-      const input=[01,01,1,01,01,1,01,01,01,01,01,01,01,01,1,1,01,1,1,1,01,01,01,1,1,1,1,01,01,01,01,01,01,01,1,01,01,01,01,01,01,01,1,1,1,1,1,01,1,1,1,01,1,01,01,01,01,01,01,1,01,1,01,01,01,01,01,01,01,01,01,1,1,1,1,1,1];
-      const output = brain(input);
+      // const input=[01,01,1,01,01,1,01,01,01,01,01,01,01,01,1,1,01,1,1,1,01,01,01,1,1,1,1,01,01,01,01,01,01,01,1,01,01,01,01,01,01,01,1,1,1,1,1,01,1,1,1,01,1,01,01,01,01,01,01,1,01,1,01,01,01,01,01,01,01,01,01,1,1,1,1,1,1];
+      const symptom = brain(symptoms);
       const conclusions=[];
-      Object.entries(output).forEach(([key, value]) => {
+      Object.entries(symptom).forEach(([key, value]) => {
         // do something with key and val
         
         if(value>=0.1){
@@ -50,8 +51,31 @@ router.post('/', async (req, res) => {
           // conclusions.push(concl);
         }
       });
+
+      const {gender, age, weight, height, activity, weightChange} = input;
+
+      let bmr = 10*weight + 6.25*height - 5*age;
+      if(gender === 1) bmr+=5;
+      else bmr-=161;
+      
+      let tdee;
+
+      if(activity === 1 ) tdee=1.2*bmr;
+      else if(activity === 2 ) tdee=1.375*bmr;
+      else if(activity === 3 ) tdee=1.55*bmr;
+      else if(activity === 4 ) tdee=1.725*bmr;
+      else if(activity === 5 ) tdee=1.9*bmr;
+
+      let calorie;
+
+      if(weightChange===1) calorie=tdee+250;
+      else if(weightChange===-1) calorie=tdee-500;
+      else if(weightChange===0) calorie=tdee;
+
+      const result = [conclusions, calorie];
+
       console.log(conclusions);
-      res.status(404).json(conclusions);
+      res.status(404).json(result);
     } catch (err) {
       console.error(err.message);
       return res.status(500).send('Server Error');
