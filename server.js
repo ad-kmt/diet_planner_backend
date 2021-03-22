@@ -5,8 +5,8 @@ const passport = require('passport');
 const swaggerJsDocs = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 var cors = require('cors');
-
 require("dotenv").config();
+
 
 //middleware
 const app = express();
@@ -15,16 +15,18 @@ app.use(cors());
 //swagger options, swagger: automatic api documentation tool
 const swaggerOptions = {
     swaggerDefinition: {
+        openapi: '3.0.0',
         info: {
             title: 'FG4L API',
+            version: "1.0.0",
             description: 'Fit Gut For Life API Information',
             contact: {
                 name: "Hitesh Kumawat"
             },
-            servers: ["http://localhost:8000"]
-        }
+            servers: ["http://localhost:8000"],
+        },
     },
-    apis: ["server.js", "routes/api/quiz.js"]
+    apis: [`server.js`, `routes/api/*.js`, `swagger/*.yaml`]
 };
 
 const swaggerDocs = swaggerJsDocs(swaggerOptions);
