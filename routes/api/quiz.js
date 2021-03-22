@@ -1,23 +1,32 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { validationResult } = require('express-validator');
-const brain = require('../../ml/brain');
-const config = require('config');
-const conclusion = config.get('Customer.conclusion');
+const { validationResult } = require("express-validator");
+const brain = require("../../services/ml/brain");
+const config = require("config");
+const conclusion = config.get("Customer.conclusion");
 
-const Quiz = require('../../models/Quiz');
+const Quiz = require("../../models/Quiz");
 // const conclusion=require('../../data/conclusion.json');
 
 // @route    GET /api/quiz
 // @desc     Get all questions
 // @access   Public
-router.get('/', async (req, res) => {
+/**
+ * @swagger
+ * /api/quiz/:
+ *  get:
+ *    description: Use to get all quiz questions.
+ *    responses:
+ *      '200':
+ *        description: A successful response.
+ */
+router.get("/", async (req, res) => {
   try {
     const questions = await Quiz.find();
     res.json(questions);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
 });
 module.exports = router;

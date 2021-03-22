@@ -4,7 +4,7 @@ require("dotenv").config();
 const passport = require("passport");
 const FacebookStrategy = require('passport-facebook').Strategy;
 
-const User = require('../../models/User');
+const User = require('../../../models/User');
 
 passport.use(new FacebookStrategy({
     clientID: "4096359277040803",

@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-// const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
@@ -11,6 +10,22 @@ const User = require('../../models/User');
 //@route   Post api/users
 //@desc    Register user
 //@access  Public
+
+/**
+ * @swagger
+ * /api/user/:
+ *   post:
+ *     tags:
+ *       - user
+ *     summary: Create a user.
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema: *userSignUp
+ *     responses:
+ *       201:
+ *         ...
+*/
 router.post('/', [
         check('firstName', 'First name is required').not().isEmpty(),
         check('email', 'Please include a valid email').isEmail(),
@@ -83,6 +98,26 @@ router.post('/', [
 // @route    GET /api/admin/user
 // @desc     Get all users
 // @access   Public
+
+
+/**
+ * @swagger
+ * /api/user/:
+ *  get:
+ *    tags:
+ *      - user
+ *    description: Use to get all users
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ *        content:
+ *          application/json:
+ *              schema: 
+ *                  type: array
+ *                  items: *user
+ *      '404':
+ *          description: Not found
+ */
 router.get('/', async (req, res) => {
     try {
       const users = await User.find();
@@ -96,7 +131,25 @@ router.get('/', async (req, res) => {
 // @route    DELETE api/posts/:id
 // @desc     Delete a post
 // @access   Private
-router.delete('/:id', [auth, checkObjectId('id')], async (req, res) => {
+/**
+ * @swagger
+ * /api/user/{id}:
+ *  delete:
+ *    tags:
+ *      - user
+ *    parameters:
+ *      -   in: path
+ *          name: id
+ *          required: true
+ *          schema:
+ *              type: integer
+ *          description: userId
+ *    description: Use to delete a user with id in URI
+ *    responses:
+ *      '204':
+ *        description: user deleted successfully
+ */
+router.delete('/:id', async (req, res) => {
     try {
       const user = await User.findById(req.params.id);
   

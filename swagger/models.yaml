@@ -1,0 +1,107 @@
+movies: &movies
+  type: array
+  items: 
+    type: object
+    properties:
+      id:
+        type: string
+      title:
+        type: string
+      year:
+        type: number
+
+user: &user
+  type: object
+  properties:
+    local:
+      type: object
+      properties: 
+        firstName:
+          type: string
+        lastName: 
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+    google:
+      type: object
+      properties: 
+        id: 
+          type: string
+        token:
+          type: string
+        name: 
+          type: string
+        firstName: 
+          type: string
+        lastName: 
+          type: string
+        email: 
+          type: string
+    facebook:
+      type: object
+      properties: 
+        id: 
+          type: string
+        token:
+          type: string
+        firstName: 
+          type: string
+        lastName: 
+          type: string
+        email: 
+          type: string
+
+userSignUp: &userSignUp
+  type: object
+  properties:
+    firstName:
+      type: string
+    lastName:
+      type: string
+    email:
+      type: string
+    password:
+      type: string
+
+meal: &meal
+  type: object
+  properties:
+    name: 
+      type: string
+    recipe:
+      type: object
+      properties: 
+        steps:
+          type: array
+          items:
+            type: object
+            properties:
+              step:
+                type: string
+        ingredients: 
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              quantity:
+                type: string
+        cookingTime:
+          type: string
+    calories:
+      type: number
+    nutritionValues: 
+      type: object
+      properties:
+        name: 
+          type: string
+        quantity: 
+          type: string
+    mealType:
+      type: string
+    mealTime: 
+      type: string
+
