@@ -1,6 +1,6 @@
 const express = require('express');
-const googleOAuth = require('../../utils/googleOAuth');
-const User = require('../../models/User');
+const googleOAuth = require('../../../utils/googleOAuth');
+const User = require('../../../models/User');
 
 const router = express.Router();
 
