@@ -128,8 +128,8 @@ router.get('/', async (req, res) => {
     }
 });
 
-// @route    DELETE api/posts/:id
-// @desc     Delete a post
+// @route    DELETE api/users/:id
+// @desc     Delete a user
 // @access   Private
 /**
  * @swagger

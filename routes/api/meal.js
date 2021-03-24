@@ -11,6 +11,25 @@ const Meal = require('../../models/Meal');
 // @route    GET /api/admin/meal
 // @desc     Get all meals
 // @access   Public
+
+/**
+ * @swagger
+ * /api/meal/:
+ *  get:
+ *    tags:
+ *      - meal
+ *    description: Use to get all meals
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ *        content:
+ *          application/json:
+ *              schema: 
+ *                  type: array
+ *                  items: *meal
+ *      '404':
+ *          description: Not found
+ */
 router.get('/', async (req, res) => {
     try {
       const meals = await Meal.find();
@@ -26,7 +45,7 @@ router.get('/', async (req, res) => {
 // @access   Public
 router.get('/', async (req, res) => {
   try {
-    const filters = req.body;
+    const filters = req.params;
     const {type, time, calories} = filters;
 
     const meals = await Meal.find({mealType: type, mealTime: time, calories: calories});
@@ -42,6 +61,25 @@ router.get('/', async (req, res) => {
 // @route    DELETE /api/admin/meal
 // @desc     Delete a meal
 // @access   Public
+
+/**
+ * @swagger
+ * /api/meal/{id}:
+ *  delete:
+ *    tags:
+ *      - meal
+ *    parameters:
+ *      -   in: path
+ *          name: id
+ *          required: true
+ *          schema:
+ *              type: integer
+ *          description: mealId
+ *    description: Use to delete a meal with id in URI
+ *    responses:
+ *      '204':
+ *        description: meal deleted successfully
+ */
 router.delete('/', async (req, res) => {
   try {
     const meal = await Meal.findById(req.params.id);
