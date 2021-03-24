@@ -8,14 +8,13 @@ const conclusion = config.get('Customer.conclusion');
 const Quiz = require('../../models/Meal');
 const Meal = require('../../models/Meal');
 
-// @route    GET /api/admin/meal
-// @desc     Get all meals
-// @access   Public
+
 
 /**
  * @swagger
- * /api/meal/:
+ * /api/meal:
  *  get:
+ *    summary: Get all meals. (Incomplete api)
  *    tags:
  *      - meal
  *    description: Use to get all meals
@@ -27,8 +26,6 @@ const Meal = require('../../models/Meal');
  *              schema: 
  *                  type: array
  *                  items: *meal
- *      '404':
- *          description: Not found
  */
 router.get('/', async (req, res) => {
     try {
@@ -40,9 +37,31 @@ router.get('/', async (req, res) => {
     }
 });
 
-// @route    GET /api/admin/meal
-// @desc     Get meals by filter
-// @access   Public
+
+
+
+/**
+ * @swagger
+ * /api/meal/?filter=xyz:
+ *  get:
+ *    summary: Get meals by filters. (Incomplete api)
+ *    tags:
+ *      - meal
+ *    parameters:
+ *      - in: query
+ *        name: filter
+ *        schema:
+ *          type: string
+ *    description: Use to get all meals
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ *        content:
+ *          application/json:
+ *              schema: 
+ *                  type: array
+ *                  items: *meal
+ */
 router.get('/', async (req, res) => {
   try {
     const filters = req.params;
@@ -58,28 +77,56 @@ router.get('/', async (req, res) => {
   }
 });
 
-// @route    DELETE /api/admin/meal
-// @desc     Delete a meal
-// @access   Public
+/**
+ * @swagger
+ * /api/meal:
+ *   post:
+ *     tags:
+ *       - meal
+ *     summary: Create a meal. (Incomplete api)
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema: *meal
+ *     responses:
+ *       201:
+*/
 
 /**
  * @swagger
  * /api/meal/{id}:
- *  delete:
- *    tags:
- *      - meal
- *    parameters:
- *      -   in: path
- *          name: id
- *          required: true
- *          schema:
- *              type: integer
- *          description: mealId
- *    description: Use to delete a meal with id in URI
- *    responses:
- *      '204':
- *        description: meal deleted successfully
- */
+ *   put:
+ *     tags:
+ *       - meal
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *     summary: Update a meal. (Incomplete api)
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema: *meal
+ *     responses:
+ *       200:
+*/
+
+/**
+ * @swagger
+ * /api/meal/{id}:
+ *   delete:
+ *     tags:
+ *       - meal
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *     summary: Delete a meal. (Incomplete api)
+ *     responses:
+ *       204:
+*/
 router.delete('/', async (req, res) => {
   try {
     const meal = await Meal.findById(req.params.id);

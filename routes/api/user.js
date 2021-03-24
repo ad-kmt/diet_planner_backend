@@ -13,7 +13,7 @@ const User = require('../../models/User');
 
 /**
  * @swagger
- * /api/user/:
+ * /api/user:
  *   post:
  *     tags:
  *       - user
@@ -24,7 +24,6 @@ const User = require('../../models/User');
  *           schema: *userSignUp
  *     responses:
  *       201:
- *         ...
 */
 router.post('/', [
         check('firstName', 'First name is required').not().isEmpty(),
@@ -102,7 +101,7 @@ router.post('/', [
 
 /**
  * @swagger
- * /api/user/:
+ * /api/user:
  *  get:
  *    tags:
  *      - user
