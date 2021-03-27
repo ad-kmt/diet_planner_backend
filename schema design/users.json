@@ -1,12 +1,31 @@
 {
-    "firstName": "Lorem",
-    "lastName": "Lorem",
-    "email": "Lorem",
+    "local":{
+        "firstName": "string",
+        "lastName": "string",
+        "email": "string",
+        "password": "string"
+    },
+    "google":{
+        "id": "string",
+        "token": "string",
+        "name": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "email": "string"
+    },
+    "facebook":{
+        "id": "string",
+        "token": "string",
+        "name": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "email": "string"
+    },
     "contact": [
         "Lorem"
     ],
-    "password": "Lorem",
     "dateOfBirth": "date",
+    "age": "number",
     "gender": "M/F",
     "address": {
         "line1": "Lorem",
@@ -14,25 +33,38 @@
         "country": "Lorem",
         "pincode": -51
     },
-    "quizResponse": {
-        "questions": [
-            {
-                "question": {
-                    "name": "Lorem",
-                    "type": "mcq/scq"
-                },
-                "options": [
-                    {
+    "quizResponse": [
+        {
+            "section":"",
+            "questions": [
+                {
+                    "question": {
                         "name": "Lorem",
-                        "selected": true
-                    }
-                ]
-            }
-        ]
-    },
-    "plan": {
+                        "type": "mcq/scq"
+                    },
+                    "options": [
+                        {
+                            "option": "Lorem",
+                            "isSelected": true
+                        }
+                    ]
+                }
+            ]
+
+        }
+    ],
+    
+    "currentPlan": {
         "name": "Lorem",
         "price": -33,
-        "expiry": "date"
+        "paymentId": "string",
+        "expiry": "yyyy-mm-dd hh:mm:ss"
+    },
+    "healthRecords": {
+        "height": "float cm",
+        "weight": "float kg",
+        "ailments": ["string", "string", "string"],
+        "foodType": "string veg/non-veg",
+        "foodRestrictions": ["string", "string", "string"]
     }
 }
