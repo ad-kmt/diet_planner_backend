@@ -1,0 +1,38 @@
+{
+    "firstName": "Lorem",
+    "lastName": "Lorem",
+    "email": "Lorem",
+    "contact": [
+        "Lorem"
+    ],
+    "password": "Lorem",
+    "dateOfBirth": "date",
+    "gender": "M/F",
+    "address": {
+        "line1": "Lorem",
+        "city": "Lorem",
+        "country": "Lorem",
+        "pincode": -51
+    },
+    "quizResponse": {
+        "questions": [
+            {
+                "question": {
+                    "name": "Lorem",
+                    "type": "mcq/scq"
+                },
+                "options": [
+                    {
+                        "name": "Lorem",
+                        "selected": true
+                    }
+                ]
+            }
+        ]
+    },
+    "plan": {
+        "name": "Lorem",
+        "price": -33,
+        "expiry": "date"
+    }
+}

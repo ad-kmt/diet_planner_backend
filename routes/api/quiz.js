@@ -41,9 +41,9 @@ router.post('/', async (req, res) => {
     }
 
     try {
-      const {symptoms, input} = req.body;
+      const {input, plan} = req.body;
       // const input=req.body.map(question => question.options.map(option=> option.selected));
-      // const input=[01,01,1,01,01,1,01,01,01,01,01,01,01,01,1,1,01,1,1,1,01,01,01,1,1,1,1,01,01,01,01,01,01,01,1,01,01,01,01,01,01,01,1,1,1,1,1,01,1,1,1,01,1,01,01,01,01,01,01,1,01,1,01,01,01,01,01,01,01,01,01,1,1,1,1,1,1];
+      const symptoms=[01,01,1,01,01,1,01,01,01,01,01,01,01,01,1,1,01,1,1,1,01,01,01,1,1,1,1,01,01,01,01,01,01,01,1,01,01,01,01,01,01,01,1,1,1,1,1,01,1,1,1,01,1,01,01,01,01,01,01,1,01,1,01,01,01,01,01,01,01,01,01,1,1,1,1,1,1];
       const symptom = brain(symptoms);
       const conclusions=[];
       Object.entries(symptom).forEach(([key, value]) => {

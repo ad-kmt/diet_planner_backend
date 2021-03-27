@@ -1,0 +1,13 @@
+{
+    "questions": [
+        {
+            "question": {
+                "name": "Lorem",
+                "type": "mcq/scq"
+            },
+            "options": [
+                "Lorem"
+            ]
+        }
+    ]
+}

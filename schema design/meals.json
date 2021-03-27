@@ -1,0 +1,22 @@
+{
+    "image": "Lorem",
+    "name": "Lorem",
+    "recipe": {
+        "steps": [
+            "Lorem"
+        ],
+        "ingredients": [
+            "Lorem",
+            "Lorem"
+        ],
+        "cookingTime": "Lorem"
+    },
+    "calories": 13,
+    "nutritients": [
+        "Lorem",
+        "Lorem"
+    ],
+    "mealType": "Lorem",
+    "video": "Lorem",
+    "mealTime": "Lorem"
+}
