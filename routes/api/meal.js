@@ -89,7 +89,8 @@ router.get('/', async (req, res) => {
  *         application/json:
  *           schema: *meal
  *     responses:
- *       201:
+ *       '200':
+ *          description: Successful
 */
 
 /**
@@ -109,7 +110,8 @@ router.get('/', async (req, res) => {
  *         application/json:
  *           schema: *meal
  *     responses:
- *       200:
+ *       '200':
+ *          description: Successful
 */
 
 /**
@@ -125,7 +127,8 @@ router.get('/', async (req, res) => {
  *           type: string
  *     summary: Delete a meal. (Incomplete api)
  *     responses:
- *       204:
+ *       '204':
+ *          description: Successful
 */
 router.delete('/', async (req, res) => {
   try {

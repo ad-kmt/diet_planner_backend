@@ -6,7 +6,8 @@
  *       - admin
  *     summary: Get all admins. (Incomplete api)
  *     responses:
- *       200:
+ *       '200':
+ *          description: Successful
 */
 
 /**
@@ -22,7 +23,8 @@
  *           type: string
  *     summary: Get a admin. (Incomplete api)
  *     responses:
- *       200:
+ *       '200':
+ *          description: Successful
 */
 
 /**
@@ -37,7 +39,8 @@
  *         application/json:
  *           schema: *admin
  *     responses:
- *       201:
+ *       '200':
+ *          description: Successful
 */
 
 /**
@@ -57,7 +60,8 @@
  *         application/json:
  *           schema: *admin
  *     responses:
- *       200:
+ *       '200':
+ *          description: Successful
 */
 
 /**
@@ -73,5 +77,6 @@
  *           type: string
  *     summary: Delete an admin. (Incomplete api)
  *     responses:
- *       204:
+ *       '204':
+ *          description: Successful
 */

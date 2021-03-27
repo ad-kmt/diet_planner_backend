@@ -15,10 +15,17 @@ const Quiz = require("../../models/Quiz");
  * @swagger
  * /api/quiz/:
  *  get:
+ *    tags:
+ *      - quiz
  *    description: Use to get all quiz questions.
  *    responses:
  *      '200':
  *        description: A successful response.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: array
+ *              items: *quizSection
  */
 router.get("/", async (req, res) => {
   try {
@@ -31,10 +38,25 @@ router.get("/", async (req, res) => {
 });
 module.exports = router;
 
-// @route    POST api/quiz
-// @desc     post quiz data
-// @access   Private
-router.post('/', async (req, res) => {
+
+/**
+ * @swagger
+ * /api/quiz/answers:
+ *   post:
+ *     tags:
+ *       - quiz
+ *     summary: post quiz answers.
+ *     description: Use to post answers to quiz question to get result as a response. \'answer\' field inside request body can be a number/string/array{jsonObject} depending on question type.
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema: *quizSectionAnswer
+ *     responses:
+ *       '200':
+ *          description: Successful
+ *        
+*/
+router.post('/answers', async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
