@@ -117,3 +117,57 @@ meal: &meal
     mealTime: 
       type: string
 
+
+quizSection: &quizSection
+  type: object
+  properties:
+    section:
+      type: string
+    questions:
+      type: array
+      items:
+        type: object
+        properties:
+          question:
+            type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+                example: mcq/scq
+          options:
+            type: array
+            items:
+              type: string
+
+quizSectionAnswer: &quizSectionAnswer
+  type: object
+  properties:
+    section:
+      type: string
+    questions:
+      type: array
+      items:
+        type: object
+        properties:
+          question:
+            type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+                example: mcq/scq
+          answer:
+            oneOf: 
+              - type: array
+                items:
+                  type: object
+                  properties:
+                    option:
+                      type: string
+                    isSelected:
+                      type: boolean            
+              - type: string
+              - type: number

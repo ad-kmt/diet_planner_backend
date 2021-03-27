@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+//Don't forget to change schema in swagger/models.yaml
 const QuizSchema = new mongoose.Schema({
             section: {type: String},
             questions: [

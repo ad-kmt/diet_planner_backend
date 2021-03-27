@@ -23,7 +23,8 @@ const User = require('../../models/User');
  *         application/json:
  *           schema: *userSignUp
  *     responses:
- *       201:
+ *       '200':
+ *          description: Successful
 */
 router.post('/', [
         check('firstName', 'First name is required').not().isEmpty(),
