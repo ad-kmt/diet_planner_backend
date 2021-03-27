@@ -48,7 +48,7 @@ const ProfileSchema = new mongoose.Schema({
           question: {
               type: String
           },
-          options: {
+          answer: {
               type: [{
                   symptom:{
                       type: String

@@ -1,0 +1,8 @@
+{
+    "userId": "string",
+    "amount": "float",
+    "currency": "string",
+    "date": "yyyy-mm-dd hh:mm:ss",
+    "plan": "string",
+    "description": "string"
+}

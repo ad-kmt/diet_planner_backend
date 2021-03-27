@@ -1,0 +1,7 @@
+{   
+    "userId": "string",
+    "date": "yyyy-mm-dd",
+    "time": "hh:mm:ss",
+    "weight": "float kg",
+    "height": "float cm"
+}
