@@ -5,6 +5,7 @@ const passport = require('passport');
 const swaggerJsDocs = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 var cors = require('cors');
+const test = require('./services/test');
 require("dotenv").config();
 
 
@@ -81,3 +82,5 @@ app.use('/api/payment/stripe', require('./routes/api/payment/stripe'));
 const PORT = process.env.PORT || 8000;
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+
+test();
