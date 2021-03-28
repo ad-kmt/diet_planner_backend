@@ -1,8 +1,19 @@
 var brain = require("brain.js");
+var fs = require("fs");
 
 var net = new brain.NeuralNetwork();
 
-module.exports=function(input){
+var model = function(input, filePath){
+  const modelJson= JSON.parse(fs.readFileSync(filePath))
+  const net = new brain.NeuralNetwork()
+  net.fromJSON(modelJson)
+  const output = net.run(input)
+
+  return output
+}
+
+
+var trainModel = function(input){
   net.train([
     { input: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], output: {"PDC": 1} },
     { input: [0,0,0,0,0,0,1,1,0,0,1,1,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], output: {"IP": 1} },
@@ -16,10 +27,19 @@ module.exports=function(input){
     { input: [0,1,1,0,0,0,1,0,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0], output: {"NoP": 1} },
   ]);
   
-  const output = net.run(input);
+  // const output = net.run(input);
+
+  // get json data
+  // const json = net.toJSON()
+  // write to file system
+  fs.writeFileSync('trained-net.json', JSON.stringify(json));
   
-  return output;
+  // return output;
 };
+
+
+
+module.exports=model;
 
 
 

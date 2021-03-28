@@ -3,5 +3,11 @@
     "date": "yyyy-mm-dd",
     "time": "hh:mm:ss",
     "weight": "float kg",
-    "height": "float cm"
+    "height": "float cm",
+    "mealsConsumed": ["string", "string"],
+    "waterIntake": "float litre",
+    "activity": "number kcal",
+    "mood": "string",
+    "bloating": "boolean",
+    "poop": "string"
 }

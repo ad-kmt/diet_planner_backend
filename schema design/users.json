@@ -21,9 +21,7 @@
         "lastName": "string",
         "email": "string"
     },
-    "contact": [
-        "Lorem"
-    ],
+    "contact": ["Lorem", "string", "string"],
     "dateOfBirth": "date",
     "age": "number",
     "gender": "M/F",
@@ -53,7 +51,7 @@
 
         }
     ],
-    
+
     "currentPlan": {
         "name": "Lorem",
         "price": -33,
@@ -63,8 +61,16 @@
     "healthRecords": {
         "height": "float cm",
         "weight": "float kg",
+        "desiredWeight": "float kg",
+        "desiredCalories": "float kcal",
+        "desiredNutrients": {
+            "protein": "string",
+            "fats": "string",
+            "carbs": "string"
+        },
         "ailments": ["string", "string", "string"],
         "foodType": "string veg/non-veg",
-        "foodRestrictions": ["string", "string", "string"]
+        "foodRestrictions": ["string", "string", "string"],
+        "activityLevel": "string"
     }
 }
