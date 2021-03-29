@@ -4,7 +4,7 @@
     "time": "hh:mm:ss",
     "weight": "float kg",
     "height": "float cm",
-    "mealsConsumed": ["string", "string"],
+    "mealsConsumed": [{"mealId": "string","mealType": "string" }],
     "waterIntake": "float litre",
     "activity": "number kcal",
     "mood": "string",

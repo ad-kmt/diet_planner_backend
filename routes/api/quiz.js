@@ -63,7 +63,7 @@ router.post('/answers', async (req, res) => {
     }
 
     try {
-      const {input, plan} = req.body;
+      // const {input, plan} = req.body;
       // const input=req.body.map(question => question.options.map(option=> option.selected));
       const symptoms=[01,01,1,01,01,1,01,01,01,01,01,01,01,01,1,1,01,1,1,1,01,01,01,1,1,1,1,01,01,01,01,01,01,01,1,01,01,01,01,01,01,01,1,1,1,1,1,01,1,1,1,01,1,01,01,01,01,01,01,1,01,1,01,01,01,01,01,01,01,01,01,1,1,1,1,1,1];
       const symptom = brain(symptoms);
@@ -91,11 +91,11 @@ router.post('/answers', async (req, res) => {
       
       let tdee;
 
-      if(activity === 1 ) tdee=1.2*bmr;
-      else if(activity === 2 ) tdee=1.375*bmr;
-      else if(activity === 3 ) tdee=1.55*bmr;
-      else if(activity === 4 ) tdee=1.725*bmr;
-      else if(activity === 5 ) tdee=1.9*bmr;
+      if(activity === 1 ) tdee=1.2*bmr;           // Sedentary/Couch Potato
+      else if(activity === 2 ) tdee=1.375*bmr;    // Light Exercise/Somewhat Active
+      else if(activity === 3 ) tdee=1.55*bmr;     // Moderate Exercise/Average Activity
+      else if(activity === 4 ) tdee=1.725*bmr;    // Active Individuals/Very Active
+      else if(activity === 5 ) tdee=1.9*bmr;      // Extremely Active Individuals/Extremely Active
 
       let calorie;
 

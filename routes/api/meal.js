@@ -92,6 +92,31 @@ router.get('/', async (req, res) => {
  *       '200':
  *          description: Successful
 */
+router.post('/', auth, async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const newMeal = new Meal({
+        name: req.body.name,
+        recipe: req.body.recipe,
+        calories: req.body.calories,
+        nutritionalValues: req.body.nutritionalValues,
+        mealTime: req.body.mealTime,
+        mealType: req.body.mealType
+      });
+
+      const meal = await newMeal.save();
+
+      res.json(meal);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
 
 /**
  * @swagger
@@ -113,6 +138,21 @@ router.get('/', async (req, res) => {
  *       '200':
  *          description: Successful
 */
+router.put('/:id', auth, async (req, res) => {
+
+    try {
+      const meal = await Meal.findOneAndUpdate(req.meal.id, req.body, { new: true, upsert: true, setDefaultsOnInsert: true });
+
+      await meal.save();
+
+      res.json(meal);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
 
 /**
  * @swagger
@@ -125,12 +165,12 @@ router.get('/', async (req, res) => {
  *         name: id
  *         schema:
  *           type: string
- *     summary: Delete a meal. (Incomplete api)
+ *     summary: Delete a meal.
  *     responses:
  *       '204':
  *          description: Successful
 */
-router.delete('/', async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const meal = await Meal.findById(req.params.id);
 
