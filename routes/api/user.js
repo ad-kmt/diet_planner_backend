@@ -167,6 +167,66 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+// @route    GET /api/user
+// @desc     Get user progress
+// @access   Private
+/**
+ * @swagger
+ * /api/user:
+ *  get:
+ *    tags:
+ *      - user
+ *    description: Use to get user progress
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ *        content:
+ *          application/json:
+ *              schema: 
+ *                  type: array
+ *                  items: *user
+ *      '404':
+ *          description: Not found
+ */
+ router.get('/:id/progress', async (req, res) => {
+    try {
+      const userProgress = await UserProgress.find({userID: req.params.id});
+      res.json(userProgress);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+});
 
+// @route    GET /api/user
+// @desc     Get user progress
+// @access   Private
+/**
+ * @swagger
+ * /api/user:
+ *  get:
+ *    tags:
+ *      - user
+ *    description: Use to get user progress
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ *        content:
+ *          application/json:
+ *              schema: 
+ *                  type: array
+ *                  items: *user
+ *      '404':
+ *          description: Not found
+ */
+router.get('/:userId/progress', async (req, res) => {
+    try {
+      const progress = await UserProgress.find(req.params.id);
+      res.json(progress);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+});
 
 module.exports = router;

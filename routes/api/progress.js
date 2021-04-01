@@ -8,36 +8,6 @@ const { check, validationResult } = require('express-validator');
 const User = require('../../models/User');
 const UserProgress = require('../../models/UserProgress');
 
-// @route    GET /api/user
-// @desc     Get user progress
-// @access   Private
-/**
- * @swagger
- * /api/user:
- *  get:
- *    tags:
- *      - user
- *    description: Use to get user progress
- *    responses:
- *      '200':
- *        description: A successful response
- *        content:
- *          application/json:
- *              schema: 
- *                  type: array
- *                  items: *user
- *      '404':
- *          description: Not found
- */
- router.get('/', async (req, res) => {
-  try {
-    const userProgress = await UserProgress.find({userID: req.user.id});
-    res.json(userProgress);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-});
 
 //@route   Post api/users/progress
 //@desc    User Daily Progress
@@ -64,12 +34,7 @@ router.post('/', auth, async (req, res) => {
       }
   
       try {
-        const user = await UserProgress.findById(req.user.id);
-  
-        const newProgress = new UserProgress({
-          user: user.id,
-          progress: req.body
-        });
+        const newProgress = new UserProgress(req.body);
   
         const progress = await newProgress.save();
   
