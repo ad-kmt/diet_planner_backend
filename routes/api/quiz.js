@@ -63,7 +63,7 @@ router.post('/answers', async (req, res) => {
     }
 
     try {
-      // const {input, plan} = req.body;
+      const input = req.body;
       // const input=req.body.map(question => question.options.map(option=> option.selected));
       const symptoms=[01,01,1,01,01,1,01,01,01,01,01,01,01,01,1,1,01,1,1,1,01,01,01,1,1,1,1,01,01,01,01,01,01,01,1,01,01,01,01,01,01,01,1,1,1,1,1,01,1,1,1,01,1,01,01,01,01,01,01,1,01,1,01,01,01,01,01,01,01,01,01,1,1,1,1,1,1];
       const symptom = brain(symptoms);
@@ -82,7 +82,7 @@ router.post('/answers', async (req, res) => {
           // conclusions.push(concl);
         }
       });
-
+ 
       const {gender, age, weight, height, activity, weightChange} = input;
 
       let bmr = 10*weight + 6.25*height - 5*age;

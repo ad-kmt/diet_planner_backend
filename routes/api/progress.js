@@ -22,7 +22,7 @@ const UserProgress = require('../../models/UserProgress');
  *     requestBody:
  *       content:
  *         application/json:
- *           schema: *userprogress
+ *           schema: 
  *     responses:
  *       '200':
  *          description: Successful

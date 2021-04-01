@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const auth = require('../../middleware/auth');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
 const { check, validationResult } = require('express-validator');
 
-const User = require('../../models/User');
-
+const Plan = require('../../models/Plan');
+ 
 // @route    GET /api/plan
 // @desc     Get all plans
 // @access   Public
@@ -77,3 +78,5 @@ router.post('/', auth, async (req, res) => {
     }
   }
 );
+
+module.exports = router;
