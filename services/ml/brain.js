@@ -1,19 +1,36 @@
 var brain = require("brain.js");
 var fs = require("fs");
+const config = require("config");
+//Map that converts abbreviated form of conclusion to full form
+const conclusionMap = config.get("Customer.conclusion");
+//ML classification model in json format
+const quizModelJson= require("./../../data/trained-net.json");
 
-var net = new brain.NeuralNetwork();
+var evaluateQuizResult = function(input){
 
-var model = function(input, filePath){
-  const modelJson= JSON.parse(fs.readFileSync(filePath))
+  //Neural Network Model
   const net = new brain.NeuralNetwork()
-  net.fromJSON(modelJson)
-  const output = net.run(input)
+  //Initializing with JSON file
+  net.fromJSON(quizModelJson)
+  //Result
+  const symptom = net.run(input)
+  
+  // console.debug(symptom)
+    const conclusions=[];
+    Object.entries(symptom).forEach(([key, value]) => {
 
-  return output
+      //Taking all conclusions with Probability > 0.1
+      if(value>=0.1){
+        conclusions.push(conclusionMap[key]);
+      }
+    });
+
+    return conclusions;
 }
 
 
-var trainModel = function(input){
+var trainModel = function(){
+  var net = new brain.NeuralNetwork();
   net.train([
     { input: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], output: {"PDC": 1} },
     { input: [0,0,0,0,0,0,1,1,0,0,1,1,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], output: {"IP": 1} },
@@ -37,9 +54,10 @@ var trainModel = function(input){
   // return output;
 };
 
-
-
-module.exports=model;
+module.exports = {
+  evaluateQuizResult: evaluateQuizResult,
+  trainModel: trainModel
+};
 
 
 
