@@ -75,7 +75,7 @@ app.get('/', (req, res) => res.send('API Running'));
 // Define Routes
 app.use('/api/quiz', require('./routes/api/quiz'));
 app.use('/api/user', require('./routes/api/user'));
-app.use('/api/auth', require('./routes/api/auth/auth'));
+app.use('/api/auth', require('./routes/api/authentication/auth'));
 app.use('/api/payment/stripe', require('./routes/api/payment/stripe'));
 app.use('/api/plan', require('./routes/api/plan'));
 
