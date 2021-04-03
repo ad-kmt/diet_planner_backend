@@ -7,6 +7,7 @@ const { check, validationResult } = require('express-validator');
 
 const User = require('../../models/User');
 const { getMeals } = require('../../services/core/mealPlanner');
+const Meal = require('../../models/Meal');
 
 //@route   Post api/users
 //@desc    Register user
@@ -129,6 +130,35 @@ router.get('/', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /api/user/:id:
+ *  get:
+ *    tags:
+ *      - user
+ *    description: Use to get user by id
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ *        content:
+ *          application/json:
+ *              schema: 
+ *                  type: array
+ *                  items: *user
+ *      '404':
+ *          description: Not found
+ */
+ router.get('/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    res.json(user);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+
 // @route    DELETE api/users/:id
 // @desc     Delete a user
 // @access   Private
@@ -232,7 +262,7 @@ router.get('/:userId/progress', async (req, res) => {
 
 /**
  * @swagger
- * /api/user/:id/meal
+ * /api/user/:id/meal:
  *  get:
  *    summary: Get meal plan for a user. (Incomplete api)
  *    tags:
@@ -255,9 +285,7 @@ router.get('/:userId/progress', async (req, res) => {
  router.get('/:id/meal', async (req, res) => {
   try {
     getMeals(req.params.id);
-    
-    // res.json(meals);
-
+    res.status(200);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');

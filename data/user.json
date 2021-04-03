@@ -1,0 +1,16 @@
+{
+    "google": {
+        "name":"Hitesh Kumawat",
+        "firstName":"Hitesh",
+        "lastName":"Kumawat",
+        "email":"kumawat.hitesh743@gmail.com"
+    },
+    "healthrecords": {
+        "desiredCalories": "2000",
+        "desiredNutrients": {
+            "proteins": "50",
+            "fats": "30",
+            "carbs": "20"
+        }
+    }
+}

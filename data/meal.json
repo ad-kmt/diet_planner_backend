@@ -1,10 +1,92 @@
-{
-    "name": "B1",
-    "calories": "",
-    "nutriValues": [{
-        "protein": "",
-        "fat": "",
-        "carb": ""
-    }],
-    "mealTime": "breakfast"
-}
+[
+    {
+        "name": "B1",
+        "calories": 500,
+        "nutriValues": {
+            "protein": 10,
+            "fat": 5,
+            "carb": 4
+        },
+        "mealTime": "breakfast"
+    },
+    {
+        "name": "B2",
+        "calories": 450,
+        "nutriValues": {
+            "protein": 12,
+            "fat": 7,
+            "carb": 8
+        },
+        "mealTime": "breakfast"
+    },
+    {
+        "name": "B3",
+        "calories": 500,
+        "nutriValues": {
+            "protein": 15,
+            "fat": 8,
+            "carb": 6
+        },
+        "mealTime": "breakfast"
+    },
+    {
+        "name": "L1",
+        "calories": 500,
+        "nutriValues": {
+            "protein": 10,
+            "fat": 5,
+            "carb": 4
+        },
+        "mealTime": "lunch"
+    },
+    {
+        "name": "L2",
+        "calories": 450,
+        "nutriValues": {
+            "protein": 12,
+            "fat": 7,
+            "carb": 8
+        },
+        "mealTime": "lunch"
+    },
+    {
+        "name": "L3",
+        "calories": 500,
+        "nutriValues": {
+            "protein": 15,
+            "fat": 8,
+            "carb": 6
+        },
+        "mealTime": "lunch"
+    },
+    {
+        "name": "D1",
+        "calories": 500,
+        "nutriValues": {
+            "protein": 10,
+            "fat": 5,
+            "carb": 4
+        },
+        "mealTime": "dinner"
+    },
+    {
+        "name": "D2",
+        "calories": 450,
+        "nutriValues": {
+            "protein": 12,
+            "fat": 7,
+            "carb": 8
+        },
+        "mealTime": "dinner"
+    },
+    {
+        "name": "D3",
+        "calories": 500,
+        "nutriValues": {
+            "protein": 15,
+            "fat": 8,
+            "carb": 6
+        },
+        "mealTime": "dinner"
+    }
+]
