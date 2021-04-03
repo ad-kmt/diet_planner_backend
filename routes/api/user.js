@@ -6,6 +6,7 @@ const config = require('config');
 const { check, validationResult } = require('express-validator');
 
 const User = require('../../models/User');
+const { getMeals } = require('../../services/core/mealPlanner');
 
 //@route   Post api/users
 //@desc    Register user
@@ -253,41 +254,9 @@ router.get('/:userId/progress', async (req, res) => {
  */
  router.get('/:id/meal', async (req, res) => {
   try {
-    const user = User.findById(req.params.id);
-    const dcalr=user.healthrecords.desireddCalories;
-    const dpr=user.healthrecords.desiredNutrients.proteins;
-    const dfr=user.healthrecords.desiredNutrients.fats;
-    const dcr=user.healthrecords.desiredNutrients.carbs;
-    const bCal = 0.3*dcalr;
-    const lCal = 0.4*dcalr;
-    const dCal = 0.3*dcalr;
-
-    const bMeals = await Meal.find({mealTime: "breakfast"});
-    const lMeals = await Meal.find({mealTime: "lunch"});
-    const dMeals = await Meal.find({mealTime: "dinner"});
-
+    getMeals(req.params.id);
     
-    
-    bMeals.forEach(b => {
-      lMeals.forEach(l => {
-        dMeals.forEach(d => {
-          const pErr = Math.pow(abs((b.nutriValues.protein + l.nutriValues.protein + d.nutriValues.protein)-dpr),2);
-          const fErr = Math.pow(abs((b.nutriValues.fat + l.nutriValues.fat + d.nutriValues.fat)-dfr),2);
-          const cErr = Math.pow(abs((b.nutriValues.carb + l.nutriValues.carb + d.nutriValues.carb)-dcr),2);
-          const calErr = Math.pow(abs((b.calories + l.calories + d.calories)-dcalr),2);
-          const tErr=pErr+fErr+cErr+calErr;
-          const mealCombo = {
-            b: b.id,
-            l: l.id,
-            d: d.id,
-            err: tErr
-          }
-          console.log(mealCombo);
-        });
-      });
-    });
-    
-    res.json(meals);
+    // res.json(meals);
 
   } catch (err) {
     console.error(err.message);
