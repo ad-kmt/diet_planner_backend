@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { validationResult } = require("express-validator");
-const brain = require("../../services/ml/brain");
+const {evaluateQuizResult} = require("../../services/ml/brain");
 const config = require("config");
 const conclusion = config.get("Customer.conclusion");
 
@@ -66,22 +66,7 @@ router.post('/answers', async (req, res) => {
       const input = req.body;
       // const input=req.body.map(question => question.options.map(option=> option.selected));
       const symptoms=[01,01,1,01,01,1,01,01,01,01,01,01,01,01,1,1,01,1,1,1,01,01,01,1,1,1,1,01,01,01,01,01,01,01,1,01,01,01,01,01,01,01,1,1,1,1,1,01,1,1,1,01,1,01,01,01,01,01,01,1,01,1,01,01,01,01,01,01,01,01,01,1,1,1,1,1,1];
-      const symptom = brain(symptoms);
-      const conclusions=[];
-      Object.entries(symptom).forEach(([key, value]) => {
-        // do something with key and val
-        
-        if(value>=0.1){
-
-          conclusions.push(conclusion[key])
-          // const concl = conclusion.map(item => {
-          //   if(Object.key(item) === key){
-          //     return item.value;
-          //   }
-          // })
-          // conclusions.push(concl);
-        }
-      });
+      const conclusions = evaluateQuizResult(symptoms);
  
       const {gender, age, weight, height, activity, weightChange} = input;
 

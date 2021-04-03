@@ -1,5 +1,4 @@
 var brain = require("brain.js");
-var fs = require("fs");
 const config = require("config");
 //Map that converts abbreviated form of conclusion to full form
 const conclusionMap = config.get("Customer.conclusion");

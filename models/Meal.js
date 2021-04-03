@@ -32,13 +32,16 @@ const MealSchema = new mongoose.Schema({
     calories: {                         // calories
         type: Number
     },
-    nutritionalValues: {                // like - proteins, vitamins, minerals, iron etc.
-        name: {
-            type: String
+    nutriValues: {                // like - proteins, vitamins, minerals, iron etc.
+        protein: {
+            type: Number
         },
-        quantity: {
-            type: String
-        }
+        fat: {
+            type: Number
+        },
+        carb: {
+            type: Number
+        },
     },
     mealType: {                         // veg/non-veg
         type: String

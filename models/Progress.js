@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const UserProgress = new mongoose.Schema({
+const Progress = new mongoose.Schema({
     userID: { type: mongoose.Schema.Types.ObjectId },
     date: {type: Date},
     height: { type: Number }, 
@@ -16,4 +16,4 @@ const UserProgress = new mongoose.Schema({
     poop: {type: String}
 });
 
-module.exports = mongoose.model('userProgress', UserProgress);
+module.exports = mongoose.model('progress', Progress);

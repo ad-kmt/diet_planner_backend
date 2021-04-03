@@ -7,6 +7,7 @@ const conclusion = config.get('Customer.conclusion');
 
 const Quiz = require('../../models/Meal');
 const Meal = require('../../models/Meal');
+const User = require('../../models/User');
 
 
 
@@ -77,6 +78,7 @@ router.get('/', async (req, res) => {
   }
 });
 
+
 /**
  * @swagger
  * /api/meal:
@@ -103,7 +105,7 @@ router.post('/', auth, async (req, res) => {
         name: req.body.name,
         recipe: req.body.recipe,
         calories: req.body.calories,
-        nutritionalValues: req.body.nutritionalValues,
+        nutriValues: req.body.nutriValues,
         mealTime: req.body.mealTime,
         mealType: req.body.mealType
       });

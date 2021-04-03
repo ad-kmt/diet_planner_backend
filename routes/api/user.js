@@ -190,8 +190,8 @@ router.delete('/:id', async (req, res) => {
  */
  router.get('/:id/progress', async (req, res) => {
     try {
-      const userProgress = await UserProgress.find({userID: req.params.id});
-      res.json(userProgress);
+      const Progress = await Progress.find({userID: req.params.id});
+      res.json(Progress);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
@@ -221,12 +221,79 @@ router.delete('/:id', async (req, res) => {
  */
 router.get('/:userId/progress', async (req, res) => {
     try {
-      const progress = await UserProgress.find(req.params.id);
+      const progress = await Progress.find(req.params.id);
       res.json(progress);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
     }
 });
+
+/**
+ * @swagger
+ * /api/user/:id/meal
+ *  get:
+ *    summary: Get meal plan for a user. (Incomplete api)
+ *    tags:
+ *      - meal
+ *    parameters:
+ *      - in: query
+ *        name: 
+ *        schema:
+ *          type: string
+ *    description: Use to get meal plan for a user
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ *        content:
+ *          application/json:
+ *              schema: 
+ *                  type: array
+ *                  items: *meal
+ */
+ router.get('/:id/meal', async (req, res) => {
+  try {
+    const user = User.findById(req.params.id);
+    const dcalr=user.healthrecords.desireddCalories;
+    const dpr=user.healthrecords.desiredNutrients.proteins;
+    const dfr=user.healthrecords.desiredNutrients.fats;
+    const dcr=user.healthrecords.desiredNutrients.carbs;
+    const bCal = 0.3*dcalr;
+    const lCal = 0.4*dcalr;
+    const dCal = 0.3*dcalr;
+
+    const bMeals = await Meal.find({mealTime: "breakfast"});
+    const lMeals = await Meal.find({mealTime: "lunch"});
+    const dMeals = await Meal.find({mealTime: "dinner"});
+
+    
+    
+    bMeals.forEach(b => {
+      lMeals.forEach(l => {
+        dMeals.forEach(d => {
+          const pErr = Math.pow(abs((b.nutriValues.protein + l.nutriValues.protein + d.nutriValues.protein)-dpr),2);
+          const fErr = Math.pow(abs((b.nutriValues.fat + l.nutriValues.fat + d.nutriValues.fat)-dfr),2);
+          const cErr = Math.pow(abs((b.nutriValues.carb + l.nutriValues.carb + d.nutriValues.carb)-dcr),2);
+          const calErr = Math.pow(abs((b.calories + l.calories + d.calories)-dcalr),2);
+          const tErr=pErr+fErr+cErr+calErr;
+          const mealCombo = {
+            b: b.id,
+            l: l.id,
+            d: d.id,
+            err: tErr
+          }
+          console.log(mealCombo);
+        });
+      });
+    });
+    
+    res.json(meals);
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 
 module.exports = router;

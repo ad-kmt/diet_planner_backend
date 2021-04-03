@@ -6,7 +6,7 @@ const config = require('config');
 const { check, validationResult } = require('express-validator');
 
 const User = require('../../models/User');
-const UserProgress = require('../../models/UserProgress');
+const Progress = require('../../models/Progress');
 
 
 //@route   Post api/users/progress
@@ -34,7 +34,7 @@ router.post('/', auth, async (req, res) => {
       }
   
       try {
-        const newProgress = new UserProgress(req.body);
+        const newProgress = new Progress(req.body);
   
         const progress = await newProgress.save();
   
