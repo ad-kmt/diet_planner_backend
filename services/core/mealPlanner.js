@@ -1,3 +1,5 @@
+const PriorityQueue = require("priorityqueuejs");
+
 const getMeals = (userId)=>{
     const user = User.findById(userId);
     const dcalr=user.healthrecords.desireddCalories;
@@ -12,7 +14,9 @@ const getMeals = (userId)=>{
     const lMeals = await Meal.find({mealTime: "lunch"});
     const dMeals = await Meal.find({mealTime: "dinner"});
 
-    
+    var queue = new PriorityQueue(function(a, b) {
+      return b.err - a.err;
+    });
     
     bMeals.forEach(b => {
       lMeals.forEach(l => {
@@ -29,8 +33,15 @@ const getMeals = (userId)=>{
             err: tErr
           }
           console.log(mealCombo);
+
+          queue.enq(mealCombo);
+
         });
       });
+    });
+
+    queue.forEach(meal => {
+      console.log(meal)
     });
 }
 
