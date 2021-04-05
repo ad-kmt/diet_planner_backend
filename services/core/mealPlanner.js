@@ -33,6 +33,7 @@ const getMeals = async (userId)=>{
           if(arr.length<=7){
             if(calErr<=50 && pErr<=4 && fErr<=4 && cErr<=2) arr.push(mealCombo);
           }
+          // need to consider protein error also for top meals. 
           else{
             var max=0;
             for(var i=0;i<arr.length;i++){
