@@ -224,4 +224,34 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+
+/**
+ * @swagger
+ * /api/meal/shuffle/?type=breakfast:
+ *   get:
+ *     tags:
+ *       - meal
+ *     parameters:
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema: 
+ *            type: object
+ *            properties:
+ *              breakfast:
+ *                type: string
+ *              lunch:
+ *                type: string
+ *              dinner:
+ *                type: string            
+ *     summary: Delete a meal.
+ *     responses:
+ *       '200':
+ *          description: Successful
+*/
+
 module.exports = router;
