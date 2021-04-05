@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { validationResult } = require('express-validator');
+const auth = require('../../middleware/auth');
 
 const config = require('config');
 const conclusion = config.get('Customer.conclusion');
@@ -118,6 +119,41 @@ router.post('/', auth, async (req, res) => {
       res.status(500).send('Server Error');
     }
   }
+);
+
+/**
+ * @swagger
+ * /api/meal/{id}:
+ *   get:
+ *     tags:
+ *       - meal
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *     summary: get a meal by id
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema: *meal
+ *     responses:
+ *       '200':
+ *          description: Successful
+*/
+router.get('/:id', async (req, res) => {
+
+  try {
+    const meal = await Meal.findById(req.params.id);
+
+    await meal.save();
+
+    res.json(meal);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+}
 );
 
 /**

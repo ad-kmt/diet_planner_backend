@@ -97,137 +97,36 @@ router.post('/', [
     }
 );
 
-// @route    GET /api/admin/user
-// @desc     Get all users
-// @access   Public
-
-
-/**
- * @swagger
- * /api/user:
- *  get:
- *    tags:
- *      - user
- *    description: Use to get all users
- *    responses:
- *      '200':
- *        description: A successful response
- *        content:
- *          application/json:
- *              schema: 
- *                  type: array
- *                  items: *user
- *      '404':
- *          description: Not found
- */
-router.get('/', async (req, res) => {
-    try {
-      const users = await User.find();
-      res.json(users);
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
-    }
-});
-
-/**
- * @swagger
- * /api/user/:id:
- *  get:
- *    tags:
- *      - user
- *    description: Use to get user by id
- *    responses:
- *      '200':
- *        description: A successful response
- *        content:
- *          application/json:
- *              schema: 
- *                  type: array
- *                  items: *user
- *      '404':
- *          description: Not found
- */
- router.get('/:id', async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    res.json(user);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-});
-
-
-// @route    DELETE api/users/:id
-// @desc     Delete a user
-// @access   Private
-/**
- * @swagger
- * /api/user/{id}:
- *  delete:
- *    tags:
- *      - user
- *    parameters:
- *      -   in: path
- *          name: id
- *          required: true
- *          schema:
- *              type: integer
- *          description: userId
- *    description: Use to delete a user with id in URI
- *    responses:
- *      '204':
- *        description: user deleted successfully
- */
-router.delete('/:id', async (req, res) => {
-    try {
-      const user = await User.findById(req.params.id);
-  
-      if (!user) {
-        return res.status(404).json({ msg: 'User not found' });
-      }
-  
-      await user.remove();
-  
-      res.json({ msg: 'User removed' });
-    } catch (err) {
-      console.error(err.message);
-  
-      res.status(500).send('Server Error');
-    }
-});
-
-// @route    GET /api/user
-// @desc     Get user progress
-// @access   Private
-/**
- * @swagger
- * /api/user:
- *  get:
- *    tags:
- *      - user
- *    description: Use to get user progress
- *    responses:
- *      '200':
- *        description: A successful response
- *        content:
- *          application/json:
- *              schema: 
- *                  type: array
- *                  items: *user
- *      '404':
- *          description: Not found
- */
- router.get('/:id/progress', async (req, res) => {
-    try {
-      const Progress = await Progress.find({userID: req.params.id});
-      res.json(Progress);
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
-    }
-});
+// // @route    GET /api/user
+// // @desc     Get user progress
+// // @access   Private
+// /**
+//  * @swagger
+//  * /api/user:
+//  *  get:
+//  *    tags:
+//  *      - user
+//  *    description: Use to get user progress
+//  *    responses:
+//  *      '200':
+//  *        description: A successful response
+//  *        content:
+//  *          application/json:
+//  *              schema: 
+//  *                  type: array
+//  *                  items: *user
+//  *      '404':
+//  *          description: Not found
+//  */
+//  router.get('/:id/progress', async (req, res) => {
+//     try {
+//       const Progress = await Progress.find({userID: req.params.id});
+//       res.json(Progress);
+//     } catch (err) {
+//       console.error(err.message);
+//       res.status(500).send('Server Error');
+//     }
+// });
 
 // @route    GET /api/user
 // @desc     Get user progress
@@ -252,7 +151,7 @@ router.delete('/:id', async (req, res) => {
  */
 router.get('/:userId/progress', async (req, res) => {
     try {
-      const progress = await Progress.find(req.params.id);
+      const progress = await Progress.find(req.params.userId);
       res.json(progress);
     } catch (err) {
       console.error(err.message);
@@ -288,6 +187,107 @@ router.get('/:userId/progress', async (req, res) => {
     res.status(200);
   } catch (err) {
     console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+
+
+
+// @route    GET /api/user
+// @desc     Get all users
+// @access   Public
+/**
+ * @swagger
+ * /api/user:
+ *  get:
+ *    tags:
+ *      - user
+ *    description: Use to get all users
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ *        content:
+ *          application/json:
+ *              schema: 
+ *                  type: array
+ *                  items: *user
+ *      '404':
+ *          description: Not found
+ */
+ router.get('/', async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+/**
+ * @swagger
+ * /api/user/:id:
+ *  get:
+ *    tags:
+ *      - user
+ *    description: Use to get user by id
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ *        content:
+ *          application/json:
+ *              schema: 
+ *                  type: array
+ *                  items: *user
+ *      '404':
+ *          description: Not found
+ */
+ router.get('/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    res.json(user);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route    DELETE api/users/:id
+// @desc     Delete a user
+// @access   Private
+/**
+ * @swagger
+ * /api/user/{id}:
+ *  delete:
+ *    tags:
+ *      - user
+ *    parameters:
+ *      -   in: path
+ *          name: id
+ *          required: true
+ *          schema:
+ *              type: integer
+ *          description: userId
+ *    description: Use to delete a user with id in URI
+ *    responses:
+ *      '204':
+ *        description: user deleted successfully
+ */
+ router.delete('/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+
+    await user.remove();
+
+    res.json({ msg: 'User removed' });
+  } catch (err) {
+    console.error(err.message);
+
     res.status(500).send('Server Error');
   }
 });
