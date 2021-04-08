@@ -72,7 +72,8 @@ router.get('/:id', async (req, res) => {
  *          description: Successful
 */
 router.post('/', [
-    check('username', 'First name is required').not().isEmpty(),
+    check('name', 'First name is required').not().isEmpty(),
+    check('email', 'Enter valid email').isEmail(),
     check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
 ],
 async (req, res) => {
@@ -81,11 +82,11 @@ async (req, res) => {
         return res.status(400).json({errors: errors.array()});
     }
 
-    var {username, password} = req.body;
+    // var {email, password} = req.body;
 
     try{
         // See if the admin exists
-        let admin = await Admin.findOne({'username': username});
+        let admin = await Admin.findOne({'email': req.body.email});
 
         if(admin){
             return res.status(400).json({errors: [{msg: 'Admin already exists'} ] });
@@ -96,7 +97,7 @@ async (req, res) => {
         // Encrypt the password
         const salt = await bcrypt.genSalt(10);
 
-        admin.password = await bcrypt.hash(password, salt);
+        admin.password = await bcrypt.hash(req.body.password, salt);
 
         await admin.save();
 
