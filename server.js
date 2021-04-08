@@ -80,6 +80,7 @@ app.use('/api/payment/stripe', require('./routes/api/payment/stripe'));
 app.use('/api/plan', require('./routes/api/plan'));
 app.use('/api/admin', require('./routes/api/admin'));
 app.use('/api/meal', require('./routes/api/meal'));
+app.use('/api/progress', require('./routes/api/progress'));
 
 
 const PORT = process.env.PORT || 8000;

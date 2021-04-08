@@ -9,6 +9,7 @@ const User = require('../../models/User');
 const { getMeals } = require('../../services/core/mealPlanner');
 const Meal = require('../../models/Meal');
 const Payment = require('../../models/Payment');
+const Progress = require('../../models/Progress');
 
 //@route   Post api/users
 //@desc    Register user
@@ -112,7 +113,7 @@ router.post('/', [
  */
 router.get('/:userId/progress', async (req, res) => {
     try {
-      const progress = await Progress.find(req.params.userId);
+      const progress = await Progress.find({userId: req.params.userId});
       res.json(progress);
     } catch (err) {
       console.error(err.message);
