@@ -29,9 +29,9 @@ const Meal = require('../../models/Meal');
  *          description: Successful
 */
 router.post('/', [
-        check('local.firstName', 'First name is required').not().isEmpty(),
-        check('local.email', 'Please include a valid email').isEmail(),
-        check('local.password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
+        check('firstName', 'First name is required').not().isEmpty(),
+        check('email', 'Please include a valid email').isEmail(),
+        check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
     ],
     async (req, res) => {
         const errors = validationResult(req);
@@ -39,12 +39,12 @@ router.post('/', [
             return res.status(400).json({errors: errors.array()});
         }
 
-        // const {firstName, lastName, email, password} = req.body;
+        const {firstName, lastName, email, password} = req.body;
 
         try{
             // See if the user exists
-            let user = await User.find({local: {email: req.body.email}});
-          console.log(user);
+            let user = await User.findOne({"local.email": email});
+            console.log(user);
             if(user){
                 return res.status(400).json({errors: [{msg: 'User already exists'} ] });
             }
@@ -62,7 +62,7 @@ router.post('/', [
             // Encrypt the password
             const salt = await bcrypt.genSalt(10);
 
-            user.password = await bcrypt.hash(password, salt);
+            user.local.password = await bcrypt.hash(password, salt);
 
             await user.save();
 
