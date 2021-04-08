@@ -271,7 +271,6 @@ router.get('/:userId/progress', async (req, res) => {
  */
  router.get('/:userId/payment', async (req, res) => {
   try {
-    Payment
     const userPayments = await Payment.find({userId: req.params.userId});
     res.json(userPayments);
   } catch (err) {
@@ -279,6 +278,5 @@ router.get('/:userId/progress', async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
-
 
 module.exports = router;
