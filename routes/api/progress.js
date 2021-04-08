@@ -27,7 +27,7 @@ const Progress = require('../../models/Progress');
  *       '200':
  *          description: Successful
 */
-router.post('/', auth, async (req, res) => {
+router.post('/', async (req, res) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -46,3 +46,4 @@ router.post('/', auth, async (req, res) => {
     }
 );
   
+module.exports = router;
