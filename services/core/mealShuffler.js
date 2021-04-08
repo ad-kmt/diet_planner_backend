@@ -28,6 +28,8 @@ const shuffleBreakfast = async (userId, mealCombo) => {
         calories: {$gte : bCalReq-50, $lte: bCalReq+50},
         nutriValues:{protein: {$gte: bpReq-4, $lte: bpReq+4}},
     }).limit(10);
+
+    return breakfastMeals;
 }
 
 const shuffleLunch = async (userId, mealCombo) => {
@@ -56,9 +58,11 @@ const shuffleLunch = async (userId, mealCombo) => {
         calories: {$gte : lCalReq-50, $lte: lCalReq+50},
         nutriValues:{protein: {$gte: lpReq-4, $lte: lpReq+4}},
     }).limit(10);
+
+    return lunchMeals;
 }
 
-const shuffleDinner = (userId, mealCombo) => {
+const shuffleDinner = async (userId, mealCombo) => {
     //get user data (tdcr)
     const user = await User.findById(userId);
     const tdcr = user.healthrecords.desiredCalories;
@@ -84,6 +88,8 @@ const shuffleDinner = (userId, mealCombo) => {
         calories: {$gte: dCalReq-50, $lte: dCalReq+50},
         nutriValues:{protein: {$gte: dpReq-4, $lte: dpReq+4}},
     }).limit(10);
+
+    return dinnerMeals;
 }
 
 module.exports={

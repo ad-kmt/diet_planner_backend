@@ -9,7 +9,7 @@ const conclusion = config.get('Customer.conclusion');
 const Quiz = require('../../models/Meal');
 const Meal = require('../../models/Meal');
 const User = require('../../models/User');
-
+const { shuffleBreakfast, shuffleLunch, shuffleDinner } = require('../../services/core/mealShuffler');
 
 
 /**
@@ -95,7 +95,7 @@ router.get('/', async (req, res) => {
  *       '200':
  *          description: Successful
 */
-router.post('/', auth, async (req, res) => {
+router.post('/', async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -227,7 +227,7 @@ router.delete('/:id', async (req, res) => {
 
 /**
  * @swagger
- * /api/meal/shuffle/?type=breakfast:
+ * /api/meal/shuffle?type=breakfast:
  *   get:
  *     tags:
  *       - meal
@@ -253,5 +253,22 @@ router.delete('/:id', async (req, res) => {
  *       '200':
  *          description: Successful
 */
+router.get('/shuffle', async (req, res) => {
+
+  try {
+    var shuffledMeal
+    if(req.query == "breakfast") shuffledMeal=shuffleBreakfast(req.body.id, req.body.mealCombo);
+
+    if(req.query == "lunch") shuffledMeal=shuffleLunch(req.body.userId, req.body.mealCombo);
+
+    if(req.query == "dinner") shuffledMeal=shuffleDinner(req.body.userId, req.body.mealCombo);
+
+    res.json(shuffledMeal);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 
 module.exports = router;
