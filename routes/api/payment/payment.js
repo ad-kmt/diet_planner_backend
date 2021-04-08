@@ -5,8 +5,8 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 const { check, validationResult } = require('express-validator');
  
-const User = require('../../models/User');
-const Payment = require('../../models/Payment');
+const User = require('../../../models/User');
+const Payment = require('../../../models/Payment');
 
 
 // @route    GET /api/admin/payments
@@ -69,3 +69,4 @@ const Payment = require('../../models/Payment');
   }
 });
 
+module.exports = router;

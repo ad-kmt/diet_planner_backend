@@ -79,6 +79,7 @@ app.use('/api/auth', require('./routes/api/authentication/auth'));
 app.use('/api/payment/stripe', require('./routes/api/payment/stripe'));
 app.use('/api/plan', require('./routes/api/plan'));
 app.use('/api/admin', require('./routes/api/admin'));
+app.use('/api/payment', require('./routes/api/payment/payment'));
 app.use('/api/meal', require('./routes/api/meal'));
 app.use('/api/progress', require('./routes/api/progress'));
 

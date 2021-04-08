@@ -54,7 +54,7 @@ const Plan = require('../../models/Plan');
  *       '200':
  *          description: Successful
 */
-router.post('/', auth, async (req, res) => {
+router.post('/', async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -78,5 +78,79 @@ router.post('/', auth, async (req, res) => {
     }
   }
 );
+
+/**
+ * @swagger
+ * /api/plan/{id}:
+ *   put:
+ *     tags:
+ *       - plan
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *     summary: Update a plan. (Incomplete api)
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema: 
+ *     responses:
+ *       '200':
+ *          description: Successful
+ */
+// router.put("/:id", auth, async (req, res) => {
+  router.put("/:id", async (req, res) => {
+    try {
+      const plan = await Plan.findByIdAndUpdate(req.params.id, {
+        $set: req.body
+      }, (error, data) => {
+        if (error) {
+          console.log(error)
+          return next(error);
+        } else {
+          // res.json(data)
+          console.log('Plan updated successfully!')
+        }
+      });
+      await plan.save();
+      res.json(plan);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server Error");
+    }
+});
+
+/**
+ * @swagger
+ * /api/plan/{id}:
+ *   delete:
+ *     tags:
+ *       - plan
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *     summary: Delete a plan.
+ *     responses:
+ *       '204':
+ *          description: Successful
+ */
+ router.delete("/:id", async (req, res) => {
+  try {
+    const plan = await Plan.findById(req.params.id);
+
+    if (!plan) {
+      return res.status(404).json({ msg: "Plan not found" });
+    }
+
+    await plan.remove();
+    res.json({ msg: "Plan removed" });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
 
 module.exports = router;
