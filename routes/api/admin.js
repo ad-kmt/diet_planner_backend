@@ -145,20 +145,27 @@ async (req, res) => {
  *       '200':
  *          description: Successful
 */
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', async (req, res) => {
 
-    try {
-      const meadminal = await Admin.findOneAndUpdate(req.meal.id, req.body, { new: true, upsert: true, setDefaultsOnInsert: true });
-
-      await admin.save();
-
-      res.json(admin);
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
-    }
+  try {
+    const admin = await Admin.findByIdAndUpdate(req.params.id, {
+      $set: req.body
+    }, (error, data) => {
+      if (error) {
+        console.log(error)
+        return next(error);
+      } else {
+        // res.json(data)
+        console.log('Admin updated successfully!')
+      }
+    });
+    await admin.save();
+    res.json(admin);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
   }
-);
+});
 
 /**
  * @swagger

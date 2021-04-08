@@ -1,14 +1,15 @@
 const mongoose = require('mongoose');
 
 const Progress = new mongoose.Schema({
-    userID: { type: mongoose.Schema.Types.ObjectId },
+    userId: { type: mongoose.Schema.Types.ObjectId },
     date: {type: Date},
     height: { type: Number }, 
     weight: { type: Number},
-    mealsConsumed: [{
-        mealID: {type: String},
-        mealType: {type: String}
-    }],
+    mealsConsumed: {
+        breakfastId: {type: mongoose.Schema.Types.ObjectId},
+        lunchId: {type: mongoose.Schema.Types.ObjectId},
+        dinnerId: {type: mongoose.Schema.Types.ObjectId}
+    },
     waterIntake: {type: Number},
     activity: {type: Number},
     mood: {type: String},

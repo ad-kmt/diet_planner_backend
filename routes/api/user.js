@@ -113,7 +113,7 @@ router.post('/', [
 //  */
 //  router.get('/:id/progress', async (req, res) => {
 //     try {
-//       const Progress = await Progress.find({userID: req.params.id});
+//       const Progress = await Progress.find({userId: req.params.id});
 //       res.json(Progress);
 //     } catch (err) {
 //       console.error(err.message);
