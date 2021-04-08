@@ -124,11 +124,11 @@ router.get('/:userId/progress', async (req, res) => {
 
 /**
  * @swagger
- * /api/user/:id/meal:
+ * /api/user/{id}/meal:
  *  get:
  *    summary: Get meal plan for a user. (Incomplete api)
  *    tags:
- *      - meal
+ *      - user
  *    parameters:
  *      - in: query
  *        name: 
