@@ -8,6 +8,7 @@ const { check, validationResult } = require('express-validator');
 const User = require('../../models/User');
 const { getMeals } = require('../../services/core/mealPlanner');
 const Meal = require('../../models/Meal');
+const Payment = require('../../models/Payment');
 
 //@route   Post api/users
 //@desc    Register user
@@ -245,6 +246,35 @@ router.get('/:userId/progress', async (req, res) => {
   } catch (err) {
     console.error(err.message);
 
+    res.status(500).send('Server Error');
+  }
+});
+
+/**
+ * @swagger
+ * /api/user/{userId}/payment:
+ *  get:
+ *    tags:
+ *      - user
+ *    description: Use to get a user's payments
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ *        content:
+ *          application/json:
+ *              schema: 
+ *                  type: array
+ *                  items: *user
+ *      '404':
+ *          description: Not found
+ */
+ router.get('/:userId/payment', async (req, res) => {
+  try {
+    Payment
+    const userPayments = await Payment.find({userId: req.params.userId});
+    res.json(userPayments);
+  } catch (err) {
+    console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
