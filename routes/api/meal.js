@@ -251,6 +251,23 @@ router.delete("/:id", async (req, res) => {
  *     responses:
  *       '200':
  *          description: Successful
- */
+*/
+router.get('/shuffle', async (req, res) => {
+
+  try {
+    var shuffledMeal
+    if(req.query == "breakfast") shuffledMeal=shuffleBreakfast(req.body.id, req.body.mealCombo);
+
+    if(req.query == "lunch") shuffledMeal=shuffleLunch(req.body.userId, req.body.mealCombo);
+
+    if(req.query == "dinner") shuffledMeal=shuffleDinner(req.body.userId, req.body.mealCombo);
+
+    res.json(shuffledMeal);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 
 module.exports = router;

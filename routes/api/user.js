@@ -29,9 +29,9 @@ const Meal = require('../../models/Meal');
  *          description: Successful
 */
 router.post('/', [
-        check('firstName', 'First name is required').not().isEmpty(),
-        check('email', 'Please include a valid email').isEmail(),
-        check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
+        check('local.firstName', 'First name is required').not().isEmpty(),
+        check('local.email', 'Please include a valid email').isEmail(),
+        check('local.password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
     ],
     async (req, res) => {
         const errors = validationResult(req);
@@ -39,31 +39,24 @@ router.post('/', [
             return res.status(400).json({errors: errors.array()});
         }
 
-        var {firstName, lastName, email, password} = req.body;
+        // const {firstName, lastName, email, password} = req.body;
 
         try{
             // See if the user exists
-            let user = await User.findOne({'local.email': email});
-
+            let user = await User.find({local: {email: req.body.email}});
+          console.log(user);
             if(user){
                 return res.status(400).json({errors: [{msg: 'User already exists'} ] });
             }
 
-            // Get users gravatar
-
-            // const avatar = gravatar.url(email, {
-            //     s: '200',
-            //     r: 'pg',
-            //     d: 'mm'
-            // });
-
+            
             user = new User({
-                'local':{
-                    firstName,
-                    lastName,
-                    email,
-                    password
-                }
+              local:{
+                  firstName,
+                  lastName,
+                  email,
+                  password
+              }
             });
 
             // Encrypt the password
