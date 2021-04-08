@@ -13,10 +13,10 @@ const Plan = require('../../models/Plan');
 // @access   Public
 /**
  * @swagger
- * /api/admin:
+ * /api/plan:
  *  get:
  *    tags:
- *      - user
+ *      - plan
  *    description: Use to get all plans
  *    responses:
  *      '200':
@@ -44,7 +44,7 @@ const Plan = require('../../models/Plan');
  * /api/plan:
  *   post:
  *     tags:
- *       - meal
+ *       - plan
  *     summary: Create a plan.
  *     requestBody:
  *       content:

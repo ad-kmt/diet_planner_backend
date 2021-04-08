@@ -17,7 +17,7 @@ const Progress = require('../../models/Progress');
  * /api/progress:
  *   post:
  *     tags:
- *       - user
+ *       - progress
  *     summary: Submit Daily Progress.
  *     requestBody:
  *       content:
