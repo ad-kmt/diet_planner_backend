@@ -1,16 +1,14 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { validationResult } = require('express-validator');
-const auth = require('../../middleware/auth');
+const { validationResult } = require("express-validator");
+const auth = require("../../middleware/auth");
 
-const config = require('config');
-const conclusion = config.get('Customer.conclusion');
+const config = require("config");
+const conclusion = config.get("Customer.conclusion");
 
-const Quiz = require('../../models/Meal');
-const Meal = require('../../models/Meal');
-const User = require('../../models/User');
-
-
+const Quiz = require("../../models/Meal");
+const Meal = require("../../models/Meal");
+const User = require("../../models/User");
 
 /**
  * @swagger
@@ -25,22 +23,19 @@ const User = require('../../models/User');
  *        description: A successful response
  *        content:
  *          application/json:
- *              schema: 
+ *              schema:
  *                  type: array
  *                  items: *meal
  */
-router.get('/', async (req, res) => {
-    try {
-      const meals = await Meal.find();
-      res.json(meals);
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
-    }
+router.get("/", async (req, res) => {
+  try {
+    const meals = await Meal.find();
+    res.json(meals);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
 });
-
-
-
 
 /**
  * @swagger
@@ -60,25 +55,27 @@ router.get('/', async (req, res) => {
  *        description: A successful response
  *        content:
  *          application/json:
- *              schema: 
+ *              schema:
  *                  type: array
  *                  items: *meal
  */
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const filters = req.params;
-    const {type, time, calories} = filters;
+    const { type, time, calories } = filters;
 
-    const meals = await Meal.find({mealType: type, mealTime: time, calories: calories});
-    
+    const meals = await Meal.find({
+      mealType: type,
+      mealTime: time,
+      calories: calories,
+    });
+
     res.json(meals);
-
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
 });
-
 
 /**
  * @swagger
@@ -94,32 +91,31 @@ router.get('/', async (req, res) => {
  *     responses:
  *       '200':
  *          description: Successful
-*/
-router.post('/', auth, async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    try {
-      const newMeal = new Meal({
-        name: req.body.name,
-        recipe: req.body.recipe,
-        calories: req.body.calories,
-        nutriValues: req.body.nutriValues,
-        mealTime: req.body.mealTime,
-        mealType: req.body.mealType
-      });
-
-      const meal = await newMeal.save();
-
-      res.json(meal);
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
-    }
+ */
+router.post("/", auth, async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
-);
+
+  try {
+    const newMeal = new Meal({
+      name: req.body.name,
+      recipe: req.body.recipe,
+      calories: req.body.calories,
+      nutriValues: req.body.nutriValues,
+      mealTime: req.body.mealTime,
+      mealType: req.body.mealType,
+    });
+
+    const meal = await newMeal.save();
+
+    res.json(meal);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
 
 /**
  * @swagger
@@ -140,9 +136,8 @@ router.post('/', auth, async (req, res) => {
  *     responses:
  *       '200':
  *          description: Successful
-*/
-router.get('/:id', async (req, res) => {
-
+ */
+router.get("/:id", async (req, res) => {
   try {
     const meal = await Meal.findById(req.params.id);
 
@@ -151,10 +146,9 @@ router.get('/:id', async (req, res) => {
     res.json(meal);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
-}
-);
+});
 
 /**
  * @swagger
@@ -175,22 +169,28 @@ router.get('/:id', async (req, res) => {
  *     responses:
  *       '200':
  *          description: Successful
-*/
-router.put('/:id', auth, async (req, res) => {
-
-    try {
-      const meal = await Meal.findOneAndUpdate(req.meal.id, req.body, { new: true, upsert: true, setDefaultsOnInsert: true });
-
-      await meal.save();
-
-      res.json(meal);
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
-    }
+ */
+// router.put("/:id", auth, async (req, res) => {
+router.put("/:id", async (req, res) => {
+  try {
+    const meal = await Meal.findByIdAndUpdate(req.params.id, {
+      $set: req.body
+    }, (error, data) => {
+      if (error) {
+        console.log(error)
+        return next(error);
+      } else {
+        // res.json(data)
+        console.log('Meal updated successfully!')
+      }
+    });
+    await meal.save();
+    res.json(meal);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
   }
-);
-
+});
 
 /**
  * @swagger
@@ -207,27 +207,26 @@ router.put('/:id', auth, async (req, res) => {
  *     responses:
  *       '204':
  *          description: Successful
-*/
-router.delete('/:id', async (req, res) => {
+ */
+router.delete("/:id", async (req, res) => {
   try {
     const meal = await Meal.findById(req.params.id);
 
     if (!meal) {
-      return res.status(404).json({ msg: 'Meal not found' });
+      return res.status(404).json({ msg: "Meal not found" });
     }
 
     await meal.remove();
-    res.json({ msg: 'Meal removed' });
+    res.json({ msg: "Meal removed" });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
 });
 
-
 /**
  * @swagger
- * /api/meal/shuffle/?type=breakfast:
+ * /api/meal/shuffle?type=breakfast:
  *   get:
  *     tags:
  *       - meal
@@ -239,7 +238,7 @@ router.delete('/:id', async (req, res) => {
  *     requestBody:
  *       content:
  *         application/json:
- *           schema: 
+ *           schema:
  *            type: object
  *            properties:
  *              breakfast:
@@ -247,11 +246,11 @@ router.delete('/:id', async (req, res) => {
  *              lunch:
  *                type: string
  *              dinner:
- *                type: string            
+ *                type: string
  *     summary: Delete a meal.
  *     responses:
  *       '200':
  *          description: Successful
-*/
+ */
 
 module.exports = router;
