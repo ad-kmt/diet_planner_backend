@@ -6,13 +6,15 @@ const config = require('config');
 const { check, validationResult } = require('express-validator');
  
 const User = require('../../models/User');
+const Payment = require('../../models/Payment');
+
 
 // @route    GET /api/admin/payments
 // @desc     Get all payments
 // @access   Public
 /**
  * @swagger
- * /api/admin:
+ * /api/payment:
  *  get:
  *    tags:
  *      - user
@@ -38,13 +40,14 @@ const User = require('../../models/User');
     }
 });
 
+// @access   Public
 /**
  * @swagger
- * /api/admin/payment/{id}:
+ * /api/payments/{paymentId}:
  *  get:
  *    tags:
  *      - user
- *    description: Use to get a user's payments
+ *    description: Use to get payment with paymentId
  *    responses:
  *      '200':
  *        description: A successful response
@@ -56,12 +59,13 @@ const User = require('../../models/User');
  *      '404':
  *          description: Not found
  */
- router.get('/payment/:userId', async (req, res) => {
-    try {
-      const userPayments = await Payment.find(req.params.userId);
-      res.json(userPayments);
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
-    }
+ router.get('/:id', async (req, res) => {
+  try {
+    const payments = await Payment.findById(req.params.id);
+    res.json(payments);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
 });
+
