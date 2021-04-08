@@ -14,7 +14,7 @@ const Progress = require('../../models/Progress');
 //@access  Public
 /**
  * @swagger
- * /api/user:
+ * /api/progress:
  *   post:
  *     tags:
  *       - user

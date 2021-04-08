@@ -90,47 +90,14 @@ router.post('/', [
     }
 );
 
-// // @route    GET /api/user
-// // @desc     Get user progress
-// // @access   Private
-// /**
-//  * @swagger
-//  * /api/user:
-//  *  get:
-//  *    tags:
-//  *      - user
-//  *    description: Use to get user progress
-//  *    responses:
-//  *      '200':
-//  *        description: A successful response
-//  *        content:
-//  *          application/json:
-//  *              schema: 
-//  *                  type: array
-//  *                  items: *user
-//  *      '404':
-//  *          description: Not found
-//  */
-//  router.get('/:id/progress', async (req, res) => {
-//     try {
-//       const Progress = await Progress.find({userID: req.params.id});
-//       res.json(Progress);
-//     } catch (err) {
-//       console.error(err.message);
-//       res.status(500).send('Server Error');
-//     }
-// });
-
-// @route    GET /api/user
-// @desc     Get user progress
 // @access   Private
 /**
  * @swagger
- * /api/user:
+ * /api/user/{userId}/progress:
  *  get:
  *    tags:
  *      - user
- *    description: Use to get user progress
+ *    description: Use to get user's progress data
  *    responses:
  *      '200':
  *        description: A successful response
@@ -151,6 +118,7 @@ router.get('/:userId/progress', async (req, res) => {
       res.status(500).send('Server Error');
     }
 });
+
 
 /**
  * @swagger
@@ -185,10 +153,6 @@ router.get('/:userId/progress', async (req, res) => {
 });
 
 
-
-
-// @route    GET /api/user
-// @desc     Get all users
 // @access   Public
 /**
  * @swagger
