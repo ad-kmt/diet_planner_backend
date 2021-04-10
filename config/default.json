@@ -14,6 +14,11 @@
         }
     },
     "mongoURI": "mongodb+srv://fitgut4lifeadmin:Atlantic1904@fitgut4life.x3jbe.mongodb.net/project?retryWrites=true&w=majority",
-    "jwtSecret": "mySecretToken"
+    "jwtSecret": "mySecretToken",
+
+    "google":{
+        "clientId": "26881759918-5p1fv8f53f8iqg3ti7qr92l0fnffujf4.apps.googleusercontent.com",
+        "clientSecret": "FjJ94MVVem1a87vzplHNwT-B"
+    }
     
 }

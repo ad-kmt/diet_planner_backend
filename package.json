@@ -29,6 +29,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "express-validator": "^6.9.2",
+    "google-auth-library": "^7.0.4",
     "googleapis": "^67.1.0",
     "gravatar": "^1.8.1",
     "jsonwebtoken": "^8.5.1",

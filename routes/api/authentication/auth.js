@@ -1,14 +1,17 @@
 const express = require('express');
-const googleOAuth = require('../../../utils/googleOAuth');
+const googleOAuth = require('../../../services/utils/googleOAuth');
 const User = require('../../../models/User');
 
 const router = express.Router();
 
 router.post('/google', async (req, res) => {
+    
     try {
       console.log("wowo")
-        const code = req.body.code;
-        const profile = await googleOAuth.getProfileInfo(code);
+        const tokenId = req.body.tokenId;
+        const profile = await googleOAuth.getProfileInfo(tokenId);
+        console.log(profile);
+
         const newUser = new User();
         newUser.google.id = profile.sub;
         newUser.google.name = profile.name;
@@ -17,10 +20,10 @@ router.post('/google', async (req, res) => {
         newUser.google.email = profile.email;
       
         
-        const user = await newUser.save();
+        // const user = await newUser.save();
         console.log(newUser);
 
-        res.json( user );
+        res.json( newUser );
       } catch (e) {
         console.log(e);
         res.status(401).send();
