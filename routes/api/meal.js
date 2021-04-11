@@ -14,7 +14,7 @@ const User = require("../../models/User");
  * @swagger
  * /api/meal:
  *  get:
- *    summary: Get all meals. (Incomplete api)
+ *    summary: Get all meals.
  *    tags:
  *      - meal
  *    description: Use to get all meals
@@ -83,7 +83,7 @@ router.get("/", async (req, res) => {
  *   post:
  *     tags:
  *       - meal
- *     summary: Create a meal. (Incomplete api)
+ *     summary: Create a meal.
  *     requestBody:
  *       content:
  *         application/json:
@@ -129,13 +129,14 @@ router.post("/", auth, async (req, res) => {
  *         schema:
  *           type: string
  *     summary: get a meal by id
- *     requestBody:
- *       content:
- *         application/json:
- *           schema: *meal
  *     responses:
- *       '200':
- *          description: Successful
+ *      '200':
+ *        description: A successful response
+ *        content:
+ *          application/json:
+ *              schema: *meal
+ *      '404':
+ *          description: Not found
  */
 router.get("/:id", async (req, res) => {
   try {
@@ -161,7 +162,7 @@ router.get("/:id", async (req, res) => {
  *         name: id
  *         schema:
  *           type: string
- *     summary: Update a meal. (Incomplete api)
+ *     summary: Update a meal.
  *     requestBody:
  *       content:
  *         application/json:
@@ -226,7 +227,7 @@ router.delete("/:id", async (req, res) => {
 
 /**
  * @swagger
- * /api/meal/shuffle?type=breakfast:
+ * /api/meal/shuffle?type=xyz:
  *   get:
  *     tags:
  *       - meal
@@ -247,7 +248,7 @@ router.delete("/:id", async (req, res) => {
  *                type: string
  *              dinner:
  *                type: string
- *     summary: Delete a meal.
+ *     summary: switch the current meal.
  *     responses:
  *       '200':
  *          description: Successful

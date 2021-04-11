@@ -99,7 +99,13 @@ router.post('/', [
  *  get:
  *    tags:
  *      - user
+ *    parameters:
+ *      - in: path
+ *        name: userId
+ *        schema:
+ *          type: string
  *    description: Use to get user's progress data
+ *    summary: Get user's progresses
  *    responses:
  *      '200':
  *        description: A successful response
@@ -107,7 +113,7 @@ router.post('/', [
  *          application/json:
  *              schema: 
  *                  type: array
- *                  items: *user
+ *                  items: *progress
  *      '404':
  *          description: Not found
  */
@@ -124,14 +130,14 @@ router.get('/:userId/progress', async (req, res) => {
 
 /**
  * @swagger
- * /api/user/{id}/meal:
+ * /api/user/{userId}/meal:
  *  get:
- *    summary: Get meal plan for a user. (Incomplete api)
+ *    summary: Get meal plan for a user.
  *    tags:
  *      - user
  *    parameters:
- *      - in: query
- *        name: 
+ *      - in: path
+ *        name: userId
  *        schema:
  *          type: string
  *    description: Use to get meal plan for a user
@@ -144,9 +150,9 @@ router.get('/:userId/progress', async (req, res) => {
  *                  type: array
  *                  items: *meal
  */
- router.get('/:id/meal', async (req, res) => {
+ router.get('/:userId/meal', async (req, res) => {
   try {
-    getMeals(req.params.id);
+    getMeals(req.params.userId);
     res.status(200);
   } catch (err) {
     console.error(err.message);
@@ -163,6 +169,7 @@ router.get('/:userId/progress', async (req, res) => {
  *    tags:
  *      - user
  *    description: Use to get all users
+ *    summary: Get all users
  *    responses:
  *      '200':
  *        description: A successful response
@@ -186,25 +193,29 @@ router.get('/:userId/progress', async (req, res) => {
 
 /**
  * @swagger
- * /api/user/:id:
+ * /api/user/{userId}:
  *  get:
  *    tags:
  *      - user
+ *    parameters:
+ *      - in: path
+ *        name: userId
+ *        schema:
+ *          type: string
  *    description: Use to get user by id
+ *    summary: Get a user
  *    responses:
  *      '200':
  *        description: A successful response
  *        content:
  *          application/json:
- *              schema: 
- *                  type: array
- *                  items: *user
+ *              schema: *user
  *      '404':
  *          description: Not found
  */
- router.get('/:id', async (req, res) => {
+ router.get('/:userId', async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.userId);
     res.json(user);
   } catch (err) {
     console.error(err.message);
@@ -217,25 +228,26 @@ router.get('/:userId/progress', async (req, res) => {
 // @access   Private
 /**
  * @swagger
- * /api/user/{id}:
+ * /api/user/{userId}:
  *  delete:
  *    tags:
  *      - user
+ *    summary: Remove a user
  *    parameters:
  *      -   in: path
- *          name: id
+ *          name: userId
  *          required: true
  *          schema:
- *              type: integer
+ *              type: ObjectId
  *          description: userId
  *    description: Use to delete a user with id in URI
  *    responses:
  *      '204':
  *        description: user deleted successfully
  */
- router.delete('/:id', async (req, res) => {
+ router.delete('/:userId', async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.userId);
 
     if (!user) {
       return res.status(404).json({ msg: 'User not found' });
@@ -258,6 +270,14 @@ router.get('/:userId/progress', async (req, res) => {
  *    tags:
  *      - user
  *    description: Use to get a user's payments
+ *    summary: Get all payments of a user
+ *    parameters:
+ *      -   in: path
+ *          name: userId
+ *          required: true
+ *          schema:
+ *              type: string
+ *          description: userId
  *    responses:
  *      '200':
  *        description: A successful response
@@ -265,7 +285,7 @@ router.get('/:userId/progress', async (req, res) => {
  *          application/json:
  *              schema: 
  *                  type: array
- *                  items: *user
+ *                  items: *payment
  *      '404':
  *          description: Not found
  */

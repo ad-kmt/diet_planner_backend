@@ -171,3 +171,65 @@ quizSectionAnswer: &quizSectionAnswer
                       type: boolean            
               - type: string
               - type: number
+
+
+plan: &plan
+  type: object
+  properties:
+    name:
+      type: string
+    displayPrice:
+      type: number
+    onsalePrice:
+      type: number
+    discount:
+      type: number
+    duration: 
+      type: date
+
+payment: &payment
+  type: object
+  properties:
+    userId:
+      type: objectId
+    amount:
+      type: number
+    currency:
+      type: string
+    date:
+      type: date
+    plan: 
+      type: string
+    description:
+      type: string
+
+progress: &progress
+  type: object
+  properties:
+    userId:
+      type: objectId
+    date:
+      type: date
+    height:
+      type: number
+    weight:
+      type: number
+    mealsConsumed: 
+      type: object
+      properties:
+        breakfastId:
+          type: objectId
+        lunchId:
+          type: objectId
+        dinnerId:
+          type: objectId
+    waterIntake:
+      type: number
+    activity:
+      type: string
+    mood:
+      type: string
+    bloating:
+      type: boolean
+    poop:
+      type: string

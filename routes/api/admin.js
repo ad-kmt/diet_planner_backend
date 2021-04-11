@@ -15,7 +15,7 @@ const Admin = require('../../models/Admin');
  *   get:
  *     tags:
  *       - admin
- *     summary: Get all admins. (Incomplete api)
+ *     summary: Get all admins.
  *     responses:
  *       '200':
  *          description: Successful
@@ -32,23 +32,23 @@ router.get('/', async (req, res) => {
 
 /**
  * @swagger
- * /api/admin/{id}:
+ * /api/admin/{adminId}:
  *   get:
  *     tags:
  *       - admin
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: adminId
  *         schema:
  *           type: string
- *     summary: Get a admin. (Incomplete api)
+ *     summary: Get an admin.
  *     responses:
  *       '200':
  *          description: Successful
 */
-router.get('/:id', async (req, res) => {
+router.get('/:adminId', async (req, res) => {
     try {
-      const admin = await Admin.findById(req.params.id);
+      const admin = await Admin.findById(req.params.adminId);
       res.json(admin);
     } catch (err) {
       console.error(err.message);
@@ -62,7 +62,7 @@ router.get('/:id', async (req, res) => {
  *   post:
  *     tags:
  *       - admin
- *     summary: Create an admin. (Incomplete api)
+ *     summary: Create an admin.
  *     requestBody:
  *       content:
  *         application/json:
@@ -72,7 +72,8 @@ router.get('/:id', async (req, res) => {
  *          description: Successful
 */
 router.post('/', [
-    check('name', 'First name is required').not().isEmpty(),
+    check('firstName', 'firstName is required').not().isEmpty(),
+    check('lastName', 'lastName is required').not().isEmpty(),
     check('email', 'Enter valid email').isEmail(),
     check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
 ],
@@ -127,16 +128,16 @@ async (req, res) => {
 
 /**
  * @swagger
- * /api/admin/{id}:
+ * /api/admin/{adminId}:
  *   put:
  *     tags:
  *       - admin
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: adminId
  *         schema:
  *           type: string
- *     summary: Update an admin. (Incomplete api)
+ *     summary: Update an admin.
  *     requestBody:
  *       content:
  *         application/json:
@@ -145,10 +146,10 @@ async (req, res) => {
  *       '200':
  *          description: Successful
 */
-router.put('/:id', async (req, res) => {
+router.put('/:adminId', async (req, res) => {
 
   try {
-    const admin = await Admin.findByIdAndUpdate(req.params.id, {
+    const admin = await Admin.findByIdAndUpdate(req.params.adminId, {
       $set: req.body
     }, (error, data) => {
       if (error) {
@@ -169,23 +170,23 @@ router.put('/:id', async (req, res) => {
 
 /**
  * @swagger
- * /api/admin/{id}:
+ * /api/admin/{adminId}:
  *   delete:
  *     tags:
  *       - admin
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: adminId
  *         schema:
  *           type: string
- *     summary: Delete an admin. (Incomplete api)
+ *     summary: Delete an admin.
  *     responses:
  *       '204':
  *          description: Successful
 */
-router.delete('/:id', async (req, res) => {
+router.delete('/:adminId', async (req, res) => {
     try {
-      const admin = await Admin.findById(req.params.id);
+      const admin = await Admin.findById(req.params.adminId);
   
       if (!admin) {
         return res.status(404).json({ msg: 'Admin not found' });
