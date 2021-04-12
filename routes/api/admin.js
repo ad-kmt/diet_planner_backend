@@ -110,7 +110,7 @@ async (req, res) => {
 
         jwt.sign(
             payload, 
-            config.get('jwtSecret'),
+            process.env.JWT_SECRET,
             {expiresIn: 360000}, //time
             (err, token) => {
                 if (err) throw err;

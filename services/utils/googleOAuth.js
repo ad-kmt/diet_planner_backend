@@ -2,8 +2,8 @@ const { OAuth2Client } = require('google-auth-library');
 const config = require("config");
 
 const client = new OAuth2Client(
-  config.get("google.clientId"),
-  config.get("google.clientSecret"),
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
   /**
    * To get access_token and refresh_token in server side,
    * the data for redirect_uri should be postmessage.
@@ -15,7 +15,7 @@ const client = new OAuth2Client(
 exports.getProfileInfo = async (idToken) => {
   const ticket = await client.verifyIdToken({
     idToken,
-    audience: config.get("google.clientId"),
+    audience: process.env.GOOGLE_CLIENT_ID,
   });
 
   const payload = ticket.getPayload();
