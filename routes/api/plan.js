@@ -18,6 +18,7 @@ const Plan = require('../../models/Plan');
  *    tags:
  *      - plan
  *    description: Use to get all plans
+ *    summary: Get all plans
  *    responses:
  *      '200':
  *        description: A successful response
@@ -25,7 +26,7 @@ const Plan = require('../../models/Plan');
  *          application/json:
  *              schema: 
  *                  type: array
- *                  items: *user
+ *                  items: *plan
  *      '404':
  *          description: Not found
  */
@@ -49,7 +50,7 @@ const Plan = require('../../models/Plan');
  *     requestBody:
  *       content:
  *         application/json:
- *           schema: *meal
+ *           schema: *plan
  *     responses:
  *       '200':
  *          description: Successful
@@ -81,16 +82,16 @@ router.post('/', async (req, res) => {
 
 /**
  * @swagger
- * /api/plan/{id}:
+ * /api/plan/{planId}:
  *   put:
  *     tags:
  *       - plan
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: planId
  *         schema:
  *           type: string
- *     summary: Update a plan. (Incomplete api)
+ *     summary: Update a plan.
  *     requestBody:
  *       content:
  *         application/json:
@@ -100,9 +101,9 @@ router.post('/', async (req, res) => {
  *          description: Successful
  */
 // router.put("/:id", auth, async (req, res) => {
-  router.put("/:id", async (req, res) => {
+  router.put("/:planId", async (req, res) => {
     try {
-      const plan = await Plan.findByIdAndUpdate(req.params.id, {
+      const plan = await Plan.findByIdAndUpdate(req.params.planId, {
         $set: req.body
       }, (error, data) => {
         if (error) {
@@ -123,13 +124,13 @@ router.post('/', async (req, res) => {
 
 /**
  * @swagger
- * /api/plan/{id}:
+ * /api/plan/{planId}:
  *   delete:
  *     tags:
  *       - plan
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: planId
  *         schema:
  *           type: string
  *     summary: Delete a plan.
@@ -137,9 +138,9 @@ router.post('/', async (req, res) => {
  *       '204':
  *          description: Successful
  */
- router.delete("/:id", async (req, res) => {
+ router.delete("/:planId", async (req, res) => {
   try {
-    const plan = await Plan.findById(req.params.id);
+    const plan = await Plan.findById(req.params.planId);
 
     if (!plan) {
       return res.status(404).json({ msg: "Plan not found" });

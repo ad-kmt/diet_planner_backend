@@ -1,7 +1,7 @@
 {
-  "name": "developer-connector-backend",
+  "name": "fg4l",
   "version": "1.0.0",
-  "description": "",
+  "description": "FitGut4Life",
   "main": "server.js",
   "scripts": {
     "start": "node server",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Hitesh-Kumawat/developer-connector-backend.git"
+    "url": "git+https://github.com/FitGirls4Life/Project-Backend.git"
   },
-  "author": "",
+  "author": "Hitesh Kumawat",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Hitesh-Kumawat/developer-connector-backend/issues"
+    "url": "https://github.com/FitGirls4Life/Project-Backend/issues"
   },
-  "homepage": "https://github.com/Hitesh-Kumawat/developer-connector-backend#readme",
+  "homepage": "https://github.com/FitGirls4Life/Project-Backend#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "brain.js": "^2.0.0-beta.2",

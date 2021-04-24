@@ -22,7 +22,7 @@ const Progress = require('../../models/Progress');
  *     requestBody:
  *       content:
  *         application/json:
- *           schema: 
+ *           schema: *progress
  *     responses:
  *       '200':
  *          description: Successful

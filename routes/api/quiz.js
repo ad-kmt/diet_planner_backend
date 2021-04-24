@@ -18,6 +18,7 @@ const Quiz = require("../../models/Quiz");
  *    tags:
  *      - quiz
  *    description: Use to get all quiz questions.
+ *    summary: Get quiz questions
  *    responses:
  *      '200':
  *        description: A successful response.
@@ -112,7 +113,7 @@ router.post("/answers", async (req, res) => {
  *     requestBody:
  *       content:
  *         application/json:
- *           schema: *meal
+ *           schema: *quizSection
  *     responses:
  *       '200':
  *          description: Successful
@@ -153,7 +154,7 @@ router.post("/", async (req, res) => {
  *     requestBody:
  *       content:
  *         application/json:
- *           schema: *meal
+ *           schema: *quizSection
  *     responses:
  *       '200':
  *          description: Successful
