@@ -1,4 +1,5 @@
 const { OAuth2Client } = require('google-auth-library');
+const config = require("config");
 
 const client = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
@@ -11,10 +12,7 @@ const client = new OAuth2Client(
   'postmessage'
 );
 
-exports.getProfileInfo = async (code) => {
-  const r = await client.getToken(code);
-  const idToken = r.tokens.id_token;
-
+exports.getGoogleProfileData = async (idToken) => {
   const ticket = await client.verifyIdToken({
     idToken,
     audience: process.env.GOOGLE_CLIENT_ID,

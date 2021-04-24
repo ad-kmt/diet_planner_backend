@@ -12,8 +12,5 @@
             "MA": "Mal-Absorption",
             "NoP": "No Problem"
         }
-    },
-    "mongoURI": "mongodb+srv://fitgut4lifeadmin:Atlantic1904@fitgut4life.x3jbe.mongodb.net/project?retryWrites=true&w=majority",
-    "jwtSecret": "mySecretToken"
-    
+    }
 }
