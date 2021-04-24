@@ -1,10 +1,10 @@
+//Connecting to MongoDB
 const mongoose = require('mongoose');
-const config = require('config');
-const db = config.get('mongoURI');
+require("dotenv").config();
 
 const connectDB = async () => {
     try {
-        await mongoose.connect(db, {
+        await mongoose.connect(process.env.MONGO_URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             useCreateIndex: true,
@@ -18,6 +18,4 @@ const connectDB = async () => {
         process.exit(1);
     }
 }
-// mongodb+srv://hitesh123:hitesh123@devconnector.usefm.mongodb.net/test?retryWrites=true&w=majority
-
 module.exports = connectDB;

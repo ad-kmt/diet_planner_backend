@@ -67,6 +67,7 @@ router.get("/:userId/progress", async (req, res) => {
  */
 router.get("/:id/meal", async (req, res) => {
   try {
+    //get basic meal plan for user
     getMeals(req.params.id);
     res.status(200);
   } catch (err) {
@@ -168,11 +169,11 @@ router.put("/:id", async (req, res) => {
               error: 'First Name is required'
           });
       } else {
-          user.local.firstName = firstName;
+          user.firstName = firstName;
       }
 
       if (lastName) {
-        user.local.lastName = lastName;
+        user.lastName = lastName;
       }
 
       console.log(user);
@@ -185,15 +186,12 @@ router.put("/:id", async (req, res) => {
               });
           }
           // console.log(updatedUser);
-          const { id, local } = updatedUser;
-          const { firstName, lastName, email } = local;
+          const { id, firstName, lastName, email } = updatedUser;
           res.json({
-            user: {
               id,
               firstName,
               lastName,
               email
-            }
           });
         });
     });

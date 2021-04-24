@@ -12,7 +12,7 @@ const client = new OAuth2Client(
   'postmessage'
 );
 
-exports.getProfileInfo = async (idToken) => {
+exports.getGoogleProfileData = async (idToken) => {
   const ticket = await client.verifyIdToken({
     idToken,
     audience: process.env.GOOGLE_CLIENT_ID,

@@ -3,11 +3,14 @@ const googleOAuth = require('../../../services/utils/googleOAuth');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
+const fetch = require('node-fetch');
+
 
 const User = require('../../../models/User');
 const auth = require('../../../middleware/auth');
 const { check, validationResult } = require('express-validator');
 const { sendEmailWithNodemailer } = require("../../../services/utils/nodeMailer");
+const passport = require('passport');
 
 const router = express.Router();
 
@@ -29,87 +32,6 @@ router.get('/', auth, async (req, res) => {
 //@access  Public
 
 
-/**
- * @swagger
- * /api/auth/:
- *   post:
- *     tags:
- *       - user
- *     summary: Create a user.
- *     requestBody:
- *       content:
- *         application/json:
- *           schema: *userSignUp
- *     responses:
- *       '200':
- *          description: Successful
- */
- router.post("/",
- [
-    check("firstName", "First name is required").not().isEmpty(),
-    check("email", "Please include a valid email").isEmail(),
-    check(
-      "password",
-      "Please enter a password with 6 or more characters"
-    ).isLength({ min: 6 }),
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { firstName, lastName, email, password } = req.body;
-
-    try {
-      // See if the user exists
-      let user = await User.findOne({ "local.email": email });
-      console.log(user);
-      if (user) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: "User already exists" }] });
-      }
-
-      user = new User({
-        local: {
-          firstName,
-          lastName,
-          email,
-          password,
-        },
-      });
-
-      // Encrypt the password
-      const salt = await bcrypt.genSalt(10);
-
-      user.local.password = await bcrypt.hash(password, salt);
-
-      await user.save();
-
-      // Return jsonwebtoken
-      const payload = {
-        user: {
-          id: user.id,
-        },
-      };
-
-      jwt.sign(
-        payload,
-        process.env.JWT_SECRET,
-        { expiresIn: 360000 }, //time
-        (err, token) => {
-          if (err) throw err;
-          res.json({ token });
-        }
-      );
-    } catch (err) {
-      console.log(err.message);
-      res.status(500).send("Server error");
-    }
-  }
-);
-
 router.post("/signup",
   [
     check("firstName", "First name is required").not().isEmpty(),
@@ -129,19 +51,21 @@ router.post("/signup",
 
     try {
       // See if the user exists
-      let user = await User.findOne({ "local.email": email });
+      let user = await User.findOne({ "email": email });
       if (user) {
         return res
           .status(400)
           .json({ errors: [{ msg: "User already exists" }] });
       }
 
+      //Generating token for Email Activation
       const token = jwt.sign(
         { firstName, lastName, email, password },
         process.env.JWT_ACCOUNT_ACTIVATION,
         { expiresIn: "10m" }
       );
 
+      //Generating Email Body
       const emailData = {
         from: process.env.NODEMAILER_EMAIL, // MAKE SURE THIS EMAIL IS YOUR GMAIL FOR WHICH YOU GENERATED APP PASSWORD
         to: email, // WHO SHOULD BE RECEIVING THIS EMAIL? IT SHOULD BE THE USER EMAIL (VALID EMAIL ADDRESS) WHO IS TRYING TO SIGNUP
@@ -155,6 +79,7 @@ router.post("/signup",
               `,
       };
 
+      //Sending Mail to User email-ID
       sendEmailWithNodemailer(req, res, emailData);
 
       res.json({
@@ -185,7 +110,7 @@ router.post("/account-activation", async (req, res) => {
 
         try {
           // See if the user exists
-          let user = await User.findOne({ "local.email": email });
+          let user = await User.findOne({ email });
           if (user) {
             return res
               .status(400)
@@ -193,19 +118,22 @@ router.post("/account-activation", async (req, res) => {
           }
     
           user = new User({
-            local: {
-              firstName,
-              lastName,
-              email,
-              password,
+            firstName,
+            lastName,
+            email,
+            account:{
+              local: {
+                password,
+              },
             },
           });
     
           // Encrypt the password
           const salt = await bcrypt.genSalt(10);
     
-          user.local.password = await bcrypt.hash(password, salt);
+          user.account.local.password = await bcrypt.hash(password, salt);
     
+          //Saving user in DB
           await user.save();
           
           res.status(200).json({
@@ -229,17 +157,19 @@ router.post("/account-activation", async (req, res) => {
 router.put('/forgot-password', async (req , res) => {
   const { email } = req.body;
 
-  User.findOne({ "local.email": email }, (err, user) => {
+  User.findOne({ email }, (err, user) => {
     if (err || !user) {
         return res.status(400).json({
             error: 'User with this email does not exist'
         });
     }
 
-    const token = jwt.sign({ _id: user._id, firstName: user.local.firstName, lastName: user.local.lastName }, process.env.JWT_RESET_PASSWORD, {
+    //Generating token for changing Password
+    const token = jwt.sign({ id: user.id, firstName: user.firstName, lastName: user.lastName }, process.env.JWT_RESET_PASSWORD, {
         expiresIn: '10m'
     });
 
+    //Creating email
     const emailData = {
         from: process.env.NODEMAILER_EMAIL,
         to: email,
@@ -253,13 +183,15 @@ router.put('/forgot-password', async (req , res) => {
         `
     };
 
-    return user.updateOne({ "local.resetPasswordLink": token }, (err, success) => {
+    return user.updateOne({ "account.local.resetPasswordLink": token }, (err, success) => {
         if (err) {
             console.log('RESET PASSWORD LINK ERROR', err);
             return res.status(400).json({
                 error: 'Database connection error on user\'s forgot password request'
             });
         } else {
+
+          //Sending mail to user with forgot password link
           sendEmailWithNodemailer(req, res, emailData);
 
           res.json({
@@ -275,6 +207,8 @@ router.put('/reset-password', async (req , res) => {
   const { resetPasswordLink, newPassword } = req.body;
 
   if (resetPasswordLink) {
+
+    //verifying forgot-password token
     jwt.verify(resetPasswordLink, process.env.JWT_RESET_PASSWORD, function(err, decoded) {
         if (err) {
             return res.status(400).json({
@@ -282,7 +216,7 @@ router.put('/reset-password', async (req , res) => {
             });
         }
 
-        User.findOne({ "local.resetPasswordLink":resetPasswordLink }, async (err, user) => {
+        User.findOne({ "account.local.resetPasswordLink":resetPasswordLink }, async (err, user) => {
             if (err || !user) {
                 return res.status(400).json({
                     error: 'Something went wrong. Try later'
@@ -292,8 +226,8 @@ router.put('/reset-password', async (req , res) => {
             // Encrypt the password
             const salt = await bcrypt.genSalt(10);
 
-            user.local.password = await bcrypt.hash(newPassword, salt);
-            user.local.resetPasswordLink = "";
+            user.account.local.password = await bcrypt.hash(newPassword, salt);
+            user.account.local.resetPasswordLink = "";
 
             user.save((err, result) => {
                 if (err) {
@@ -340,7 +274,7 @@ router.post( '/login',
     const { email, password } = req.body;
 
     try {
-      let user = await User.findOne({"local.email": email });
+      let user = await User.findOne({ email });
 
       if (!user) {
         return res
@@ -348,7 +282,7 @@ router.post( '/login',
           .json({ errors: [{ msg: 'Invalid Credentials' }] });
       }
 
-      const isMatch = await bcrypt.compare(password, user.local.password);
+      const isMatch = await bcrypt.compare(password, user.account.local.password);
 
       if (!isMatch) {
         return res
@@ -362,8 +296,7 @@ router.post( '/login',
         }
       };
 
-      const { id, local } = user;
-      const { firstName, lastName } = local;
+      const { id, firstName, lastName } = user;
 
       jwt.sign(
         payload,
@@ -389,82 +322,118 @@ router.post( '/login',
   }
 );
 
-router.post('/google', async (req, res) => {
+router.post('/google-login', async (req, res) => {
+  try {
     
-    try {
-      console.log("wowo")
-        const tokenId = req.body.tokenId;
-        const profile = await googleOAuth.getProfileInfo(tokenId);
-        console.log(profile);
+    const tokenId = req.body.tokenId;
 
-        const newUser = new User();
-        newUser.google.id = profile.sub;
-        newUser.google.name = profile.name;
-        newUser.google.firstName = profile.given_name;
-        newUser.google.lastName = profile.family_name;
-        newUser.google.email = profile.email;
-      
-        
-        // const user = await newUser.save();
-        console.log(newUser);
+    //get user's google profile data
+    const profile = await googleOAuth.getGoogleProfileData(tokenId);
+    // console.log(profile);
 
-        res.json( newUser );
-      } catch (e) {
-        console.log(e);
-        res.status(401).send();
+    const { sub, name, given_name, family_name, email, email_verified } = profile;
+
+
+    if (email_verified) {
+      User.findOne({ email }).exec(async (err, user) => {
+          if (user) {
+              if(!user.account.google.id){
+                user.account.google.id = sub;
+                await user.save();
+              }
+              const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+              const { id, firstName, lastName, email } = user;
+              return res.json({
+                  token,
+                  user: { id, firstName, lastName, email }
+              });
+          } else {
+              const newUser = new User();
+              newUser.account.google.id = sub;
+              newUser.firstName = given_name;
+              newUser.lastName = family_name;
+              newUser.email = email;
+
+              newUser.save((err, data) => {
+                  if (err) {
+                      console.log('ERROR GOOGLE LOGIN ON USER SAVE', err);
+                      return res.status(400).json({
+                          error: 'User signup failed with google'
+                      });
+                  }
+                  const token = jwt.sign({ id: data.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+                  const { id, firstName, lastName, email } = data;
+                  return res.json({
+                      token,
+                      user: { id, firstName, lastName, email }
+                  });
+              });
+          }
+      });
+    } else {
+        return res.status(400).json({
+            error: 'Google login failed. Try again'
+        });
       }
+  } catch (e) {
+    console.log(e);
+    res.status(401).send();
+  }
 });
 
 
+router.post('/facebook-login', (req, res) => {
+  console.log('FACEBOOK LOGIN REQ BODY', req.body);
+  const { userID, accessToken } = req.body;
+
+  const url = `https://graph.facebook.com/v2.11/${userID}/?fields=id,first_name,last_name,email&access_token=${accessToken}`;
+
+  return (
+      fetch(url, {
+          method: 'GET'
+      })
+          .then(response => response.json())
+          .then(response => {
+              // console.log(response);
+              const { email, first_name, last_name } = response;
+              User.findOne({ email }).exec((err, user) => {
+                  if (user) {
+                      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+                      const { id, email, firstName, lastName } = user;
+                      return res.json({
+                          token,
+                          user: { id, email, firstName, lastName }
+                      });
+                  } else {
+            
+                      user = new User({
+                        firstName: first_name,
+                        lastName: last_name, 
+                        email, 
+                      });
+                      user.save((err, data) => {
+                          if (err) {
+                              console.log('ERROR FACEBOOK LOGIN ON USER SAVE', err);
+                              return res.status(400).json({
+                                  error: 'User signup failed with facebook'
+                              });
+                          }
+                          const token = jwt.sign({ id: data.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+                          const { id, email, firstName, lastName } = data;
+                          return res.json({
+                              token,
+                              user: { id, email, firstName, lastName }
+                          });
+                      });
+                  }
+              });
+          })
+          .catch(error => {
+              res.json({
+                  error: 'Facebook login failed. Try later'
+              });
+          })
+  );
+});
+
 module.exports = router;
-
-// const express = require("express");
-// const router = express.Router();
-// const passport = require('passport');
-// const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-
-// const User = require('../../models/User');
-// // Use the GoogleStrategy within Passport.
-// //   Strategies in Passport require a `verify` function, which accept
-// //   credentials (in this case, an accessToken, refreshToken, and Google
-// //   profile), and invoke a callback with a user object.
-// passport.use(new GoogleStrategy({
-//     clientID: "496363927715-f6n858u4d6l7lin1la1hi5v4i9b8mgn1.apps.googleusercontent.com",
-//     clientSecret: "BDGOuRb0u2u04TrHLdy0tM2d",
-//     callbackURL: "http://localhost:8000/auth/google/callback"
-//   },
-//   function(accessToken, refreshToken, profile, done) {
-//     User.findOne({'google.id': profile.id}, function(err, user) {
-//       const {email, firstName, lastName} = profile._json;
-//       if (err) return done(err);
-//       if(user) return done(null, user);
-//       else{
-//         const newUser=new User();
-//         newUser.google.id = profile.id;
-//         newUser.google.token = accessToken;
-//         newUser.google.name = profile.displayName;
-//         newUser.google.email = profile.emails[0].value;
-
-//         // newUser.save(function(err){
-//         //   if(err) throw err;
-//         //   return done(null, newUser);
-//         // })
-//         newUser.save();
-//         console.log(newUser)
-//       }
-//     });
-//   }
-// ));
-
-
-// router.get('/google',
-//   passport.authenticate('google', { scope: ['profile', 'email'] })
-// );
-
-// router.get('/google/callback', 
-//   passport.authenticate('google', { failureRedirect: '/login' }),
-//   function(req, res) {
-//     res.redirect('/');
-// });
-
-// module.exports=router;

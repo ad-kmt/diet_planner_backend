@@ -1,8 +1,9 @@
 const express = require('express');
+require("dotenv").config();
 const router = express.Router();
-const stripe = require("stripe")("sk_test_51IUb5BGODzbn4dY6MTsi7kqrVg8NEVR5N47rk3sjsClZDMw2bT17hkpl0XLx6KQXYqM6Q7FyHG8cwna3twMwfeup00m79asTYb");
 const { v4: uuid } = require('uuid');
 
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 router.post("/", (req, res) => {
     

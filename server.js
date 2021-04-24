@@ -19,25 +19,9 @@ app.use(morgan('dev'));
 app.use(cors());
 app.use(express.json({extended: false}));
 
-//swagger options, swagger: automatic api documentation tool
-// const swaggerOptions = {
-//     swaggerDefinition: {
-//         openapi: '3.0.0',
-//         info: {
-//             title: 'FG4L API',
-//             version: "1.0.0",
-//             description: 'Fit Gut For Life API Information',
-//             contact: {
-//                 name: "Hitesh Kumawat"
-//             },
-//             servers: ["http://localhost:8000"],
-//         },
-//     },
-//     apis: [`server.js`, `routes/api/*.js`, `swagger/*.yaml`]
-// };
 
-// const swaggerDocs = swaggerJsDocs(swaggerOptions);
-// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+//Swagger Docs API endpoint
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(generateSwaggerDocs()));
 
 
