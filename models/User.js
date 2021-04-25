@@ -76,17 +76,9 @@ const UserSchema = new mongoose.Schema({
             fats: {type: Number},
             carbs: {type: Number}
         },
-        ailments: [
-            {
-                ailment: {type: String},
-            }
-        ],
+        ailments: [String],
         foodType: {type: String},
-        foodRestrictions: [
-            {
-                restriction: {type: String}
-            }
-        ],
+        foodRestrictions: [String],
         activityLevel: {type: String}
     }
 });
