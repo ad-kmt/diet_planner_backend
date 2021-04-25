@@ -14,7 +14,7 @@ const swaggerOptions = {
             servers: ["http://localhost:8000"],
         },
     },
-    apis: [`server.js`, `routes/api/*.js`, `swagger/*.yaml`]
+    apis: [`server.js`, `routes/api/*.js`, `routes/api/*/*.js`, `swagger/*.yaml`]
 };
 
 const generateSwaggerDocs = () => {

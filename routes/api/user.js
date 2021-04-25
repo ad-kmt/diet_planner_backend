@@ -155,7 +155,7 @@ router.get("/", async (req, res) => {
  *         name: id
  *         schema:
  *           type: string
- *     summary: Update's user data. (Incomplete api)
+ *     summary: Update's user data.
  *     requestBody:
  *       content:
  *         application/json:
