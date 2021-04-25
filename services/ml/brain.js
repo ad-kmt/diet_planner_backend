@@ -1,5 +1,6 @@
 var brain = require("brain.js");
 const config = require("config");
+var fs = require('fs'); 
 //Map that converts abbreviated form of conclusion to full form
 const conclusionMap = config.get("Customer.conclusion");
 //ML classification model in json format
@@ -43,12 +44,8 @@ var trainModel = function(){
     { input: [0,1,1,0,0,0,1,0,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0], output: {"NoP": 1} },
   ]);
   
-  // const output = net.run(input);
-
-  // get json data
-  // const json = net.toJSON()
-  // write to file system
-  fs.writeFileSync('trained-net.json', JSON.stringify(json));
+  // write trained model as a json in file system
+  fs.writeFileSync('data/trained-net-2.json', JSON.stringify(net.toJSON()));
   
   // return output;
 };
