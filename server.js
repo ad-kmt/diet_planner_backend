@@ -7,7 +7,7 @@ const swaggerUi = require('swagger-ui-express');
 var cors = require('cors');
 const test = require('./services/test');
 const generateSwaggerDocs = require('./config/swagger');
-const { trainModel } = require('./services/ml/brain');
+const { trainModel, trainModelFromExcel } = require('./services/ml/brain');
 const { populateMealDb } = require('./services/core/mealDatabase');
 require("dotenv").config();
 
@@ -56,4 +56,5 @@ app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
 // test();
 // trainModel();
-populateMealDb();
+// populateMealDb();
+trainModelFromExcel();
