@@ -1,19 +1,3 @@
-/**
- * Requirement from CSV file
- * 1. Column names must not change
- * 2. Recipe code should be unique
- * 3. Format .csv
- * 4.
- *
- *
- * STEPS:
- *
- * 1. Read CSV file row by row
- * 2. While recipe-code is same keep populating fields in single Meal Object
- * 3. Save Meal in MongoDB
- * 4.
- */
-
 const readXlsxFile = require("read-excel-file/node");
 const Meal = require("../../models/Meal");
 const config = require("config");
@@ -23,7 +7,7 @@ const _ = require("lodash");
 
 
 var populateMealDb = async () => {
-  await readXlsxFile("data/Gut-Health-Recipes-Database.xlsx").then(async (rows) => {
+  await readXlsxFile("data/quiz-data.xlsx").then(async (rows) => {
 
     Meal.collection.drop();
     console.log("Collection meals removed successfully");

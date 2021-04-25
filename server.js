@@ -56,4 +56,4 @@ app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
 // test();
 // trainModel();
-// populateMealDb();
+populateMealDb();

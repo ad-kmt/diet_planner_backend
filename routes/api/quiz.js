@@ -6,6 +6,7 @@ const config = require("config");
 const conclusion = config.get("Customer.conclusion");
 
 const Quiz = require("../../models/Quiz");
+const adminAuth = require("../../middleware/adminAuth");
 // const conclusion=require('../../data/conclusion.json');
 
 // @route    GET /api/quiz
@@ -118,7 +119,7 @@ router.post("/answers", async (req, res) => {
  *       '200':
  *          description: Successful
  */
-router.post("/", async (req, res) => {
+router.post("/", adminAuth, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -160,7 +161,7 @@ router.post("/", async (req, res) => {
  *          description: Successful
  */
 // router.put("/:id", auth, async (req, res) => {
-  router.put("/:id", async (req, res) => {
+  router.put("/:id", adminAuth, async (req, res) => {
     try {
       const quiz = await Quiz.findByIdAndUpdate(req.params.id, {
         $set: req.body
@@ -197,7 +198,7 @@ router.post("/", async (req, res) => {
  *       '204':
  *          description: Successful
  */
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", adminAuth, async (req, res) => {
   try {
     const quiz = await Quiz.findById(req.params.id);
 

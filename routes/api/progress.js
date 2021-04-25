@@ -7,6 +7,7 @@ const { check, validationResult } = require('express-validator');
 
 const User = require('../../models/User');
 const Progress = require('../../models/Progress');
+const auth = require("../../middleware/auth");
 
 
 //@route   Post api/users/progress
@@ -27,7 +28,7 @@ const Progress = require('../../models/Progress');
  *       '200':
  *          description: Successful
 */
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });

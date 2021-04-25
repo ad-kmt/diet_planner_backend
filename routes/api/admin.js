@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../../middleware/auth');
+const adminAuth = require('../../middleware/adminAuth');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
@@ -20,7 +20,7 @@ const Admin = require('../../models/Admin');
  *       '200':
  *          description: Successful
 */
-router.get('/', async (req, res) => {
+router.get('/', adminAuth, async (req, res) => {
     try {
       const admins = await Admin.find();
       res.json(admins);
@@ -46,7 +46,7 @@ router.get('/', async (req, res) => {
  *       '200':
  *          description: Successful
 */
-router.get('/:adminId', async (req, res) => {
+router.get('/:adminId', adminAuth, async (req, res) => {
     try {
       const admin = await Admin.findById(req.params.adminId);
       res.json(admin);
@@ -77,7 +77,7 @@ router.post('/', [
     check('email', 'Enter valid email').isEmail(),
     check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
 ],
-async (req, res) => {
+adminAuth, async (req, res) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});
@@ -146,7 +146,7 @@ async (req, res) => {
  *       '200':
  *          description: Successful
 */
-router.put('/:adminId', async (req, res) => {
+router.put('/:adminId', adminAuth, async (req, res) => {
 
   try {
     const admin = await Admin.findByIdAndUpdate(req.params.adminId, {
@@ -184,7 +184,7 @@ router.put('/:adminId', async (req, res) => {
  *       '204':
  *          description: Successful
 */
-router.delete('/:adminId', async (req, res) => {
+router.delete('/:adminId', adminAuth, async (req, res) => {
     try {
       const admin = await Admin.findById(req.params.adminId);
   

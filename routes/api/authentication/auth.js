@@ -8,6 +8,7 @@ const fetch = require('node-fetch');
 
 const User = require('../../../models/User');
 const auth = require('../../../middleware/auth');
+const adminAuth = require('../../../middleware/adminAuth');
 const { check, validationResult } = require('express-validator');
 const { sendEmailWithNodemailer } = require("../../../services/utils/nodeMailer");
 const passport = require('passport');

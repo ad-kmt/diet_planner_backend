@@ -10,6 +10,7 @@ const { getMeals } = require("../../services/core/mealPlanner");
 const Meal = require("../../models/Meal");
 const Payment = require("../../models/Payment");
 const Progress = require("../../models/Progress");
+const adminAuth = require("../../middleware/adminAuth");
 
 
 
@@ -235,7 +236,7 @@ router.put("/:id", async (req, res) => {
  *      '204':
  *        description: user deleted successfully
  */
- router.delete('/:userId', async (req, res) => {
+ router.delete('/:userId', adminAuth, async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
 

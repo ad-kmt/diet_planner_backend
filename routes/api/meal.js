@@ -9,6 +9,7 @@ const conclusion = config.get("Customer.conclusion");
 const Quiz = require("../../models/Meal");
 const Meal = require("../../models/Meal");
 const User = require("../../models/User");
+const adminAuth = require("../../middleware/adminAuth");
 
 /**
  * @swagger
@@ -49,7 +50,7 @@ router.get("/", async (req, res) => {
  *        name: filter
  *        schema:
  *          type: string
- *    description: Use to get all meals
+ *    description: Use to get meals by filters
  *    responses:
  *      '200':
  *        description: A successful response
@@ -92,7 +93,7 @@ router.get("/", async (req, res) => {
  *       '200':
  *          description: Successful
  */
-router.post("/", auth, async (req, res) => {
+router.post("/", adminAuth, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -172,7 +173,7 @@ router.get("/:id", async (req, res) => {
  *          description: Successful
  */
 // router.put("/:id", auth, async (req, res) => {
-router.put("/:id", async (req, res) => {
+router.put("/:id", adminAuth, async (req, res) => {
   try {
     const meal = await Meal.findByIdAndUpdate(req.params.id, {
       $set: req.body
@@ -209,7 +210,7 @@ router.put("/:id", async (req, res) => {
  *       '204':
  *          description: Successful
  */
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", adminAuth, async (req, res) => {
   try {
     const meal = await Meal.findById(req.params.id);
 
@@ -253,7 +254,7 @@ router.delete("/:id", async (req, res) => {
  *       '200':
  *          description: Successful
 */
-router.get('/shuffle', async (req, res) => {
+router.get('/shuffle', adminAuth, async (req, res) => {
 
   try {
     var shuffledMeal
