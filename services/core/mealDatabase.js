@@ -17,7 +17,6 @@
 const readXlsxFile = require("read-excel-file/node");
 const Meal = require("../../models/Meal");
 const config = require("config");
-const { Mongoose } = require("mongoose");
 const excelToMongo = config.get("excelToMongo");
 const _ = require("lodash");
 
