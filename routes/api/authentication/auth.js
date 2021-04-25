@@ -17,6 +17,30 @@ const router = express.Router();
 // @route    GET api/auth
 // @desc     Get user by token
 // @access   Private
+/**
+ * @swagger
+ * /api/auth:
+ *   get:
+ *     tags:
+ *       - auth
+ *     summary: Get user by token.
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
+ *     responses:
+ *      '200':
+ *        description: A successful response
+ *        content:
+ *          application/json:
+ *              schema:
+ *                type: array
+ *                items: *user
+ *      '404':
+ *          description: Not found
+*/
 router.get('/', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -27,11 +51,43 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-//@route   Post api/users
+//@route   Post api/auth/signup
 //@desc    Register user
 //@access  Public
 
-
+/**
+ * @swagger
+ * /api/auth/signup:
+ *   post:
+ *     tags:
+ *       - auth
+ *     summary: Register a user.
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *            type: object
+ *            properties:
+ *               firstName: 
+ *                 type: string
+ *               lastName: 
+ *                 type: string
+ *               email: 
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       '200':
+ *          description: Successful
+ *       content:
+ *          application/json:
+ *              schema:
+ *               type: object
+ *               properties:
+ *                message:
+ *                  type: string
+ *                  example: Activation link has been sent to user@email.com Follow the instructions there to activate your account.
+*/
 router.post("/signup",
   [
     check("firstName", "First name is required").not().isEmpty(),
@@ -92,6 +148,33 @@ router.post("/signup",
   }
 );
 
+/**
+ * @swagger
+ * /api/auth/account-activation:
+ *   post:
+ *     tags:
+ *       - auth
+ *     summary: Activate User's Account.
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               token:          
+ *                 type: string
+ *     responses:
+ *       '200':
+ *          description: Successful
+ *       content:
+ *          application/json:
+ *              schema:
+ *               type: object
+ *               properties:
+ *                message:
+ *                  type: string
+ *                  example: Signup success. Please login to continue.
+*/
 router.post("/account-activation", async (req, res) => {
   const { token } = req.body;
   if (token) {
@@ -153,7 +236,33 @@ router.post("/account-activation", async (req, res) => {
   }
 });
 
-
+/**
+ * @swagger
+ * /api/auth/forgot-password:
+ *   put:
+ *     tags:
+ *       - auth
+ *     summary: Forgot Password.
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *            type: object
+ *            properties:
+ *              email:
+ *                type: string
+ *     responses:
+ *       '200':
+ *          description: Successful
+ *       content:
+ *          application/json:
+ *              schema:
+ *               type: object
+ *               properties:
+ *                message:
+ *                  type: string
+ *                  example: Password reset link has been sent to user@email.com
+ */
 router.put('/forgot-password', async (req , res) => {
   const { email } = req.body;
 
@@ -203,6 +312,35 @@ router.put('/forgot-password', async (req , res) => {
 
 });
 
+/**
+ * @swagger
+ * /api/auth/reset-password:
+ *   put:
+ *     tags:
+ *       - auth
+ *     summary: Reset Password.
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *            type: object
+ *            properties:
+ *              resetPasswordLink:
+ *                type: string
+ *              newPassword:
+ *                type: string
+ *     responses:
+ *       '200':
+ *          description: Successful
+ *       content:
+ *          application/json:
+ *              schema:
+ *               type: object
+ *               properties:
+ *                message:
+ *                  type: string
+ *                  example: Great! Your password is changed successfully
+ */
 router.put('/reset-password', async (req , res) => {
   const { resetPasswordLink, newPassword } = req.body;
 
@@ -249,18 +387,42 @@ router.put('/reset-password', async (req , res) => {
 //@access  Public
 /**
  * @swagger
- * /api/user:
+ * /api/auth/login:
  *   post:
  *     tags:
- *       - user
+ *       - auth
  *     summary: Login a user.
  *     requestBody:
  *       content:
  *         application/json:
- *           schema: 
+ *           schema:
+ *            type: object
+ *            properties:
+ *              email:
+ *                type: string
+ *              password:
+ *                type: string
  *     responses:
  *       '200':
  *          description: Successful
+ *       content:
+ *          application/json:
+ *              schema:
+ *               type: object
+ *               properties:
+ *                token:
+ *                  type: string
+ *                user:
+ *                  type: object
+ *                  properties:
+ *                    id:
+ *                      type: string
+ *                    firstName:
+ *                      type: string
+ *                    lastName:
+ *                      type: string
+ *                    email:
+ *                      type: string
 */
 router.post( '/login',
   check('email', 'Please include a valid email').isEmail(),
@@ -322,6 +484,43 @@ router.post( '/login',
   }
 );
 
+/**
+ * @swagger
+ * /api/auth/google-login:
+ *   post:
+ *     tags:
+ *       - auth
+ *     summary: Google Login.
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *            type: object
+ *            properties:
+ *              tokenId:
+ *                type: string
+ *     responses:
+ *       '200':
+ *          description: Successful
+ *       content:
+ *          application/json:
+ *              schema:
+ *               type: object
+ *               properties:
+ *                token:
+ *                  type: string
+ *                user:
+ *                  type: object
+ *                  properties:
+ *                    id:
+ *                      type: string
+ *                    firstName:
+ *                      type: string
+ *                    lastName:
+ *                      type: string
+ *                    email:
+ *                      type: string
+*/
 router.post('/google-login', async (req, res) => {
   try {
     
@@ -381,7 +580,45 @@ router.post('/google-login', async (req, res) => {
   }
 });
 
-
+/**
+ * @swagger
+ * /api/auth/facebook-login:
+ *   post:
+ *     tags:
+ *       - auth
+ *     summary: Facebook Login.
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *            type: object
+ *            properties:
+ *              userId:
+ *                type: string
+ *              token:
+ *                type: string
+ *     responses:
+ *       '200':
+ *          description: Successful
+ *       content:
+ *          application/json:
+ *              schema:
+ *               type: object
+ *               properties:
+ *                token:
+ *                  type: string
+ *                user:
+ *                  type: object
+ *                  properties:
+ *                    id:
+ *                      type: string
+ *                    email:
+ *                      type: string
+ *                    firstName:
+ *                      type: string
+ *                    lastName:
+ *                      type: string
+*/
 router.post('/facebook-login', (req, res) => {
   console.log('FACEBOOK LOGIN REQ BODY', req.body);
   const { userID, accessToken } = req.body;
