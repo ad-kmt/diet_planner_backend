@@ -9,6 +9,7 @@ const test = require('./services/test');
 const generateSwaggerDocs = require('./config/swagger');
 const {  trainModelFromExcel } = require('./services/ml/brain');
 const { populateMealDb } = require('./services/core/mealDatabase');
+const { populateQuizDb } = require('./services/core/quizDatabase');
 require("dotenv").config();
 
 const app = express();
