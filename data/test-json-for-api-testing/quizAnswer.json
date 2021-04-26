@@ -1,0 +1,452 @@
+[
+    {
+        "questions": [
+            {
+                "options": [
+                    {
+                        "option": "Male",
+                        "selected": true
+                    },
+                    {
+                        "option": "Female",
+                        "selected": false
+                    },
+                    {
+                        "option": "Others",
+                        "selected": false
+                    }
+                ],
+                "question": "Gender",
+                "type": "single"
+            },
+            {
+                "options": [
+                    {
+                        "option": "Sedentary/Couch Potato",
+                        "selected": true
+                    },
+                    {
+                        "option": "Light Exercise/Somewhat Active",
+                        "selected": false
+                    },
+                    {
+                        "option": "Moderate Exercise/Average Activity",
+                        "selected": false
+                    },
+                    {
+                        "option": "Active Individuals/Very Active",
+                        "selected": false
+                    },
+                    {
+                        "option": "Extremely Active Individuals/Extremely Active",
+                        "selected": false
+                    }
+                ],
+                "question": "Daily Activity Level",
+                "type": "single"
+            },
+            {
+                "options": [],
+                "question": "Age",
+                "type": "number"
+            },
+            {
+                "options": [],
+                "question": "Height",
+                "type": "number"
+            },
+            {
+                "options": [],
+                "question": "Weight",
+                "type": "number"
+            },
+            {
+                "options": [],
+                "question": "Dersired weight",
+                "type": "number"
+            }
+        ],
+        "sectionNumber": 1,
+        "sectionName": "About You"
+    },
+    {
+        "questions": [
+            {
+                "options": [
+                    {
+                        "option": "Celiac Disease",
+                        "selected": true
+                    },
+                    {
+                        "option": "Crohn’s Disease",
+                        "selected": true
+                    },
+                    {
+                        "option": "IBS",
+                        "selected": true
+                    },
+                    {
+                        "option": "Belching after you eat, \r\nAcid reflux, Heartburn",
+                        "selected": true
+                    },
+                    {
+                        "option": "Diabetes",
+                        "selected": true
+                    },
+                    {
+                        "option": "Chronic low grade inflammation",
+                        "selected": true
+                    },
+                    {
+                        "option": "Weight issue",
+                        "selected": true
+                    },
+                    {
+                        "option": "Indigestion",
+                        "selected": true
+                    },
+                    {
+                        "option": "Nausea",
+                        "selected": true
+                    },
+                    {
+                        "option": "Constipation",
+                        "selected": true
+                    },
+                    {
+                        "option": "Gas",
+                        "selected": true
+                    },
+                    {
+                        "option": "Recurrent diarrhoea",
+                        "selected": true
+                    },
+                    {
+                        "option": "Persistent bloating",
+                        "selected": true
+                    },
+                    {
+                        "option": "None of these",
+                        "selected": false
+                    }
+                ],
+                "question": "First up, the easy signs... Do you have any of these issues? (select all that apply)",
+                "type": "multiple"
+            },
+            {
+                "options": [
+                    {
+                        "option": "Bad breath",
+                        "selected": true
+                    },
+                    {
+                        "option": "Skin issues, eczema, psoriasis, rosacea",
+                        "selected": true
+                    },
+                    {
+                        "option": "Chronic sinus trouble /always stuffy",
+                        "selected": true
+                    },
+                    {
+                        "option": "Headaches/Migraines",
+                        "selected": true
+                    },
+                    {
+                        "option": "Joint pain",
+                        "selected": true
+                    },
+                    {
+                        "option": "frequent colds or flu",
+                        "selected": true
+                    },
+                    {
+                        "option": "Food Allergies",
+                        "selected": true
+                    },
+                    {
+                        "option": "Weak Bones/ Osteoporosis",
+                        "selected": true
+                    },
+                    {
+                        "option": "Irregular/Stopped Periods",
+                        "selected": true
+                    },
+                    {
+                        "option": "Low Blood Pressure",
+                        "selected": true
+                    },
+                    {
+                        "option": "Anemia",
+                        "selected": true
+                    },
+                    {
+                        "option": "Fluid retention/Edema/Swelling",
+                        "selected": true
+                    },
+                    {
+                        "option": "Loss of appetite",
+                        "selected": true
+                    },
+                    {
+                        "option": "Dry damaged hair/brittle nails",
+                        "selected": true
+                    },
+                    {
+                        "option": "None of these",
+                        "selected": false
+                    }
+                ],
+                "question": "How about these? (Select all that apply)",
+                "type": "multiple"
+            },
+            {
+                "options": [
+                    {
+                        "option": "Slow metabolism/Metabolic Syndrome",
+                        "selected": true
+                    },
+                    {
+                        "option": "Unexplained/unintended weight loss",
+                        "selected": true
+                    },
+                    {
+                        "option": "None of these",
+                        "selected": false
+                    }
+                ],
+                "question": "Do you have any of these weight issues?",
+                "type": "multiple"
+            },
+            {
+                "options": [
+                    {
+                        "option": "Feeling of fullness for a long time after",
+                        "selected": true
+                    },
+                    {
+                        "option": "Still feeling hungry after you just ate",
+                        "selected": true
+                    },
+                    {
+                        "option": "Not hungry in the morning",
+                        "selected": true
+                    },
+                    {
+                        "option": "Normal",
+                        "selected": false
+                    }
+                ],
+                "question": "How do you feel after eating your meals?",
+                "type": "multiple"
+            },
+            {
+                "options": [
+                    {
+                        "option": "Lactose intolerant",
+                        "selected": true
+                    },
+                    {
+                        "option": "Gluten intolerant",
+                        "selected": true
+                    },
+                    {
+                        "option": "Intolerant to certain vegetables",
+                        "selected": true
+                    },
+                    {
+                        "option": "None of these",
+                        "selected":false
+                    }
+                ],
+                "question": "Do you have any of these food intolerances?",
+                "type": "multiple"
+            },
+            {
+                "options": [
+                    {
+                        "option": "Undigested food in stool",
+                        "selected": true
+                    },
+                    {
+                        "option": "Blood in stools",
+                        "selected": true
+                    },
+                    {
+                        "option": "Floating",
+                        "selected": true
+                    },
+                    {
+                        "option": "Foul smelling",
+                        "selected": true
+                    },
+                    {
+                        "option": "Stick to sides of toilet bowl",
+                        "selected": true
+                    },
+                    {
+                        "option": "Shiny",
+                        "selected": true
+                    },
+                    {
+                        "option": "Light Coloured",
+                        "selected": true
+                    },
+                    {
+                        "option": "Green",
+                        "selected": true
+                    },
+                    {
+                        "option": "Soft & Bulky",
+                        "selected": true
+                    },
+                    {
+                        "option": "Lumpy & Sausage like",
+                        "selected": true
+                    },
+                    {
+                        "option": "Mushy",
+                        "selected": true
+                    },
+                    {
+                        "option": "Separate hard lumps",
+                        "selected": true
+                    },
+                    {
+                        "option": "Smooth and long sausage like",
+                        "selected": true
+                    },
+                    {
+                        "option": "Brown / chocolate coloured",
+                        "selected": true
+                    }
+                ],
+                "question": "It’s time for little poop talk",
+                "type": "multiple"
+            }
+        ],
+        "sectionNumber": 2,
+        "sectionName": "About Your Gut"
+    },
+    {
+        "questions": [
+            {
+                "options": [
+                    {
+                        "option": "Fazzled, scatterbrained or distracted.",
+                        "selected": true
+                    },
+                    {
+                        "option": "Moody mopey or grumpy",
+                        "selected": true
+                    },
+                    {
+                        "option": "Feeling down or depressed / low mood",
+                        "selected": true
+                    },
+                    {
+                        "option": "Low energy",
+                        "selected": true
+                    },
+                    {
+                        "option": "Anxiety",
+                        "selected": true
+                    },
+                    {
+                        "option": "None of these",
+                        "selected": false
+                    }
+                ],
+                "question": "Do you feel any of these?",
+                "type": "multiple"
+            },
+            {
+                "options": [
+                    {
+                        "option": "Sugar",
+                        "selected": true
+                    },
+                    {
+                        "option": "Carbs",
+                        "selected": false
+                    },
+                    {
+                        "option": "Salty foods",
+                        "selected": false
+                    },
+                    {
+                        "option": "I’ve tons of craving",
+                        "selected": false
+                    },
+                    {
+                        "option": "I’ve no cravings",
+                        "selected": false
+                    }
+                ],
+                "question": "What do you crave ? (pick one.)",
+                "type": "single"
+            },
+            {
+                "options": [
+                    {
+                        "option": "Trouble sleeping",
+                        "selected": true
+                    },
+                    {
+                        "option": "It’s alright",
+                        "selected": false
+                    }
+                ],
+                "question": "How’s your sleep ? (pick one)",
+                "type": "single"
+            },
+            {
+                "options": [
+                    {
+                        "option": "Excess sugar intake",
+                        "selected": true
+                    },
+                    {
+                        "option": "Stressed",
+                        "selected": true
+                    },
+                    {
+                        "option": "Netflix and chill",
+                        "selected": true
+                    },
+                    {
+                        "option": "Inactive",
+                        "selected": true
+                    },
+                    {
+                        "option": "Smoking",
+                        "selected": true
+                    },
+                    {
+                        "option": "Antibiotics",
+                        "selected": true
+                    },
+                    {
+                        "option": "NSAIDs",
+                        "selected": true
+                    },
+                    {
+                        "option": "Consume Alcohol",
+                        "selected": true
+                    },
+                    {
+                        "option": "Fitness enthusiast",
+                        "selected": true
+                    },
+                    {
+                        "option": "None of these",
+                        "selected": false
+                    }
+                ],
+                "question": "Which of these apply to you?",
+                "type": "multiple"
+            }
+        ],
+        "sectionNumber": 3,
+        "sectionName": "About Your Lifestyle"
+    }
+]

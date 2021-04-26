@@ -44,7 +44,7 @@ var populateQuizDb = async () => {
         }
         
         for (let j = 0; j < rows[i].length; j++) {
-            if(rows[i][j] == null || rows[i][j] === ""){
+            if(rows[i][j] == null || rows[i][j] == ""){
                 continue;
             }
             if(column[j]=="Section number"){
@@ -56,9 +56,8 @@ var populateQuizDb = async () => {
             } else if(column[j]=="Type"){
                 newQuestion.type=rows[i][j];
             } else if(column[j]=="Options"){
-                newQuestion.options.push(rows[i][j]);
+                newQuestion.options.push({option: rows[i][j]});
             }
-            // console.log(newSection);
         }
         
     }

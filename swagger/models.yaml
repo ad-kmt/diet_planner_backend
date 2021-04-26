@@ -144,7 +144,9 @@ quizSection: &quizSection
 quizSectionAnswer: &quizSectionAnswer
   type: object
   properties:
-    section:
+    sectionNumber:
+      type: number
+    sectionName:
       type: string
     questions:
       type: array
@@ -152,25 +154,18 @@ quizSectionAnswer: &quizSectionAnswer
         type: object
         properties:
           question:
-            type: object
-            properties:
-              name:
-                type: string
-              type:
-                type: string
-                example: mcq/scq
-          answer:
-            oneOf: 
-              - type: array
-                items:
-                  type: object
-                  properties:
-                    option:
-                      type: string
-                    isSelected:
-                      type: boolean            
-              - type: string
-              - type: number
+            type: string
+          type:
+            type: string
+          options:
+            type: array
+            items:
+              type: object
+              properties:
+                option:
+                  type: string
+                selected:
+                  type: boolean
 
 
 plan: &plan
