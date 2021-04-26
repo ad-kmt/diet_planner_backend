@@ -58,3 +58,4 @@ app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 test();
 // populateMealDb();
 // trainModelFromExcel();
+// populateQuizDb();
