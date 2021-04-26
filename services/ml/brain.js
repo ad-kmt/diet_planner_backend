@@ -5,7 +5,7 @@ const readXlsxFile = require("read-excel-file/node");
 //Map that converts abbreviated form of conclusion to full form
 const conclusionMap = config.get("Customer.conclusion");
 //ML classification model in json format
-const quizModelJson= require("./../../data/trained-net.json");
+const quizModelJson= require("./../../data/trained-net-excel.json");
 
 var evaluateQuizResult = function(input){
 
@@ -22,7 +22,7 @@ var evaluateQuizResult = function(input){
 
       //Taking all conclusions with Probability > 0.1
       if(value>=0.1){
-        conclusions.push(conclusionMap[key]);
+        conclusions.push(key);
       }
     });
 
@@ -30,7 +30,7 @@ var evaluateQuizResult = function(input){
 }
 
 
-var trainModel = function(){
+var trainModelOld = function(){
   var net = new brain.NeuralNetwork();
   net.train([
     { input: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], output: {"PDC": 1} },
@@ -112,8 +112,7 @@ var trainModelFromExcel = async function(){
 };
 
 module.exports = {
-  evaluateQuizResult: evaluateQuizResult,
-  trainModel: trainModel,
+  evaluateQuizResult,
   trainModelFromExcel
 };
 
