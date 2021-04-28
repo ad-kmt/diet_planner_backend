@@ -1,7 +1,7 @@
 const readXlsxFile = require("read-excel-file/node");
 const config = require("config");
 const _ = require("lodash");
-const Quiz = require("../../models/Quiz");
+const Quiz = require("../../../models/Quiz");
 
 
 var populateQuizDb = async () => {

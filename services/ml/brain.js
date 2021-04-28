@@ -5,7 +5,7 @@ const readXlsxFile = require("read-excel-file/node");
 //Map that converts abbreviated form of conclusion to full form
 const conclusionMap = config.get("Customer.conclusion");
 //ML classification model in json format
-const quizModelJson= require("./../../data/trained-net-excel.json");
+const quizModelJson= require("./../../data/quiz-evaluation-ml-model.json");
 
 var evaluateQuizResult = function(input){
 
@@ -28,7 +28,6 @@ var evaluateQuizResult = function(input){
 
     return conclusions;
 }
-
 
 var trainModelOld = function(){
   var net = new brain.NeuralNetwork();
@@ -102,7 +101,7 @@ var trainModelAndSave = function(trainingDataSet){
     net.train(trainingDataSet);
 
     // write trained model as a json in file system
-    fs.writeFileSync('data/trained-net-excel.json', JSON.stringify(net.toJSON()));
+    fs.writeFileSync('data/quiz-evaluation-ml-model.json', JSON.stringify(net.toJSON()));
 }
 
 var trainModelFromExcel = async function(){

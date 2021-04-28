@@ -1,39 +1,58 @@
 const express = require('express');
 require("dotenv").config();
 const router = express.Router();
-const { v4: uuid } = require('uuid');
+const Plan = require('../../../models/Plan');
+const Payment = require('../../../models/Payment');
+const { verifyToken, IsUser } = require('../../../middleware/auth');
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-router.post("/", (req, res) => {
+router.post("/", verifyToken, IsUser,  async (req, res) => {
+    try{
+        const user = req.user;
+        console.log("USER ", user);
+        
+        const {product, token} = req.body;
+        
+        console.log("PRODUCT ", product);
+        console.log("PRICE ", product.sellingPrice);
+        console.log(token);
+
+        if(product){
+
+            const customer = await stripe.customers.create({
+                email: token.email,
+                source: token.id,
+            }); 
+
+            const charge = await stripe.charges.create({
+                amount: product.sellingPrice * 100, //by default price comes in cents
+                currency: 'inr',
+                receipt_email: user.email,
+                customer: customer.id,
+                description: `Purchase of ${product.name}`,
+            });
     
-    const {product, token} = req.body;
-    console.log("PRODUCT ", product);
-    console.log("PRICE ", product.price);
-    console.log(token);
-
-    //so that user is not charged two times
-    const idempontencyKey = uuid();
-
-    stripe.customers.create({
-        email: token.email,
-        source: token.id,
-    }).then(customer => {
-        stripe.charges.create({
-            amount: product.price * 100, //by default price comes in cents
-            currency: 'usd',
-            customer: customer.id,
-            receipt_email: token.email,
-            description: `purchase of ${product.name}`,
-            shipping: {
-                name: token.card.name,
+            if(!charge) throw Error('Payment failed');
+            if(charge){
+                const payment = await Payment.create({
+                    "userId": user.id,
+                    "amount": product.sellingPrice,
+                    "currency": "inr",
+                    "date": Date.now().toString(),
+                    "plan": product.name
+                })
+                return res.status(201).send(payment);
             }
-
-        })
-    })
-    .catch(err => console.log(err))
-    .then(result => res.status(200).json(result))
-    .catch(err => console.log(err))
+        }
+        else{
+            res.status(500).send("Plan was not selected");
+        }
+    }
+    catch(err){
+        console.log(err);
+        res.status(500).send("Something went wrong");
+    }
 
 }); 
 

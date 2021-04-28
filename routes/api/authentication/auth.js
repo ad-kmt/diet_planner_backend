@@ -3,12 +3,11 @@ const googleOAuth = require('../../../services/utils/googleOAuth');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const fetch = require('node-fetch');
-
-
 const User = require('../../../models/User');
-const auth = require('../../../middleware/auth');
 const { check, validationResult } = require('express-validator');
 const { sendEmailWithNodemailer } = require("../../../services/utils/nodeMailer");
+const role = require('../../../services/utils/role');
+const { IsAdmin, verifyToken } = require('../../../middleware/auth');
 
 const router = express.Router();
 
@@ -39,7 +38,7 @@ const router = express.Router();
  *      '404':
  *          description: Not found
 */
-router.get('/', auth, async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
     res.json(user);
@@ -453,7 +452,8 @@ router.post( '/login',
       const payload = {
         user: {
           id: user.id
-        }
+        },
+        role: role.User
       };
 
       const { id, firstName, lastName } = user;
@@ -538,7 +538,14 @@ router.post('/google-login', async (req, res) => {
                 user.account.google.id = sub;
                 await user.save();
               }
-              const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+              const payload = {
+                user: {
+                  id: user.id
+                },
+                role: role.User
+              };
+              const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
               const { id, firstName, lastName, email } = user;
               return res.json({
                   token,
@@ -551,14 +558,20 @@ router.post('/google-login', async (req, res) => {
               newUser.lastName = family_name;
               newUser.email = email;
 
-              newUser.save((err, data) => {
+              newUser.save((err, user) => {
                   if (err) {
                       console.log('ERROR GOOGLE LOGIN ON USER SAVE', err);
                       return res.status(400).json({
                           error: 'User signup failed with google'
                       });
                   }
-                  const token = jwt.sign({ id: data.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+                  const payload = {
+                    user: {
+                      id: user.id
+                    },
+                    role: role.User
+                  };
+                  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
                   const { id, firstName, lastName, email } = data;
                   return res.json({
                       token,
@@ -633,7 +646,13 @@ router.post('/facebook-login', (req, res) => {
               const { email, first_name, last_name } = response;
               User.findOne({ email }).exec((err, user) => {
                   if (user) {
-                      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+                      const payload = {
+                        user: {
+                          id: user.id
+                        },
+                        role: role.User
+                      };
+                      const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
                       const { id, email, firstName, lastName } = user;
                       return res.json({
                           token,
@@ -646,14 +665,20 @@ router.post('/facebook-login', (req, res) => {
                         lastName: last_name, 
                         email, 
                       });
-                      user.save((err, data) => {
+                      user.save((err, user) => {
                           if (err) {
                               console.log('ERROR FACEBOOK LOGIN ON USER SAVE', err);
                               return res.status(400).json({
                                   error: 'User signup failed with facebook'
                               });
                           }
-                          const token = jwt.sign({ id: data.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+                          const payload = {
+                            user: {
+                              id: user.id
+                            },
+                            role: role.User
+                          };
+                          const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
                           const { id, email, firstName, lastName } = data;
                           return res.json({
                               token,

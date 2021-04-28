@@ -1,6 +1,6 @@
 const PriorityQueue = require("priorityqueuejs");
-const Meal = require("../../models/Meal");
-const User = require("../../models/User");
+const Meal = require("../../../models/Meal");
+const User = require("../../../models/User");
 
 const getMeals = async (userId)=>{
     const user = await User.findById(userId);

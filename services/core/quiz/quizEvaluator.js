@@ -1,4 +1,4 @@
-const { evaluateQuizResult } = require("../ml/brain");
+const { evaluateQuizResult } = require("../../ml/brain");
 
 var quizEvaluator = (input) => {
     let symptoms=[];

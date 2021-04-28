@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
 
+const { verifyToken, IsAdmin } = require("../../middleware/auth");
+
 const Plan = require('../../models/Plan');
-const adminAuth = require('../../middleware/adminAuth');
  
 // @route    GET /api/plan
 // @desc     Get all plans
@@ -52,7 +53,7 @@ const adminAuth = require('../../middleware/adminAuth');
  *       '200':
  *          description: Successful
 */
-router.post('/', adminAuth, async (req, res) => {
+router.post('/', verifyToken, IsAdmin, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -98,7 +99,7 @@ router.post('/', adminAuth, async (req, res) => {
  *          description: Successful
  */
 // router.put("/:id", auth, async (req, res) => {
-  router.put("/:planId", adminAuth, async (req, res) => {
+  router.put("/:planId", verifyToken, IsAdmin, async (req, res) => {
     try {
       const plan = await Plan.findByIdAndUpdate(req.params.planId, {
         $set: req.body
@@ -135,7 +136,7 @@ router.post('/', adminAuth, async (req, res) => {
  *       '204':
  *          description: Successful
  */
- router.delete("/:planId", adminAuth, async (req, res) => {
+ router.delete("/:planId", verifyToken, IsAdmin, async (req, res) => {
   try {
     const plan = await Plan.findById(req.params.planId);
 
