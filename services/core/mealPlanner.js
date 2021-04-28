@@ -5,10 +5,10 @@ const User = require("../../models/User");
 const getMeals = async (userId)=>{
     const user = await User.findById(userId);
 
-    const dcalr=user.healthrecords.desiredCalories;
-    const dpr=user.healthrecords.desiredNutrients.proteins;
-    const dfr=user.healthrecords.desiredNutrients.fats;
-    const dcr=user.healthrecords.desiredNutrients.carbs;
+    const dcalr=user.healthRecords.desiredCalories;
+    const dpr=user.healthRecords.desiredNutrients.proteins;
+    const dfr=user.healthRecords.desiredNutrients.fats;
+    const dcr=user.healthRecords.desiredNutrients.carbs;
 
     const bMeals = await Meal.find({mealTime: "breakfast"});
     const lMeals = await Meal.find({mealTime: "lunch"});

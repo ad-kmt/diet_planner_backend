@@ -1,12 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const { validationResult } = require("express-validator");
-const { evaluateQuizResult } = require("../../services/ml/brain");
-const config = require("config");
-const conclusion = config.get("Customer.conclusion");
-
 const Quiz = require("../../models/Quiz");
 const adminAuth = require("../../middleware/adminAuth");
+const auth = require("../../middleware/auth");
+const {quizEvaluator} = require("../../services/core/quizEvaluator");
+const User = require("../../models/User");
 // const conclusion=require('../../data/conclusion.json');
 
 // @route    GET /api/quiz
@@ -57,51 +56,28 @@ module.exports = router;
  *          description: Successful
  *
  */
-router.post("/answers", async (req, res) => {
+router.post("/answers", auth, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
 
   try {
+    // const user = await User.findById(req.user.id);
+    let gender,age,quizResponse,healthRecords;
     const input = req.body;
-    let symptoms=[];
-    input[1].questions.map(question => question.options.map(option=> {
-      option.selected ? symptoms.push(1) : symptoms.push(0);
-    }));
-    input[2].questions.map(question => question.options.map(option=> {
-      option.selected ? symptoms.push(1) : symptoms.push(0);
-    }));
-    // const symptoms = [1,1,1,1,1,1,1,1,1,1,1,1,01,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
-    const conclusions = evaluateQuizResult(symptoms);
-
-    // const { gender, activity, age, height, weight, desiredWeight } = input[0];
+    const result = quizEvaluator(input);
     
-    let bmr = 10 * input[0].questions[4] + 6.25 * input[0].questions[3] - 5 * input[0].questions[2];
-    if (input[0].questions[0] === "Male") bmr += 5;
-    else bmr -= 161;
-
-    let tdee;
-
-    if (input[0].questions[1] === 1) tdee = 1.2 * bmr;
-    // Sedentary/Couch Potato
-    else if (input[0].questions[1] === 2) tdee = 1.375 * bmr;
-    // Light Exercise/Somewhat Active
-    else if (input[0].questions[1] === 3) tdee = 1.55 * bmr;
-    // Moderate Exercise/Average Activity
-    else if (input[0].questions[1] === 4) tdee = 1.725 * bmr;
-    // Active Individuals/Very Active
-    else if (input[0].questions[1] === 5) tdee = 1.9 * bmr; // Extremely Active Individuals/Extremely Active
-
-    let calorie;
-
-    if (input[0].questions[5] === 1) calorie = tdee + 250;
-    else if (input[0].questions[5] === -1) calorie = tdee - 500;
-    else if (input[0].questions[5] === 0) calorie = tdee;
-
-    const result = [conclusions, calorie];
-
-    console.log(conclusions);
+    input[0].questions[0].options.map(option => {
+      if(option.selected) gender = option.option;
+    });
+    quizResponse = input;
+    age = input[0].questions[2].options[0];
+    
+    healthRecords=result.healthRecords;
+    const user = {gender,age,quizResponse,healthRecords}
+    await User.findByIdAndUpdate(req.user.id, user);
+    // console.log(result);
     res.status(200).json(result);
   } catch (err) {
     console.error(err.message);

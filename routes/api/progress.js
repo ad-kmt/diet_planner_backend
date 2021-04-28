@@ -1,13 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const config = require('config');
 const { check, validationResult } = require('express-validator');
-
-const User = require('../../models/User');
 const Progress = require('../../models/Progress');
 const auth = require("../../middleware/auth");
+const User = require('../../models/User');
 
 
 //@route   Post api/users/progress
@@ -37,8 +33,12 @@ router.post('/', auth, async (req, res) => {
       try {
         const newProgress = new Progress(req.body);
   
-        const progress = await newProgress.save();
-  
+        await newProgress.save();
+        let user = new User();
+        user.height = newProgress.height;
+        user.weight = newProgress.weight;
+        user.activity = newProgress.activity;
+        await User.findByIdAndUpdate(req.user.id, user);
         res.json(progress);
       } catch (err) {
         console.error(err.message);
