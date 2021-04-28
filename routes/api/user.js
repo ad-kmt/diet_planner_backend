@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../../models/User");
-const { getMeals } = require("../../services/core/mealPlanner");
+const { getMeals } = require("../../services/core/meal/mealPlanner");
 const Payment = require("../../models/Payment");
 const Progress = require("../../models/Progress");
 const { verifyToken, IsAdmin } = require("../../middleware/auth");

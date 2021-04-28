@@ -1,1 +1,22 @@
 # Project-Backend
+
+SAMPLE .env:
+
+NODEMAILER_EMAIL=kumawat.hitesh743@gmail.com
+NODEMAILER_PASSWORD=password
+
+JWT_ACCOUNT_ACTIVATION=accountActivationSecretKey12345
+JWT_SECRET=mySecretToken
+JWT_RESET_PASSWORD=resetPasswordSecretKey12345
+
+GOOGLE_CLIENT_ID=26881759918-5p1fv8f53f8iqg3ti7qr92l0fnffujf4.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=FjJ94MVVem1a87vzplHNwT-B
+
+FACEBOOK_APP_ID=4096359277040803
+FACEBOOK_APP_SECRET=5481e83c1bfc4174ae2dcc0be8f55f02
+
+CLIENT_URL=http://localhost:3000
+
+MONGO_URI=mongodb+srv://fitgut4lifeadmin:Atlantic1904@fitgut4life.x3jbe.mongodb.net/project?retryWrites=true&w=majority
+
+STRIPE_SECRET_KEY=sk_test_51IUb5BGODzbn4dY6MTsi7kqrVg8NEVR5N47rk3sjsClZDMw2bT17hkpl0XLx6KQXYqM6Q7FyHG8cwna3twMwfeup00m79asTYb

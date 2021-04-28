@@ -8,8 +8,8 @@ var cors = require('cors');
 const test = require('./services/test');
 const generateSwaggerDocs = require('./config/swagger');
 const {  trainModelFromExcel } = require('./services/ml/brain');
-const { populateMealDb } = require('./services/core/mealDatabase');
-const { populateQuizDb } = require('./services/core/quizDatabase');
+const { populateMealDb } = require('./services/core/meal/mealExcelToDb');
+const { populateQuizDb } = require('./services/core/quiz/quizExcelToDb');
 const fileUpload = require('express-fileupload');
 require("dotenv").config();
 
