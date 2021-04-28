@@ -5,6 +5,7 @@ const { getMeals } = require("../../services/core/mealPlanner");
 const Payment = require("../../models/Payment");
 const Progress = require("../../models/Progress");
 const adminAuth = require("../../middleware/adminAuth");
+const auth = require("../../middleware/auth");
 
 
 // @access   Private
@@ -19,8 +20,8 @@ const adminAuth = require("../../middleware/adminAuth");
  *        name: userId
  *        schema:
  *          type: string
- *    description: Use to get user's progress data
- *    summary: Get user's progresses
+ *    description: Use to allow admin to get user's progress data
+ *    summary: Get user's progresses for admin
  *    responses:
  *      '200':
  *        description: A successful response
@@ -32,7 +33,7 @@ const adminAuth = require("../../middleware/adminAuth");
  *      '404':
  *          description: Not found
  */
-router.get("/:userId/progress", async (req, res) => {
+router.get("/:userId/progress", adminAuth, async (req, res) => {
   try {
     const progress = await Progress.find({ userId: req.params.userId });
     res.json(progress);
@@ -44,7 +45,7 @@ router.get("/:userId/progress", async (req, res) => {
 
 /**
  * @swagger
- * /api/user/{userId}/meal:
+ * /api/user/meal:
  *  get:
  *    summary: Get meal plan for a user.
  *    tags:
@@ -64,10 +65,10 @@ router.get("/:userId/progress", async (req, res) => {
  *                  type: array
  *                  items: *meal
  */
-router.get("/:id/meal", async (req, res) => {
+router.get("/meal", auth, async (req, res) => {
   try {
     //get basic meal plan for user
-    getMeals(req.params.id);
+    getMeals(req.user.id);
     res.status(200);
   } catch (err) {
     console.error(err.message);
@@ -95,7 +96,7 @@ router.get("/:id/meal", async (req, res) => {
  *      '404':
  *          description: Not found
  */
-router.get("/", async (req, res) => {
+router.get("/", adminAuth,async (req, res) => {
   try {
     const users = await User.find();
     res.json(users);
@@ -127,7 +128,7 @@ router.get("/", async (req, res) => {
  *      '404':
  *          description: Not found
  */
- router.get('/:userId', async (req, res) => {
+ router.get('/:userId', adminAuth, async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
     res.json(user);
@@ -139,7 +140,7 @@ router.get("/", async (req, res) => {
 
 /**
  * @swagger
- * /api/user/{id}:
+ * /api/user:
  *   put:
  *     tags:
  *       - user
@@ -158,11 +159,11 @@ router.get("/", async (req, res) => {
  *          description: Successful
  */
 // router.put("/:id", auth, async (req, res) => {
-router.put("/:id", async (req, res) => {
+router.put("/", auth, async (req, res) => {
   try {
     const { firstName, lastName} = req.body;
 
-    User.findById(req.params.id, (err, user) => {
+    User.findById(req.user.id, (err, user) => {
       if (err || !user) {
           return res.status(400).json({
               error: 'User not found'
@@ -272,7 +273,7 @@ router.put("/:id", async (req, res) => {
  *      '404':
  *          description: Not found
  */
-router.get("/:userId/payment", async (req, res) => {
+router.get("/:userId/payment", adminAuth, async (req, res) => {
   try {
     const userPayments = await Payment.find({ userId: req.params.userId });
     res.json(userPayments);

@@ -13,6 +13,12 @@ const Admin = require('../../models/Admin');
  *   get:
  *     tags:
  *       - admin
+ *     parameters:
+ *      - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *     summary: Get all admins.
  *     responses:
  *       '200':
@@ -39,6 +45,11 @@ router.get('/', adminAuth, async (req, res) => {
  *         name: adminId
  *         schema:
  *           type: string
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *     summary: Get an admin.
  *     responses:
  *       '200':
@@ -177,7 +188,7 @@ router.put('/:adminId', adminAuth, async (req, res) => {
  *         name: adminId
  *         schema:
  *           type: string
- *     summary: Delete an admin.
+ *     summary: Remove an admin.
  *     responses:
  *       '204':
  *          description: Successful
