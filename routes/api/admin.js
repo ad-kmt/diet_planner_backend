@@ -71,12 +71,10 @@ router.get('/:adminId', verifyToken, IsAdmin, async (req, res) => {
  *          description: Successful
 */
 router.post('/', [
-    check('firstName', 'firstName is required').not().isEmpty(),
-    check('lastName', 'lastName is required').not().isEmpty(),
-    check('email', 'Enter valid email').isEmail(),
+    check('username', 'username is required').not().isEmpty(),
     check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
-],
-verifyToken, IsAdmin, async (req, res) => {
+], verifyToken, IsAdmin, 
+ async (req, res) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});
@@ -86,10 +84,10 @@ verifyToken, IsAdmin, async (req, res) => {
 
     try{
         // See if the admin exists
-        let admin = await Admin.findOne({'email': req.body.email});
+        let admin = await Admin.findOne({'username': req.body.username});
 
         if(admin){
-            return res.status(400).json({errors: [{msg: 'Admin already exists'} ] });
+            return res.status(400).json({errors: [{msg: 'Admin with this username already exists'} ] });
         }
 
         admin = new Admin(req.body);
@@ -101,29 +99,69 @@ verifyToken, IsAdmin, async (req, res) => {
 
         await admin.save();
 
-        // Return jsonwebtoken
-        const payload = {
-            admin: {
-                id: admin.id
-            },
-            role: role.Admin
-        };
-
-        jwt.sign(
-            payload, 
-            process.env.JWT_SECRET,
-            {expiresIn: 360000}, //time
-            (err, token) => {
-                if (err) throw err;
-                res.json({ token });
-            }
-        );
+        return res.json({msg: "Admin successfully created"});
 
     } catch(err){
         console.log(err.message);
         res.status(500).send('Server error');
     }
 }
+);
+
+
+router.post( '/login',
+  check('username', 'username is required').isEmail(),
+  check('password', 'password is required').exists(),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { username, password } = req.body;
+
+    try {
+      let admin = await Admin.findOne({ username });
+
+      if (!admin) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'Invalid Credentials' }] });
+      }
+
+      const isMatch = await bcrypt.compare(password, admin.password);
+
+      if (!isMatch) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'Invalid Credentials' }] });
+      }
+
+      const payload = {
+        admin: {
+          id: admin.id
+        },
+        role: role.Admin
+      };
+
+      const { id, username } = admin;
+
+      jwt.sign(
+        payload,
+        process.env.JWT_SECRET,
+        { expiresIn: '2 days' },
+        (err, token) => {
+          if (err) throw err;
+          res.json({ 
+            token
+          });
+        }
+      );
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  }
 );
 
 /**
