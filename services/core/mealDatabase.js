@@ -22,7 +22,7 @@ const _ = require("lodash");
 
 
 var populateMealDb = async () => {
-  await readXlsxFile("data/Gut-Health-Recipes-Database.xlsx").then(async (rows) => {
+  await readXlsxFile("data/meal-data.xlsx").then(async (rows) => {
 
     Meal.collection.drop();
     console.log("Collection meals removed successfully");
