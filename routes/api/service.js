@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { populateMealDb } = require('../../services/core/mealDatabase');
-const { populateQuizDb } = require('../../services/core/quizDatabase');
+const { populateMealDb } = require('../../services/core/meal/mealExcelToDb');
+const { populateQuizDb } = require('../../services/core/quiz/quizExcelToDb');
 const { trainModelFromExcel } = require('../../services/ml/brain');
 const {verifyToken, IsAdmin, IsUser}= require("../../middleware/auth");
 

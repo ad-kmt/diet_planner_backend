@@ -3,7 +3,7 @@ const router = express.Router();
 const { validationResult } = require("express-validator");
 const Quiz = require("../../models/Quiz");
 const {verifyToken, IsAdmin, IsUser}= require("../../middleware/auth");
-const {quizEvaluator} = require("../../services/core/quizEvaluator");
+const {quizEvaluator} = require("../../services/core/quiz/quizEvaluator");
 const User = require("../../models/User");
 // const conclusion=require('../../data/conclusion.json');
 
