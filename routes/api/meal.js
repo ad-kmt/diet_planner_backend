@@ -1,14 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { validationResult } = require("express-validator");
-const auth = require("../../middleware/auth");
-
-const config = require("config");
-const conclusion = config.get("Customer.conclusion");
-
-const Quiz = require("../../models/Meal");
 const Meal = require("../../models/Meal");
-const User = require("../../models/User");
 const adminAuth = require("../../middleware/adminAuth");
 
 /**

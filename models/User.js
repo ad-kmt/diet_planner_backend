@@ -46,12 +46,11 @@ const UserSchema = new mongoose.Schema({
         pincode: {type: Number},
     },
     quizResponse: {
-        section: {type: String},
+        sectionNumber: {type: Number},
+        sectionName: {type: String},
         questions: [{
-            question: {
-                qname: {type: String},
-                qtype: {type: String}
-            },
+            question: {type: String},
+            type: {type: String},
             options: [
                 {
                     option:{type: String},
@@ -66,7 +65,7 @@ const UserSchema = new mongoose.Schema({
         paymentId: {type: mongoose.Schema.Types.ObjectId},
         expiry: {type: Date}
     },
-    healthrecords: {
+    healthRecords: {
         height: {type: Number},
         weight: {type: Number},
         desiredWeight: {type: Number},
@@ -76,10 +75,9 @@ const UserSchema = new mongoose.Schema({
             fats: {type: Number},
             carbs: {type: Number}
         },
-        ailments: [String],
-        foodType: {type: String},
+        quizConclusion: [String],
         foodRestrictions: [String],
-        activityLevel: {type: String}
+        activity: {type: String}
     }
 });
 
