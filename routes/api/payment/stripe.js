@@ -15,7 +15,7 @@ router.post("/", (req, res) => {
     //so that user is not charged two times
     const idempontencyKey = uuid();
 
-    return stripe.customers.create({
+    stripe.customers.create({
         email: token.email,
         source: token.id,
     }).then(customer => {
@@ -29,7 +29,7 @@ router.post("/", (req, res) => {
                 name: token.card.name,
             }
 
-        }, {idempontencyKey})
+        })
     })
     .catch(err => console.log(err))
     .then(result => res.status(200).json(result))
