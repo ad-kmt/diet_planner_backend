@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { verifyToken, IsAdmin, IsUser} = require("../../../middleware/auth")
 
 const Payment = require('../../../models/Payment');
 
@@ -25,7 +26,7 @@ const Payment = require('../../../models/Payment');
  *      '404':
  *          description: Not found
  */
- router.get('/', async (req, res) => {
+ router.get('/', verifyToken, IsAdmin,  async (req, res) => {
     try {
       const payments = await Payment.find();
       res.json(payments);
@@ -54,7 +55,7 @@ const Payment = require('../../../models/Payment');
  *      '404':
  *          description: Not found
  */
- router.get('/:id', async (req, res) => {
+ router.get('/:id', verifyToken, IsAdmin,  async (req, res) => {
   try {
     const payments = await Payment.findById(req.params.id);
     res.json(payments);

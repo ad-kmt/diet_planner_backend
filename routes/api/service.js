@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const adminAuth = require('../../middleware/adminAuth');
 const { populateMealDb } = require('../../services/core/mealDatabase');
 const { populateQuizDb } = require('../../services/core/quizDatabase');
 const { trainModelFromExcel } = require('../../services/ml/brain');
+const {verifyToken, IsAdmin, IsUser}= require("../../middleware/auth");
 
 /**
  * @swagger
@@ -20,7 +20,7 @@ const { trainModelFromExcel } = require('../../services/ml/brain');
  *       '200':
  *          description: Successful
  */
- router.post("/upload/quiz-data",  async (req, res) => {
+ router.post("/upload/quiz-data", verifyToken, IsAdmin, async (req, res) => {
     try {
       var file = req.files.quizExcelFile;
       var fileName = file.name;
@@ -49,7 +49,7 @@ const { trainModelFromExcel } = require('../../services/ml/brain');
  *       '200':
  *          description: Successful
  */
-router.post("/upload/meal-data",  async (req, res) => {
+router.post("/upload/meal-data", verifyToken, IsAdmin, async (req, res) => {
 try {
     var file = req.files.mealExcelFile;
     var fileName = file.name;

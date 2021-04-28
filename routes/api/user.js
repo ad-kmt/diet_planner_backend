@@ -4,7 +4,7 @@ const User = require("../../models/User");
 const { getMeals } = require("../../services/core/mealPlanner");
 const Payment = require("../../models/Payment");
 const Progress = require("../../models/Progress");
-const adminAuth = require("../../middleware/adminAuth");
+const { verifyToken, IsAdmin } = require("../../middleware/auth");
 
 
 // @access   Private
@@ -32,7 +32,7 @@ const adminAuth = require("../../middleware/adminAuth");
  *      '404':
  *          description: Not found
  */
-router.get("/:userId/progress", async (req, res) => {
+router.get("/:userId/progress", verifyToken ,async (req, res) => {
   try {
     const progress = await Progress.find({ userId: req.params.userId });
     res.json(progress);
@@ -64,7 +64,7 @@ router.get("/:userId/progress", async (req, res) => {
  *                  type: array
  *                  items: *meal
  */
-router.get("/:id/meal", async (req, res) => {
+router.get("/:id/meal", verifyToken, async (req, res) => {
   try {
     //get basic meal plan for user
     getMeals(req.params.id);
@@ -95,13 +95,13 @@ router.get("/:id/meal", async (req, res) => {
  *      '404':
  *          description: Not found
  */
-router.get("/", async (req, res) => {
+router.get("/", verifyToken, IsAdmin, async (req, res) => {
   try {
     const users = await User.find();
     res.json(users);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).json("Server Error");
   }
 });
 
@@ -127,7 +127,7 @@ router.get("/", async (req, res) => {
  *      '404':
  *          description: Not found
  */
- router.get('/:userId', async (req, res) => {
+ router.get('/:userId', verifyToken, async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
     res.json(user);
@@ -158,7 +158,7 @@ router.get("/", async (req, res) => {
  *          description: Successful
  */
 // router.put("/:id", auth, async (req, res) => {
-router.put("/:id", async (req, res) => {
+router.put("/:id", verifyToken, async (req, res) => {
   try {
     const { firstName, lastName} = req.body;
 
@@ -228,7 +228,7 @@ router.put("/:id", async (req, res) => {
  *      '204':
  *        description: user deleted successfully
  */
- router.delete('/:userId', adminAuth, async (req, res) => {
+ router.delete('/:userId', verifyToken, async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
 
@@ -272,7 +272,7 @@ router.put("/:id", async (req, res) => {
  *      '404':
  *          description: Not found
  */
-router.get("/:userId/payment", async (req, res) => {
+router.get("/:userId/payment", verifyToken, async (req, res) => {
   try {
     const userPayments = await Payment.find({ userId: req.params.userId });
     res.json(userPayments);

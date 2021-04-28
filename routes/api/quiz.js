@@ -2,8 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { validationResult } = require("express-validator");
 const Quiz = require("../../models/Quiz");
-const adminAuth = require("../../middleware/adminAuth");
-const auth = require("../../middleware/auth");
+const {verifyToken, IsAdmin, IsUser}= require("../../middleware/auth");
 const {quizEvaluator} = require("../../services/core/quizEvaluator");
 const User = require("../../models/User");
 // const conclusion=require('../../data/conclusion.json');
@@ -55,7 +54,7 @@ router.get("/", async (req, res) => {
  *          description: Successful
  *
  */
-router.post("/answers", auth, async (req, res) => {
+router.post("/answers", verifyToken, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -99,7 +98,7 @@ router.post("/answers", auth, async (req, res) => {
  *       '200':
  *          description: Successful
  */
-router.post("/", adminAuth, async (req, res) => {
+router.post("/", verifyToken, IsAdmin, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -141,7 +140,7 @@ router.post("/", adminAuth, async (req, res) => {
  *          description: Successful
  */
 // router.put("/:id", auth, async (req, res) => {
-  router.put("/:id", adminAuth, async (req, res) => {
+  router.put("/:id", verifyToken, IsAdmin, async (req, res) => {
     try {
       const quiz = await Quiz.findByIdAndUpdate(req.params.id, {
         $set: req.body
@@ -178,7 +177,7 @@ router.post("/", adminAuth, async (req, res) => {
  *       '204':
  *          description: Successful
  */
-router.delete("/:id", adminAuth, async (req, res) => {
+router.delete("/:id", verifyToken, IsAdmin, async (req, res) => {
   try {
     const quiz = await Quiz.findById(req.params.id);
 
