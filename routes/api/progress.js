@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
 const Progress = require('../../models/Progress');
-const auth = require("../../middleware/auth");
+const {verifyToken, IsAdmin, IsUser} = require("../../middleware/auth");
 const User = require('../../models/User');
 
 
@@ -24,7 +24,7 @@ const User = require('../../models/User');
  *       '200':
  *          description: Successful
 */
-router.post('/', auth, async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });

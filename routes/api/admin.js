@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const adminAuth = require('../../middleware/adminAuth');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { check, validationResult } = require('express-validator');
 
 const Admin = require('../../models/Admin');
+const role = require('../../services/utils/role');
+const { IsAdmin, verifyToken } = require('../../middleware/auth');
 
 /**
  * @swagger
@@ -18,7 +19,7 @@ const Admin = require('../../models/Admin');
  *       '200':
  *          description: Successful
 */
-router.get('/', adminAuth, async (req, res) => {
+router.get('/', verifyToken, IsAdmin, async (req, res) => {
     try {
       const admins = await Admin.find();
       res.json(admins);
@@ -44,7 +45,7 @@ router.get('/', adminAuth, async (req, res) => {
  *       '200':
  *          description: Successful
 */
-router.get('/:adminId', adminAuth, async (req, res) => {
+router.get('/:adminId', verifyToken, IsAdmin, async (req, res) => {
     try {
       const admin = await Admin.findById(req.params.adminId);
       res.json(admin);
@@ -70,12 +71,10 @@ router.get('/:adminId', adminAuth, async (req, res) => {
  *          description: Successful
 */
 router.post('/', [
-    check('firstName', 'firstName is required').not().isEmpty(),
-    check('lastName', 'lastName is required').not().isEmpty(),
-    check('email', 'Enter valid email').isEmail(),
+    check('username', 'username is required').not().isEmpty(),
     check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
-],
-adminAuth, async (req, res) => {
+], verifyToken, IsAdmin, 
+ async (req, res) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});
@@ -85,10 +84,10 @@ adminAuth, async (req, res) => {
 
     try{
         // See if the admin exists
-        let admin = await Admin.findOne({'email': req.body.email});
+        let admin = await Admin.findOne({'username': req.body.username});
 
         if(admin){
-            return res.status(400).json({errors: [{msg: 'Admin already exists'} ] });
+            return res.status(400).json({errors: [{msg: 'Admin with this username already exists'} ] });
         }
 
         admin = new Admin(req.body);
@@ -100,28 +99,69 @@ adminAuth, async (req, res) => {
 
         await admin.save();
 
-        // Return jsonwebtoken
-        const payload = {
-            admin: {
-                id: admin.id
-            }
-        };
-
-        jwt.sign(
-            payload, 
-            process.env.JWT_SECRET,
-            {expiresIn: 360000}, //time
-            (err, token) => {
-                if (err) throw err;
-                res.json({ token });
-            }
-        );
+        return res.json({msg: "Admin successfully created"});
 
     } catch(err){
         console.log(err.message);
         res.status(500).send('Server error');
     }
 }
+);
+
+
+router.post( '/login',
+  check('username', 'username is required').isEmail(),
+  check('password', 'password is required').exists(),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { username, password } = req.body;
+
+    try {
+      let admin = await Admin.findOne({ username });
+
+      if (!admin) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'Invalid Credentials' }] });
+      }
+
+      const isMatch = await bcrypt.compare(password, admin.password);
+
+      if (!isMatch) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'Invalid Credentials' }] });
+      }
+
+      const payload = {
+        admin: {
+          id: admin.id
+        },
+        role: role.Admin
+      };
+
+      const { id, username } = admin;
+
+      jwt.sign(
+        payload,
+        process.env.JWT_SECRET,
+        { expiresIn: '2 days' },
+        (err, token) => {
+          if (err) throw err;
+          res.json({ 
+            token
+          });
+        }
+      );
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  }
 );
 
 /**
@@ -144,7 +184,7 @@ adminAuth, async (req, res) => {
  *       '200':
  *          description: Successful
 */
-router.put('/:adminId', adminAuth, async (req, res) => {
+router.put('/:adminId', verifyToken, IsAdmin, async (req, res) => {
 
   try {
     const admin = await Admin.findByIdAndUpdate(req.params.adminId, {
@@ -182,7 +222,7 @@ router.put('/:adminId', adminAuth, async (req, res) => {
  *       '204':
  *          description: Successful
 */
-router.delete('/:adminId', adminAuth, async (req, res) => {
+router.delete('/:adminId', verifyToken, IsAdmin, async (req, res) => {
     try {
       const admin = await Admin.findById(req.params.adminId);
   
