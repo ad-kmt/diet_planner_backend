@@ -10,7 +10,9 @@ const generateSwaggerDocs = require('./config/swagger');
 const {  trainModelFromExcel } = require('./services/ml/brain');
 const { populateMealDb } = require('./services/core/mealDatabase');
 const { populateQuizDb } = require('./services/core/quizDatabase');
+const fileUpload = require('express-fileupload');
 require("dotenv").config();
+
 
 const app = express();
 
@@ -21,7 +23,9 @@ connectDB();
 app.use(morgan('dev'));
 app.use(cors());
 app.use(express.json({extended: false}));
-
+app.use(fileUpload({           // enable files upload
+    createParentPath: true
+}));
 
 
 //Swagger Docs API endpoint
@@ -49,6 +53,8 @@ app.use('/api/admin', require('./routes/api/admin'));
 app.use('/api/payment', require('./routes/api/payment/payment'));
 app.use('/api/meal', require('./routes/api/meal'));
 app.use('/api/progress', require('./routes/api/progress'));
+app.use('/api/service', require('./routes/api/service'));
+
 
 
 const PORT = process.env.PORT || 8000;
