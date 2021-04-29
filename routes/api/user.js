@@ -4,7 +4,7 @@ const User = require("../../models/User");
 const { getMeals } = require("../../services/core/meal/mealPlanner");
 const Payment = require("../../models/Payment");
 const Progress = require("../../models/Progress");
-const { verifyToken, IsAdmin } = require("../../middleware/auth");
+const { verifyToken, IsAdmin, IsUser } = require("../../middleware/auth");
 
 
 // @access   Private
@@ -15,10 +15,15 @@ const { verifyToken, IsAdmin } = require("../../middleware/auth");
  *    tags:
  *      - user
  *    parameters:
- *      - in: path
- *        name: userId
- *        schema:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
  *          type: string
+ *         required: true
  *    description: Use to allow admin to get user's progress data
  *    summary: Get user's progresses for admin
  *    responses:
@@ -50,11 +55,16 @@ router.get("/:userId/progress", verifyToken ,async (req, res) => {
  *    tags:
  *      - user
  *    parameters:
- *      - in: path
- *        name: userId
- *        schema:
+ *       - in: path
+ *         name: userId
+ *         schema:
  *          type: string
- *    description: Use to get meal plan for a user
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
+ *    description: Use to get meal plan for a user. Response will contain 7 arrays each representing 7 days of week containing 3 meals.
  *    responses:
  *      '200':
  *        description: A successful response
@@ -62,13 +72,15 @@ router.get("/:userId/progress", verifyToken ,async (req, res) => {
  *          application/json:
  *              schema:
  *                  type: array
- *                  items: *meal
+ *                  items:
+ *                    type: array
+ *                    items: *meal
  */
-router.get("/:id/meal", verifyToken, async (req, res) => {
+router.get("/:userId/meal", verifyToken, async (req, res) => {
   try {
     //get basic meal plan for user
-    getMeals(req.user.id);
-    res.status(200);
+    const mealPlan = getMeals(req.params.userId);
+    res.status(200).json(mealPlan);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
@@ -82,8 +94,14 @@ router.get("/:id/meal", verifyToken, async (req, res) => {
  *  get:
  *    tags:
  *      - user
- *    description: Use to get all users
+ *    parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *    summary: Get all users
+ *    description: Only Admin
  *    responses:
  *      '200':
  *        description: A successful response
@@ -112,10 +130,15 @@ router.get("/", verifyToken, IsAdmin, async (req, res) => {
  *    tags:
  *      - user
  *    parameters:
- *      - in: path
- *        name: userId
- *        schema:
+ *       - in: path
+ *         name: userId
+ *         schema:
  *          type: string
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *    description: Use to get user by id
  *    summary: Get a user
  *    responses:
@@ -148,6 +171,11 @@ router.get("/", verifyToken, IsAdmin, async (req, res) => {
  *         name: id
  *         schema:
  *           type: string
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *     summary: Update's user data.
  *     requestBody:
  *       content:
@@ -157,12 +185,11 @@ router.get("/", verifyToken, IsAdmin, async (req, res) => {
  *       '200':
  *          description: Successful
  */
-// router.put("/:id", auth, async (req, res) => {
-router.put("/:id", verifyToken, async (req, res) => {
+router.put("/:userId", verifyToken, async (req, res) => {
   try {
     const { firstName, lastName} = req.body;
 
-    User.findById(req.user.id, (err, user) => {
+    User.findById(req.params.userId, (err, user) => {
       if (err || !user) {
           return res.status(400).json({
               error: 'User not found'
@@ -217,12 +244,17 @@ router.put("/:id", verifyToken, async (req, res) => {
  *      - user
  *    summary: Remove a user
  *    parameters:
- *      -   in: path
- *          name: userId
- *          required: true
- *          schema:
- *              type: ObjectId
- *          description: userId
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *            type: ObjectId
+ *         description: userId
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *    description: Use to delete a user with id in URI
  *    responses:
  *      '204':
@@ -255,12 +287,17 @@ router.put("/:id", verifyToken, async (req, res) => {
  *    description: Use to get a user's payments
  *    summary: Get all payments of a user
  *    parameters:
- *      -   in: path
- *          name: userId
- *          required: true
- *          schema:
- *              type: string
- *          description: userId
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *             type: string
+ *         description: userId
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *    responses:
  *      '200':
  *        description: A successful response

@@ -5,7 +5,7 @@ const Plan = new mongoose.Schema({
     displayPrice: {type: Number},
     sellingPrice: {type: Number},
     discount: {type: Number},
-    duration: {type: Date}
+    duration: {type: Number}
 });
 
 module.exports = mongoose.model('plan', Plan);

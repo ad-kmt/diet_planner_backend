@@ -91,7 +91,7 @@ var getTrainingDataSetFromExcel = async function(){
     //pushing to training data set
     trainingDataSet.push(trainingData);
   }
-  console.log(trainingDataSet);
+  // console.log(trainingDataSet);
   return trainingDataSet;
 }
 
@@ -106,7 +106,7 @@ var trainModelAndSave = function(trainingDataSet){
 
 var trainModelFromExcel = async function(){
   var trainingDataSet = await getTrainingDataSetFromExcel();
-  console.log(trainingDataSet);
+  // console.log(trainingDataSet);
   trainModelAndSave(trainingDataSet);
 };
 

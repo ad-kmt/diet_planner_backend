@@ -1,5 +1,4 @@
 const express = require('express');
-const adminAuth = require('../../../middleware/adminAuth');
 const router = express.Router();
 const { verifyToken, IsAdmin, IsUser} = require("../../../middleware/auth")
 
@@ -21,7 +20,9 @@ const Payment = require('../../../models/Payment');
  *         schema:
  *          type: string
  *         required: true
- *    description: Use to get all payments
+ *         description: jwt admin authentication token
+ *    summary: Use to get all payments
+ *    description: Only Admin
  *    responses:
  *      '200':
  *        description: A successful response
@@ -29,7 +30,7 @@ const Payment = require('../../../models/Payment');
  *          application/json:
  *              schema: 
  *                  type: array
- *                  items: *user
+ *                  items: *payment
  *      '404':
  *          description: Not found
  */
@@ -51,11 +52,12 @@ const Payment = require('../../../models/Payment');
  *    tags:
  *      - user
  *    parameters:
- *      - in: header
+ *      -  in: header
  *         name: x-auth-token
  *         schema:
  *          type: string
  *         required: true
+ *         description: jwt admin authentication token
  *    description: Use to get payment with paymentId
  *    responses:
  *      '200':
@@ -64,13 +66,13 @@ const Payment = require('../../../models/Payment');
  *          application/json:
  *              schema: 
  *                  type: array
- *                  items: *user
+ *                  items: *payment
  *      '404':
  *          description: Not found
  */
  router.get('/:id', verifyToken, IsAdmin,  async (req, res) => {
   try {
-    const payments = await Payment.findById(req.params.paymentId);
+    const payments = await Payment.findById(req.params.id);
     res.json(payments);
   } catch (err) {
     console.error(err.message);

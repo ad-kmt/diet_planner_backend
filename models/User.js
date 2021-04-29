@@ -60,10 +60,12 @@ const UserSchema = new mongoose.Schema({
         }]
     },
     currentPlan: {
+        planId: {type: mongoose.Schema.Types.ObjectId},
         name: {type: String},
         price: {type: String},
         paymentId: {type: mongoose.Schema.Types.ObjectId},
-        expiry: {type: Date}
+        startDate: {type: Date},
+        expiryDate: {type: Date}
     },
     healthRecords: {
         height: {type: Number},

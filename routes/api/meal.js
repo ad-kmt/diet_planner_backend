@@ -11,6 +11,12 @@ const Meal = require("../../models/Meal");
  *    summary: Get all meals.
  *    tags:
  *      - meal
+ *    parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *    description: Use to get all meals
  *    responses:
  *      '200':
@@ -20,6 +26,8 @@ const Meal = require("../../models/Meal");
  *              schema:
  *                  type: array
  *                  items: *meal
+ *      '404':
+ *          description: Not found
  */
 router.get("/", verifyToken,  async (req, res) => {
   try {
@@ -39,10 +47,15 @@ router.get("/", verifyToken,  async (req, res) => {
  *    tags:
  *      - meal
  *    parameters:
- *      - in: query
- *        name: filter
- *        schema:
+ *       - in: query
+ *         name: filter
+ *         schema:
+ *           type: string
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
  *          type: string
+ *         required: true
  *    description: Use to get meals by filters
  *    responses:
  *      '200':
@@ -77,6 +90,13 @@ router.get("/", verifyToken, async (req, res) => {
  *   post:
  *     tags:
  *       - meal
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
+ *     description: Only Admin
  *     summary: Create a meal.
  *     requestBody:
  *       content:
@@ -122,6 +142,11 @@ router.post("/", verifyToken, IsAdmin, async (req, res) => {
  *         name: id
  *         schema:
  *           type: string
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *     summary: get a meal by id
  *     responses:
  *      '200':
@@ -156,6 +181,12 @@ router.get("/:id", verifyToken, async (req, res) => {
  *         name: id
  *         schema:
  *           type: string
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
+ *     description: Only Admin
  *     summary: Update a meal.
  *     requestBody:
  *       content:
@@ -165,7 +196,6 @@ router.get("/:id", verifyToken, async (req, res) => {
  *       '200':
  *          description: Successful
  */
-// router.put("/:id", auth, async (req, res) => {
 router.put("/:id", verifyToken, IsAdmin, async (req, res) => {
   try {
     const meal = await Meal.findByIdAndUpdate(req.params.id, {
@@ -198,7 +228,13 @@ router.put("/:id", verifyToken, IsAdmin, async (req, res) => {
  *         name: id
  *         schema:
  *           type: string
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *     summary: Delete a meal.
+ *     description: Only Admin
  *     responses:
  *       '204':
  *          description: Successful
@@ -230,6 +266,11 @@ router.delete("/:id", verifyToken, IsAdmin, async (req, res) => {
  *         name: type
  *         schema:
  *           type: string
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *     requestBody:
  *       content:
  *         application/json:
@@ -246,6 +287,11 @@ router.delete("/:id", verifyToken, IsAdmin, async (req, res) => {
  *     responses:
  *       '200':
  *          description: Successful
+ *          content:
+ *            application/json:
+ *              schema: *meal
+ *       '404':
+ *          description: Not found
 */
 router.get('/shuffle', verifyToken, async (req, res) => {
 

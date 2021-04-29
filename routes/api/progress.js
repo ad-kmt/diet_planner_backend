@@ -15,6 +15,12 @@ const User = require('../../models/User');
  *   post:
  *     tags:
  *       - progress
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *     summary: Submit Daily Progress.
  *     requestBody:
  *       content:
@@ -38,7 +44,7 @@ router.post('/', verifyToken, async (req, res) => {
         user.height = newProgress.height;
         user.weight = newProgress.weight;
         user.activity = newProgress.activity;
-        await User.findByIdAndUpdate(req.user.id, user);
+        await User.findByIdAndUpdate(req.body.userId, user);
         res.json(progress);
       } catch (err) {
         console.error(err.message);
@@ -46,34 +52,6 @@ router.post('/', verifyToken, async (req, res) => {
       }
     }
 );
-
-
-/**
- * @swagger
- * /api/progress:
- *   get:
- *     tags:
- *       - progress
- *     summary: Get user's Progress.
- *     responses:
- *       '200':
- *          description: Successful
-*/
-router.get('/', auth, async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  try {
-
-    const progress = await Progress.find({userId: req.user.id});
-    res.json(progress);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-});
 
 
 /**
@@ -87,6 +65,11 @@ router.get('/', auth, async (req, res) => {
  *         name: progressId
  *         schema:
  *           type: string
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *     summary: Update a progress.
  *     requestBody:
  *       content:
@@ -97,7 +80,7 @@ router.get('/', auth, async (req, res) => {
  *          description: Successful
  */
 
-router.put("/:progressId", auth, async (req, res) => {
+router.put("/:progressId", verifyToken, async (req, res) => {
   try {
     const progress = await Progress.findByIdAndUpdate(req.params.progressId, {
       $set: req.body

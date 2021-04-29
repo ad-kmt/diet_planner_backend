@@ -8,6 +8,44 @@ const Admin = require('../../models/Admin');
 const role = require('../../services/utils/role');
 const { IsAdmin, verifyToken } = require('../../middleware/auth');
 
+
+// @route    GET api/auth
+// @desc     Get user by token
+// @access   Private
+/**
+ * @swagger
+ * /api/admin/auth:
+ *   get:
+ *     tags:
+ *       - admin
+ *     summary: Get admin by token.
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
+ *         description: jwt admin authentication token
+ *     description: Only Admin
+ *     responses:
+ *      '200':
+ *        description: A successful response
+ *        content:
+ *          application/json:
+ *              schema: *admin
+ *      '404':
+ *          description: Not found
+*/
+router.get('/', verifyToken, IsAdmin,async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.admin.id).select('-password');
+    res.json(admin);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 /**
  * @swagger
  * /api/admin:
@@ -15,15 +53,23 @@ const { IsAdmin, verifyToken } = require('../../middleware/auth');
  *     tags:
  *       - admin
  *     parameters:
- *      - in: header
+ *      -  in: header
  *         name: x-auth-token
  *         schema:
  *          type: string
  *         required: true
+ *         description: jwt admin authentication token
  *     summary: Get all admins.
  *     responses:
  *       '200':
  *          description: Successful
+ *          content:
+ *            application/json:
+ *                schema:
+ *                  type: array
+ *                  items: *admin
+ *       '404':
+ *            description: Not found
 */
 router.get('/', verifyToken, IsAdmin, async (req, res) => {
     try {
@@ -51,10 +97,18 @@ router.get('/', verifyToken, IsAdmin, async (req, res) => {
  *         schema:
  *          type: string
  *         required: true
+ *         description: jwt admin authentication token
  *     summary: Get an admin.
  *     responses:
  *       '200':
  *          description: Successful
+ *          content:
+ *            application/json:
+ *                schema:
+ *                  type: array
+ *                  items: *admin
+ *       '404':
+ *          description: Not found
 */
 router.get('/:adminId', verifyToken, IsAdmin, async (req, res) => {
     try {
@@ -73,6 +127,12 @@ router.get('/:adminId', verifyToken, IsAdmin, async (req, res) => {
  *     tags:
  *       - admin
  *     summary: Create an admin.
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *     requestBody:
  *       content:
  *         application/json:
@@ -80,6 +140,13 @@ router.get('/:adminId', verifyToken, IsAdmin, async (req, res) => {
  *     responses:
  *       '200':
  *          description: Successful
+ *          content:
+ *            application/json:
+ *                schema:
+ *                  type: string
+ *                  example: Admin created successfully
+ *       '404':
+ *          description: Not found
 */
 router.post('/', [
     check('username', 'username is required').not().isEmpty(),
@@ -119,9 +186,40 @@ router.post('/', [
 }
 );
 
-
+//@route   Post api/admin
+//@desc    Login admin
+//@access  Public
+/**
+ * @swagger
+ * /api/admin/login:
+ *   post:
+ *     tags:
+ *       - admin
+ *     summary: Login a admin.
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *            type: object
+ *            properties:
+ *              username:
+ *                type: string
+ *              password:
+ *                type: string
+ *     responses:
+ *       '200':
+ *          description: Successful
+ *       content:
+ *          application/json:
+ *              schema:
+ *               type: object
+ *               properties:
+ *                token:
+ *                  type: string
+ *                  examples: jwt authentication token
+*/
 router.post( '/login',
-  check('username', 'username is required').isEmail(),
+  check('username', 'username is required').exists(),
   check('password', 'password is required').exists(),
   async (req, res) => {
     const errors = validationResult(req);
@@ -129,10 +227,9 @@ router.post( '/login',
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { username, password } = req.body;
-
     try {
-      let admin = await Admin.findOne({ username });
+      const { username, password } = req.body;
+      let admin = await Admin.findOne({"username": username });
 
       if (!admin) {
         return res
@@ -154,8 +251,6 @@ router.post( '/login',
         },
         role: role.Admin
       };
-
-      const { id, username } = admin;
 
       jwt.sign(
         payload,
@@ -186,14 +281,31 @@ router.post( '/login',
  *         name: adminId
  *         schema:
  *           type: string
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
+ *         description: jwt admin authentication token
  *     summary: Update an admin.
  *     requestBody:
  *       content:
  *         application/json:
- *           schema: *admin
+ *           schema:
+ *            type: object
+ *            properties:
+ *              username:
+ *                type: string
+ *              password:
+ *                type: string
  *     responses:
- *       '200':
- *          description: Successful
+ *      '200':
+ *        description: A successful response
+ *        content:
+ *          application/json:
+ *           schema: *admin
+ *      '404':
+ *          description: Not found
 */
 router.put('/:adminId', verifyToken, IsAdmin, async (req, res) => {
 
@@ -228,10 +340,21 @@ router.put('/:adminId', verifyToken, IsAdmin, async (req, res) => {
  *         name: adminId
  *         schema:
  *           type: string
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
+ *         description: jwt admin authentication token
  *     summary: Remove an admin.
  *     responses:
  *       '204':
  *          description: Successful
+ *          content:
+ *            application/json:
+ *              schema: *admin
+ *       '404':
+ *          description: Not found
 */
 router.delete('/:adminId', verifyToken, IsAdmin, async (req, res) => {
     try {
