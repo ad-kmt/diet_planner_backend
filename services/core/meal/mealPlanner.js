@@ -10,25 +10,31 @@ const getMeals = async (userId) => {
   const dfr = user.healthRecords.desiredNutrients.fats;
   const dcr = user.healthRecords.desiredNutrients.carbs;
 
-  const bMeals = await Meal.find({ mealTime: "breakfast" });
-  const lMeals = await Meal.find({ mealTime: "lunch" });
-  const dMeals = await Meal.find({ mealTime: "dinner" });
-
+  const bMeals = await Meal.find({ mealType: "Breakfast" });
+  const lMeals = await Meal.find({ mealType: "Breakfast" });
+  const dMeals = await Meal.find({ mealType: "Breakfast" });
   var arr = [];
   bMeals.forEach((b) => {
+    if(!b.proteins || !b.fats || !b.carbs || !b.calories) return;
+    // console.log("%%%");
     lMeals.forEach((l) => {
+      if(!l.proteins || !l.fats || !l.carbs || !l.calories) return;
+      // console.log("$$$");
       dMeals.forEach((d) => {
+        if(!d.proteins || !d.fats || !d.carbs || !d.calories) return;
+
+        // console.log("###");
         const pErr = Math.abs(
-          b.nutriValues.protein +
-            l.nutriValues.protein +
-            d.nutriValues.protein -
+          b.proteins +
+            l.proteins +
+            d.proteins -
             dpr
         );
         const fErr = Math.abs(
-          b.nutriValues.fat + l.nutriValues.fat + d.nutriValues.fat - dfr
+          b.fats + l.fats + d.fats - dfr
         );
         const cErr = Math.abs(
-          b.nutriValues.carb + l.nutriValues.carb + d.nutriValues.carb - dcr
+          b.carbs + l.carbs + d.carbs - dcr
         );
         const calErr = Math.abs(b.calories + l.calories + d.calories - dcalr);
 
