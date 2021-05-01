@@ -4,6 +4,7 @@ const router = express.Router();
 const Plan = require('../../../models/Plan');
 const Payment = require('../../../models/Payment');
 const { verifyToken, IsUser } = require('../../../middleware/auth');
+const User = require('../../../models/User');
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
@@ -35,13 +36,25 @@ router.post("/", verifyToken, IsUser,  async (req, res) => {
     
             if(!charge) throw Error('Payment failed');
             if(charge){
+                const startDate = new Date();
+
+                const expiryDate = new Date();
+                expiryDate.setDate(expiryDate.getDate() + product.duration);
                 const payment = await Payment.create({
                     "userId": user.id,
                     "amount": product.sellingPrice,
                     "currency": "inr",
                     "date": Date.now().toString(),
                     "plan": product.name
-                })
+                });
+                user.currentPlan = {};
+                user.currentPlan.name = product.name;
+                user.currentPlan.price = product.sellingPrice;
+                user.currentPlan.paymentId = payment.id;
+                user.currentPlan.startDate = startDate;
+                user.currentPlan.expiryDate = expiryDate;
+                console.log(user);
+                await User.findByIdAndUpdate(user.id, user);
                 return res.status(201).send(payment);
             }
         }

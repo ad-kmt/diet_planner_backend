@@ -23,11 +23,11 @@
                 "options": [
                     {
                         "option": "Sedentary/Couch Potato",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Light Exercise/Somewhat Active",
-                        "selected": false
+                        "selected": true
                     },
                     {
                         "option": "Moderate Exercise/Average Activity",
@@ -46,22 +46,22 @@
                 "type": "single"
             },
             {
-                "options": [],
+                "options": [20],
                 "question": "Age",
                 "type": "number"
             },
             {
-                "options": [],
+                "options": [175],
                 "question": "Height",
                 "type": "number"
             },
             {
-                "options": [],
+                "options": [70],
                 "question": "Weight",
                 "type": "number"
             },
             {
-                "options": [],
+                "options": [60],
                 "question": "Dersired weight",
                 "type": "number"
             }

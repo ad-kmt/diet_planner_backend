@@ -165,6 +165,10 @@ const MealSchema = new mongoose.Schema({
   prepTime: String,
   servings: String,
   yield: String,
+  proteins: Number,                             // unit = g
+  fats: Number,                                 // unit = g
+  carbs: Number,                                // unit = g
+  calories: Number,                             // unit = kcal
   nutritionalValues: [NutritionalValueSchema],
   mealType: String,                             // Breakfast/Lunch/Dinner
   source: String,                               // Recipe Source link

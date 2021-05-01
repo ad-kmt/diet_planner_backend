@@ -11,11 +11,23 @@ const {verifyToken, IsAdmin, IsUser}= require("../../middleware/auth");
  *   post:
  *     tags:
  *       - service
- *     summary: Upload quiz .xlsx.
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *     requestBody:
  *       content:
- *         application/json:
- *           schema: *quizSection
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               quizExcelFile:
+ *                 type: string
+ *                 format: binary
+ *     summary: Upload quiz .xlsx.
+ *     description: Only Admin
  *     responses:
  *       '200':
  *          description: Successful
@@ -23,10 +35,9 @@ const {verifyToken, IsAdmin, IsUser}= require("../../middleware/auth");
  router.post("/upload/quiz-data", verifyToken, IsAdmin, async (req, res) => {
     try {
       var file = req.files.quizExcelFile;
-      var fileName = file.name;
       await file.mv('data/quiz-data.xlsx');
-      populateQuizDb();
-      trainModelFromExcel();
+      await populateQuizDb();
+      await trainModelFromExcel();
       res.json("Success: File uploaded, database updated, new training model created.");
     } catch (err) {
       console.error(err.message);
@@ -40,11 +51,23 @@ const {verifyToken, IsAdmin, IsUser}= require("../../middleware/auth");
  *   post:
  *     tags:
  *       - service
- *     summary: Upload quiz .xlsx.
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *     requestBody:
  *       content:
- *         application/json:
- *           schema: *quizSection
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               mealExcelFile:
+ *                 type: string
+ *                 format: binary
+ *     summary: Upload meal .xlsx.
+ *     description: Only Admin
  *     responses:
  *       '200':
  *          description: Successful
@@ -52,9 +75,8 @@ const {verifyToken, IsAdmin, IsUser}= require("../../middleware/auth");
 router.post("/upload/meal-data", verifyToken, IsAdmin, async (req, res) => {
 try {
     var file = req.files.mealExcelFile;
-    var fileName = file.name;
     await file.mv('data/meal-data.xlsx');
-    populateMealDb();
+    await populateMealDb();
     res.json("Success: File uploaded, database updated");
 } catch (err) {
     console.error(err.message);

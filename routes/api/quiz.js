@@ -43,6 +43,12 @@ router.get("/", async (req, res) => {
  *   post:
  *     tags:
  *       - quiz
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *     summary: post quiz answers.
  *     description: Use to post answers to quiz question to get result as a response. \'answer\' field inside request body can be a number/string/array{jsonObject} depending on question type.
  *     requestBody:
@@ -54,14 +60,13 @@ router.get("/", async (req, res) => {
  *          description: Successful
  *
  */
-router.post("/answers", verifyToken, async (req, res) => {
+router.post("/answers", verifyToken, IsUser,async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
 
   try {
-    // const user = await User.findById(req.user.id);
     let gender,age,quizResponse,healthRecords;
     const input = req.body;
     const result = quizEvaluator(input);
@@ -89,7 +94,14 @@ router.post("/answers", verifyToken, async (req, res) => {
  *   post:
  *     tags:
  *       - quiz
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *     summary: Creates a quiz section.
+ *     description: Only Admin
  *     requestBody:
  *       content:
  *         application/json:
@@ -130,7 +142,13 @@ router.post("/", verifyToken, IsAdmin, async (req, res) => {
  *         name: id
  *         schema:
  *           type: string
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *     summary: Update a quiz section.
+ *     description: Only Admin
  *     requestBody:
  *       content:
  *         application/json:
@@ -139,7 +157,6 @@ router.post("/", verifyToken, IsAdmin, async (req, res) => {
  *       '200':
  *          description: Successful
  */
-// router.put("/:id", auth, async (req, res) => {
   router.put("/:id", verifyToken, IsAdmin, async (req, res) => {
     try {
       const quiz = await Quiz.findByIdAndUpdate(req.params.id, {
@@ -172,7 +189,13 @@ router.post("/", verifyToken, IsAdmin, async (req, res) => {
  *         name: id
  *         schema:
  *           type: string
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *     summary: Delete a quiz section.
+ *     description: Only Admin
  *     responses:
  *       '204':
  *          description: Successful

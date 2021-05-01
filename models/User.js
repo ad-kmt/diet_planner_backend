@@ -47,7 +47,7 @@ const UserSchema = new mongoose.Schema({
         country: {type: String},
         pincode: {type: Number},
     },
-    quizResponse: {
+    quizResponse: [{
         sectionNumber: {type: Number},
         sectionName: {type: String},
         questions: [{
@@ -60,12 +60,14 @@ const UserSchema = new mongoose.Schema({
                 }
             ]
         }]
-    },
+    }],
     currentPlan: {
+        planId: {type: mongoose.Schema.Types.ObjectId},
         name: {type: String},
         price: {type: String},
         paymentId: {type: mongoose.Schema.Types.ObjectId},
-        expiry: {type: Date}
+        startDate: {type: Date},
+        expiryDate: {type: Date}
     },
     healthRecords: {
         height: {type: Number},

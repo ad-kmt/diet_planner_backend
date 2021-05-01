@@ -14,7 +14,15 @@ const Payment = require('../../../models/Payment');
  *  get:
  *    tags:
  *      - user
- *    description: Use to get all payments
+ *    parameters:
+ *      -  in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
+ *         description: jwt admin authentication token
+ *    summary: Use to get all payments
+ *    description: Only Admin
  *    responses:
  *      '200':
  *        description: A successful response
@@ -22,7 +30,7 @@ const Payment = require('../../../models/Payment');
  *          application/json:
  *              schema: 
  *                  type: array
- *                  items: *user
+ *                  items: *payment
  *      '404':
  *          description: Not found
  */
@@ -43,6 +51,13 @@ const Payment = require('../../../models/Payment');
  *  get:
  *    tags:
  *      - user
+ *    parameters:
+ *      -  in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
+ *         description: jwt admin authentication token
  *    description: Use to get payment with paymentId
  *    responses:
  *      '200':
@@ -51,7 +66,7 @@ const Payment = require('../../../models/Payment');
  *          application/json:
  *              schema: 
  *                  type: array
- *                  items: *user
+ *                  items: *payment
  *      '404':
  *          description: Not found
  */

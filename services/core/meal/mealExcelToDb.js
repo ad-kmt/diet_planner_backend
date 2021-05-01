@@ -70,6 +70,10 @@ var populateMealDb = async () => {
           nutritionalValue.name = rows[i][j];
         } else if (column[j] === "Nutritional information (amount)") {
           nutritionalValue.amount = rows[i][j];
+          if(rows[i][j-1]==="Protein") newMeal.proteins=rows[i][j];
+          else if(rows[i][j-1]==="Fat") newMeal.fats=rows[i][j];
+          else if(rows[i][j-1]==="Carbohydrates") newMeal.carbs=rows[i][j];
+          else if(rows[i][j-1]==="Calories") newMeal.calories=rows[i][j];
         } else if (column[j] === "Nutritional information (unit)") {
           nutritionalValue.unit = rows[i][j];
         } else if (column[j] === "Food Category (GUT TAG)") {

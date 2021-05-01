@@ -45,6 +45,13 @@ const Plan = require('../../models/Plan');
  *     tags:
  *       - plan
  *     summary: Create a plan.
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
+ *     description: Only Admin
  *     requestBody:
  *       content:
  *         application/json:
@@ -52,6 +59,8 @@ const Plan = require('../../models/Plan');
  *     responses:
  *       '200':
  *          description: Successful
+ *       '404':
+ *          description: Not found
 */
 router.post('/', verifyToken, IsAdmin, async (req, res) => {
     const errors = validationResult(req);
@@ -89,16 +98,23 @@ router.post('/', verifyToken, IsAdmin, async (req, res) => {
  *         name: planId
  *         schema:
  *           type: string
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *     summary: Update a plan.
+ *     description: Only Admin
  *     requestBody:
  *       content:
  *         application/json:
- *           schema: 
+ *           schema: *plan
  *     responses:
  *       '200':
  *          description: Successful
+ *       '404':
+ *          description: Not found
  */
-// router.put("/:id", auth, async (req, res) => {
   router.put("/:planId", verifyToken, IsAdmin, async (req, res) => {
     try {
       const plan = await Plan.findByIdAndUpdate(req.params.planId, {
@@ -131,10 +147,18 @@ router.post('/', verifyToken, IsAdmin, async (req, res) => {
  *         name: planId
  *         schema:
  *           type: string
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
  *     summary: Delete a plan.
+ *     description: Only Admin
  *     responses:
  *       '204':
  *          description: Successful
+ *       '404':
+ *          description: Not found
  */
  router.delete("/:planId", verifyToken, IsAdmin, async (req, res) => {
   try {
