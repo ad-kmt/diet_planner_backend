@@ -42,7 +42,7 @@ exports.IsUser = (req, res, next) => {
 };
 
 exports.IsAdmin = (req, res, next) => {
-  console.log(req.role);
+  // console.log(req.role);
   if (req.role == role.Admin) {
     next();
   } else {

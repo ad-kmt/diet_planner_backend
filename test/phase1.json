@@ -1,0 +1,79 @@
+{
+    "currentPhase": {
+        "name": "Phase1",
+        "week": "1",
+        "foodTest": ""
+    },
+    "mealPlan": {
+        "current": {
+            "startDate": "01-05",
+            "endDate": "07-05",
+            "meals": [{
+                "breakfast": "",
+                "lunch": "",
+                "snack": "",
+                "dinner": ""
+            }]
+        }
+    },
+    "phases": {
+        "phase1":{
+            "startDate": "01-05",
+            "endDate": "21-05",
+            "status": {
+                "type": "String",
+                "default": "phaseStatus.IN_PROGRESS"
+            },
+            "week1": {
+                "startDate": "01-05",
+                "endDate": "07-05",
+                "status": {
+                    "type": "String",
+                    "default": "phaseStatus.IN_PROGRESS"
+                }
+            },
+            "week2": {
+                "startDate": "08-05",
+                "endDate": "14-05",
+                "status": {
+                    "type": "String",
+                    "default": "phaseStatus.PENDING"
+                }
+            },
+            "week3": {
+                "startDate": "15-05",
+                "endDate": "21-05",
+                "status": {
+                    "type": "String",
+                    "default": "phaseStatus.PENDING"
+                }
+            }
+        },
+        "phase2":{
+            "startDate": "22-05",
+            "endDate": "04-06",
+            "status": {
+                "type": "String",
+                "default": "phaseStatus.PENDING"
+            },
+            "week1": {
+                "startDate": "22-05",
+                "endDate": "28-05",
+                "status": {
+                    "type": "String",
+                    "default": "phaseStatus.PENDING"
+                },
+                "foodTest": "GLUTEN"
+            },
+            "week2": {
+                "startDate": "29-05",
+                "endDate": "04-06",
+                "status": {
+                    "type": "String",
+                    "default": "phaseStatus.PENDING"
+                },
+                "foodTest": "DAIRY LACTOSE"
+            }
+        }
+    }
+}

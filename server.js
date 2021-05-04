@@ -11,6 +11,7 @@ const {  trainModelFromExcel } = require('./services/ml/brain');
 const { populateMealDb } = require('./services/core/meal/mealExcelToDb');
 const { populateQuizDb } = require('./services/core/quiz/quizExcelToDb');
 const fileUpload = require('express-fileupload');
+const { getWeeklyMealPlanA, getWeeklyMealPlanB } = require('./services/core/meal/mealPlanner');
 require("dotenv").config();
 
 
@@ -61,7 +62,9 @@ const PORT = process.env.PORT || 8000;
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
-test();
+// test();
 // populateMealDb();
 // trainModelFromExcel();
 // populateQuizDb();
+// getWeeklyMealPlanA("6089a677c9858f10cc25fcff");
+getWeeklyMealPlanB("6089a677c9858f10cc25fcff");

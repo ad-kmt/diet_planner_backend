@@ -62,10 +62,10 @@ const UserSchema = new mongoose.Schema({
         }]
     }],
     currentPlan: {
-        planId: {type: mongoose.Schema.Types.ObjectId},
+        planId: {type: mongoose.Schema.Types.ObjectId, ref: 'plan'},
         name: {type: String},
         price: {type: String},
-        paymentId: {type: mongoose.Schema.Types.ObjectId},
+        paymentId: {type: mongoose.Schema.Types.ObjectId, ref: 'payment'},
         startDate: {type: Date},
         expiryDate: {type: Date}
     },
@@ -92,6 +92,7 @@ const mealPlanSchema = new mongoose.Schema({
     startDate: Date,
     endDate: Date,
     phase: String,
+    foodTest: String,
     meals: [{
         breakfast: mongoose.Schema.Types.ObjectId,
         lunch: mongoose.Schema.Types.ObjectId,
@@ -199,21 +200,21 @@ const UserSchemaNew = new mongoose.Schema({
                 default: phaseStatus.PENDING
             },
             week1: {
-                mealPlan: mealPlanSchema,
+                // mealPlan: mealPlanSchema,
                 status: {
                     type: String,
                     default: phaseStatus.PENDING
                 },
             },
             week2: {
-                mealPlan: mealPlanSchema,
+                // mealPlan: mealPlanSchema,
                 status: {
                     type: String,
                     default: phaseStatus.PENDING
                 },
             },
             week3: {
-                mealPlan: mealPlanSchema,
+                // mealPlan: mealPlanSchema,
                 status: {
                     type: String,
                     default: phaseStatus.PENDING
@@ -228,7 +229,7 @@ const UserSchemaNew = new mongoose.Schema({
                 default: phaseStatus.PENDING
             },
             week1: {
-                mealPlan: mealPlanSchema,
+                // mealPlan: mealPlanSchema,
                 status: {
                     type: String,
                     default: phaseStatus.PENDING
@@ -239,7 +240,7 @@ const UserSchemaNew = new mongoose.Schema({
                 },
             },
             week2: {
-                mealPlan: mealPlanSchema,
+                // mealPlan: mealPlanSchema,
                 status: {
                     type: String,
                     default: phaseStatus.PENDING
@@ -262,7 +263,7 @@ const UserSchemaNew = new mongoose.Schema({
                 default: [
                     {
                         name: gutTags.EGG,
-                        mealPlan: mealPlanSchema,
+                        // mealPlan: mealPlanSchema,
                         status: {
                             type: String,
                             default: phaseStatus.PENDING
@@ -270,7 +271,7 @@ const UserSchemaNew = new mongoose.Schema({
                     },
                     {
                         name: gutTags.SOY,
-                        mealPlan: mealPlanSchema,
+                        // mealPlan: mealPlanSchema,
                         status: {
                             type: String,
                             default: phaseStatus.PENDING
@@ -278,7 +279,7 @@ const UserSchemaNew = new mongoose.Schema({
                     },
                     {
                         name: gutTags.CORN,
-                        mealPlan: mealPlanSchema,
+                        // mealPlan: mealPlanSchema,
                         status: {
                             type: String,
                             default: phaseStatus.PENDING
@@ -286,7 +287,7 @@ const UserSchemaNew = new mongoose.Schema({
                     },
                     {
                         name: gutTags.RED_MEAT,
-                        mealPlan: mealPlanSchema,
+                        // mealPlan: mealPlanSchema,
                         status: {
                             type: String,
                             default: phaseStatus.PENDING
@@ -294,7 +295,7 @@ const UserSchemaNew = new mongoose.Schema({
                     },
                     {
                         name: gutTags.GRAIN,
-                        mealPlan: mealPlanSchema,
+                        // mealPlan: mealPlanSchema,
                         status: {
                             type: String,
                             default: phaseStatus.PENDING
@@ -302,7 +303,7 @@ const UserSchemaNew = new mongoose.Schema({
                     },
                     {
                         name: gutTags.FISH,
-                        mealPlan: mealPlanSchema,
+                        // mealPlan: mealPlanSchema,
                         status: {
                             type: String,
                             default: phaseStatus.PENDING
@@ -310,7 +311,7 @@ const UserSchemaNew = new mongoose.Schema({
                     },
                     {
                         name: gutTags.CRUSTACEAN,
-                        mealPlan: mealPlanSchema,
+                        // mealPlan: mealPlanSchema,
                         status: {
                             type: String,
                             default: phaseStatus.PENDING

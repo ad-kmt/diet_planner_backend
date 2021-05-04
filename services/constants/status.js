@@ -1,4 +1,4 @@
-export const DONE = "DONE"
-export const IN_PROGRESS = "IN PROGRESS"
-export const PENDING = "PENDING"
+exports.DONE = "DONE"
+exports.IN_PROGRESS = "IN PROGRESS"
+exports.PENDING = "PENDING"
 

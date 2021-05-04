@@ -60,7 +60,7 @@ router.get("/", async (req, res) => {
  *          description: Successful
  *
  */
-router.post("/answers", verifyToken, IsUser,async (req, res) => {
+router.post("/answers", verifyToken, IsUser, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -69,17 +69,8 @@ router.post("/answers", verifyToken, IsUser,async (req, res) => {
   try {
     let gender,age,quizResponse,healthRecords;
     const input = req.body;
-    const result = quizEvaluator(input);
-    
-    input[0].questions[0].options.map(option => {
-      if(option.selected) gender = option.option;
-    });
-    quizResponse = input;
-    age = input[0].questions[2].options[0];
-    
-    healthRecords=result.healthRecords;
-    const user = {gender,age,quizResponse,healthRecords}
-    await User.findByIdAndUpdate(req.user.id, user);
+    const result = await quizEvaluator(input, req.user.id);
+
     // console.log(result);
     res.status(200).json(result);
   } catch (err) {

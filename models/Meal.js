@@ -157,8 +157,8 @@ const MealSchema = new mongoose.Schema({
   
   name: String,                                 // Name of the Dish
   code: String,                                 // Recipe code mentioned in Excel file
-  category: String,
   gutTags: [String],
+  gutHealing: Boolean,
   steps: [String],
   ingredients: [IngredientSchema],
   cookingTime: String,

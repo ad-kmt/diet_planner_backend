@@ -31,7 +31,7 @@ const Meal = require("../../models/Meal");
  */
 router.get("/", verifyToken,  async (req, res) => {
   try {
-    const meals = await Meal.find();
+    const meals = await Meal.find().select('name mealType proteins fats carbs calories');
     res.json(meals);
   } catch (err) {
     console.error(err.message);

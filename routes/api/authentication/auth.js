@@ -575,7 +575,7 @@ router.post('/google-login', async (req, res) => {
                     role: role.User
                   };
                   const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
-                  const { id, firstName, lastName, email } = data;
+                  const { id, firstName, lastName, email } = user;
                   return res.json({
                       token,
                       user: { id, firstName, lastName, email }

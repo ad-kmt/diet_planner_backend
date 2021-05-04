@@ -1,5 +1,5 @@
-const Meal = require("../../models/Meal");
-const User = require("../../models/User");
+const Meal = require("../../../models/Meal");
+const User = require("../../../models/User");
 
 const shuffleBreakfast = async (userId, mealCombo) => {
     
@@ -26,7 +26,7 @@ const shuffleBreakfast = async (userId, mealCombo) => {
     const breakfastMeals = Mealfind({
         mealTime: "breakfast",
         calories: {$gte : bCalReq-50, $lte: bCalReq+50},
-        nutriValues:{protein: {$gte: bpReq-4, $lte: bpReq+4}},
+        nutriValues: {protein: {$gte: bpReq-4, $lte: bpReq+4}},
     }).limit(10);
 
     return breakfastMeals;
@@ -83,7 +83,7 @@ const shuffleDinner = async (userId, mealCombo) => {
 
     //logic to get all dinner where  dcalreq - 50 <= dcal <= dcalreq + 50
     //return only 10 dinner meals
-    const dinnerMeals = Mealfind({
+    const dinnerMeals = Meal.find({
         mealTime: "dinner",
         calories: {$gte: dCalReq-50, $lte: dCalReq+50},
         nutriValues:{protein: {$gte: dpReq-4, $lte: dpReq+4}},
