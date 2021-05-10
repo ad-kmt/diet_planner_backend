@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const gutTags = require('../services/constants/gutTags')
 const phaseStatus = require('../services/constants/status')
 
-const UserSchema = new mongoose.Schema({
+const UserSchemaOld = new mongoose.Schema({
     
     firstName: {
         type: String,
@@ -85,23 +85,21 @@ const UserSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('user', UserSchema);
+
 
 
 const mealPlanSchema = new mongoose.Schema({
     startDate: Date,
     endDate: Date,
-    phase: String,
-    foodTest: String,
     meals: [{
-        breakfast: mongoose.Schema.Types.ObjectId,
-        lunch: mongoose.Schema.Types.ObjectId,
-        snack: mongoose.Schema.Types.ObjectId,
-        dinner: mongoose.Schema.Types.ObjectId, 
+        breakfast: [mongoose.Schema.Types.ObjectId],
+        lunch: [mongoose.Schema.Types.ObjectId],
+        snacks: [mongoose.Schema.Types.ObjectId],
+        dinner: [mongoose.Schema.Types.ObjectId], 
     }]
 });
 
-const UserSchemaNew = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
     
     firstName: {
         type: String,
@@ -164,7 +162,8 @@ const UserSchemaNew = new mongoose.Schema({
         name: {type: String},
         price: {type: String},
         paymentId: {type: mongoose.Schema.Types.ObjectId},
-        expiry: {type: Date}
+        startDate: {type: Date},
+        expiryDate: {type: Date},
     },
     healthRecords: {
         height: {type: Number},
@@ -181,16 +180,13 @@ const UserSchemaNew = new mongoose.Schema({
         activity: {type: String}
     },
     currentPhase: {
-        name: String,
+        phase: Number,
+        week: Number,
         startDate: Date,
         endDate: Date,
-        week: Number,
         foodTest: String,
     },
-    mealPlan: {
-        current: mealPlanSchema,
-        next: mealPlanSchema,
-    },
+    mealPlan: mealPlanSchema,
     phases: {
         phase1:{
             startDate: Date,
@@ -205,6 +201,8 @@ const UserSchemaNew = new mongoose.Schema({
                     type: String,
                     default: phaseStatus.PENDING
                 },
+                startDate: Date,
+                endDate: Date,
             },
             week2: {
                 // mealPlan: mealPlanSchema,
@@ -212,6 +210,8 @@ const UserSchemaNew = new mongoose.Schema({
                     type: String,
                     default: phaseStatus.PENDING
                 },
+                startDate: Date,
+                endDate: Date,
             },
             week3: {
                 // mealPlan: mealPlanSchema,
@@ -219,6 +219,8 @@ const UserSchemaNew = new mongoose.Schema({
                     type: String,
                     default: phaseStatus.PENDING
                 },
+                startDate: Date,
+                endDate: Date,
             }
         },
         phase2: {
@@ -228,27 +230,23 @@ const UserSchemaNew = new mongoose.Schema({
                 type: String,
                 default: phaseStatus.PENDING
             },
-            week1: {
+            gluten: {
                 // mealPlan: mealPlanSchema,
                 status: {
                     type: String,
                     default: phaseStatus.PENDING
                 },
-                foodTest: {
-                    type: String,
-                    default: gutTags.GLUTEN,
-                },
+                startDate: Date,
+                endDate: Date,
             },
-            week2: {
+            dairy: {
                 // mealPlan: mealPlanSchema,
                 status: {
                     type: String,
                     default: phaseStatus.PENDING
                 },
-                foodTest: {
-                    type: String,
-                    default: gutTags.GLUTEN,
-                },
+                startDate: Date,
+                endDate: Date,
             },
         },
         phase3: {
@@ -258,67 +256,70 @@ const UserSchemaNew = new mongoose.Schema({
                 type: String,
                 default: phaseStatus.PENDING
             },
-            foodTest: {
-                type: Array,
-                default: [
-                    {
-                        name: gutTags.EGG,
-                        // mealPlan: mealPlanSchema,
-                        status: {
-                            type: String,
-                            default: phaseStatus.PENDING
-                        },
-                    },
-                    {
-                        name: gutTags.SOY,
-                        // mealPlan: mealPlanSchema,
-                        status: {
-                            type: String,
-                            default: phaseStatus.PENDING
-                        },
-                    },
-                    {
-                        name: gutTags.CORN,
-                        // mealPlan: mealPlanSchema,
-                        status: {
-                            type: String,
-                            default: phaseStatus.PENDING
-                        },
-                    },
-                    {
-                        name: gutTags.RED_MEAT,
-                        // mealPlan: mealPlanSchema,
-                        status: {
-                            type: String,
-                            default: phaseStatus.PENDING
-                        },
-                    },
-                    {
-                        name: gutTags.GRAIN,
-                        // mealPlan: mealPlanSchema,
-                        status: {
-                            type: String,
-                            default: phaseStatus.PENDING
-                        },
-                    },
-                    {
-                        name: gutTags.FISH,
-                        // mealPlan: mealPlanSchema,
-                        status: {
-                            type: String,
-                            default: phaseStatus.PENDING
-                        },
-                    },
-                    {
-                        name: gutTags.CRUSTACEAN,
-                        // mealPlan: mealPlanSchema,
-                        status: {
-                            type: String,
-                            default: phaseStatus.PENDING
-                        },
-                    },
-                ]
-            }
+            egg:{
+                status: {
+                    type: String,
+                    default: phaseStatus.PENDING
+                },
+                startDate: Date,
+                endDate: Date,
+            },
+            soy:{
+                status: {
+                    type: String,
+                    default: phaseStatus.PENDING
+                },
+                startDate: Date,
+                endDate: Date,
+            },
+            corn:{
+                status: {
+                    type: String,
+                    default: phaseStatus.PENDING
+                },
+                startDate: Date,
+                endDate: Date,
+            },
+            redMeat:{
+                status: {
+                    type: String,
+                    default: phaseStatus.PENDING
+                },
+                startDate: Date,
+                endDate: Date,
+            },
+            grain:{
+                status: {
+                    type: String,
+                    default: phaseStatus.PENDING
+                },
+                startDate: Date,
+                endDate: Date,
+            },
+            fish:{
+                status: {
+                    type: String,
+                    default: phaseStatus.PENDING
+                },
+                startDate: Date,
+                endDate: Date,
+            },
+            crustacean:{
+                status: {
+                    type: String,
+                    default: phaseStatus.PENDING
+                },
+                startDate: Date,
+                endDate: Date,
+            },
+            seaFood:{
+                status: {
+                    type: String,
+                    default: phaseStatus.PENDING
+                },
+                startDate: Date,
+                endDate: Date,
+            },
         },
         phase4: {
             startDate: Date,
@@ -330,3 +331,4 @@ const UserSchemaNew = new mongoose.Schema({
     }
 });
 
+module.exports = mongoose.model('user', UserSchema);

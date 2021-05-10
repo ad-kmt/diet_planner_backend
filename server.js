@@ -11,8 +11,12 @@ const {  trainModelFromExcel } = require('./services/ml/brain');
 const { populateMealDb } = require('./services/core/meal/mealExcelToDb');
 const { populateQuizDb } = require('./services/core/quiz/quizExcelToDb');
 const fileUpload = require('express-fileupload');
-const { getWeeklyMealPlanA, getWeeklyMealPlanB } = require('./services/core/meal/mealPlanner');
+const { getWeeklyMealPlanA, getWeeklyMealPlan, getFoodTestMealPlan } = require('./services/core/meal/mealPlanner');
 require("dotenv").config();
+const {DateTime} = require('luxon');
+const { postPaymentUpdate } = require('./services/core/user/paymentService');
+const { GLUTEN, EGG, DAIRY_LACTOSE, DAIRY, GRAIN } = require('./services/constants/gutTags');
+const Meal = require('./models/Meal');
 
 
 const app = express();
@@ -67,4 +71,21 @@ app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 // trainModelFromExcel();
 // populateQuizDb();
 // getWeeklyMealPlanA("6089a677c9858f10cc25fcff");
-getWeeklyMealPlanB("6089a677c9858f10cc25fcff");
+// getWeeklyMealPlan("6089a677c9858f10cc25fcff", 3, 7);
+// let plan = {
+//     name: "FG4L",
+//     productBy: "Sebastian Fitness Solutions",
+//     displayPrice: 100,
+//     sellingPrice: 50,
+//     discount: 50,
+//     duration: 30,
+// }
+// postPaymentUpdate("608de8dae0be6667c01d3fb0", plan);
+// test.testMultipleMealPlan();
+// test.testFoodRestriction();
+// test.testShuffleMealPlan();
+test.testShuffleMeal()
+
+
+
+

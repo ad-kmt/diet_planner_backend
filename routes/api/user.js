@@ -5,6 +5,7 @@ const { getMeals } = require("../../services/core/meal/mealPlanner");
 const Payment = require("../../models/Payment");
 const Progress = require("../../models/Progress");
 const { verifyToken, IsAdmin, IsUser } = require("../../middleware/auth");
+const { next } = require("../../services/core/user/phaseService");
 
 
 // @access   Private
@@ -313,6 +314,51 @@ router.get("/:userId/payment", verifyToken, async (req, res) => {
   try {
     const userPayments = await Payment.find({ userId: req.params.userId });
     res.json(userPayments);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+/**
+ * @swagger
+ * /api/user/{userId}/payment:
+ *  get:
+ *    tags:
+ *      - user
+ *    description: Use to get a user's payments
+ *    summary: Get all payments of a user
+ *    parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *             type: string
+ *         description: userId
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ *        content:
+ *          application/json:
+ *              schema:
+ *                  type: array
+ *                  items: *payment
+ *      '404':
+ *          description: Not found
+ */
+ router.post("/:userId/phase/next", verifyToken, IsUser, async (req, res) => {
+  try {
+
+    let userId = req.params.userId;
+    let { completedPhase, nextPhase } = req.body;
+    await next(userId, completedPhase, nextPhase);
+    let user = await User.findById(req.params.userId).select('currentPhase')
+    res.status(201).json(user.currentPhase);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");

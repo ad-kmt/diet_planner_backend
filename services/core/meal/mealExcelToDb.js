@@ -41,24 +41,27 @@ const excelToMongo = {
 let dropMealCollection = () => {
 
   const connection = mongoose.connection;
-  connection.db.listCollections().toArray(function(err, names) {
-    if (err) {
-        console.log(err);
-    } else {
-        for (i = 0; i < names.length; i++) {
-            if ((names[i].name === "meals")) {
-                console.log("Meal Collection Exists in DB");
-                mongoose.connection.db.dropCollection(
-                    "meals",
-                    function(err, result) {
-                        console.log("Collection droped");
-                    }
-                );
-                console.log("Meal Collection No Longer Available");
-            } 
-        }
-    }
-});
+  connection.once("open", function() {
+    console.log("MongoDB connected successfully");
+    connection.db.listCollections().toArray(function(err, names) {
+      if (err) {
+          console.log(err);
+      } else {
+          for (i = 0; i < names.length; i++) {
+              if ((names[i].name === "meals")) {
+                  console.log("Meal Collection Exists in DB");
+                  mongoose.connection.db.dropCollection(
+                      "meals",
+                      function(err, result) {
+                          console.log("Collection droped");
+                      }
+                  );
+                  console.log("Meal Collection No Longer Available");
+              } 
+          }
+      }
+  });
+  });
 }
 
 
