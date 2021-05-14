@@ -1,10 +1,6 @@
 const { getTrainingDataSetFromExcel } = require("../../ml/brain");
 
-var trainingData = getTrainingDataSetFromExcel.trainingData;
-var columns = getTrainingDataSetFromExcel.columnsNames;
-var limits = getTrainingDataSetFromExcel.limits;
-
-var quizEvaluator2 = (input) => {
+var quizEvaluator2 = async (input) => {
     let symptoms=[];
     input[1].questions.map(question => question.options.map(option=> {
       option.selected ? symptoms.push(1) : symptoms.push(0);
@@ -13,11 +9,15 @@ var quizEvaluator2 = (input) => {
       option.selected ? symptoms.push(1) : symptoms.push(0);
     }));
 
-
-    var conclusionSum=[];
-    for(var i=0;i<columns.length;i++){
-        var sum=0;
-        for(var j=0;j<symptoms.length;j++){
+    let trainingDataSet = await getTrainingDataSetFromExcel();
+    
+    let trainingData = trainingDataSet.trainingData;
+    let columns = trainingDataSet.columnNames;
+    let limits = trainingDataSet.limits;
+    let conclusionSum=[];
+    for(let i=0;i<columns.length;i++){
+        let sum=0;
+        for(let j=0;j<symptoms.length;j++){
             if(symptoms[j]===1 && trainingData[i][j]>0){
                 sum+=trainingData[i][j];
             }
@@ -30,8 +30,8 @@ var quizEvaluator2 = (input) => {
     let desiredWeight = input[0].questions[5].options[0];
     let quizConclusion=[];
     
-    for(var i=0;i<conclusionSum.length;i++){
-        if(conclusionSum[i]>=limits[i]) quizConclusion.push(columns)
+    for(let i=0;i<conclusionSum.length;i++){
+        if(conclusionSum[i]>=limits[i]) quizConclusion.push(columns[i]);
     }
 
     // const { gender, activity, age, height, weight, desiredWeight } = input[0];
@@ -119,7 +119,7 @@ var quizEvaluator2 = (input) => {
         activity
     };
     let result = {quizConclusion, healthRecords, estimation};
-    
+    // console.log(result);
 
     return result;
 }

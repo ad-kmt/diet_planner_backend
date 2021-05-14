@@ -80,7 +80,7 @@ router.post("/answers", verifyToken, IsUser, async (req, res, next) => {
   }
 });
 
-router.post("/answersNew", verifyToken, IsUser,async (req, res) => {
+router.post("/answersNew", verifyToken, IsUser,async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -89,7 +89,7 @@ router.post("/answersNew", verifyToken, IsUser,async (req, res) => {
   try {
     let gender,age,quizResponse,healthRecords;
     const input = req.body;
-    const result = quizEvaluator2(input);
+    const result = await quizEvaluator2(input);
     
     input[0].questions[0].options.map(option => {
       if(option.selected) gender = option.option;
@@ -103,8 +103,7 @@ router.post("/answersNew", verifyToken, IsUser,async (req, res) => {
     // console.log(result);
     res.status(200).json(result);
   } catch (err) {
-    console.error(err.message);
-    return res.status(500).send("Server Error");
+    next(err);
   }
 });
 

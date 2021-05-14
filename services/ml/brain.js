@@ -54,7 +54,7 @@ var getTrainingDataSetFromExcel = async function(){
   var rows = await readXlsxFile("data/quiz-data.xlsx", {sheet: "Training"});
     // `rows` is an array of rows
     // each row being an array of cells.
-  const columnNames = [];
+  let columnNames = [];
   var trainingData = [];
   var limits=[];
   /**
@@ -71,7 +71,7 @@ var getTrainingDataSetFromExcel = async function(){
    * }
    */
 
-  for (let j = 2; j < columnNames.length; j++) {
+  for (let j = 2; j < rows[0].length; j++) {
     columnNames.push(rows[0][j]);
     limits.push(rows[1][j]);
 
@@ -84,7 +84,7 @@ var getTrainingDataSetFromExcel = async function(){
     //pushing to training data set
     trainingData.push(input);
   }
-  const trainingDataSet = {trainingData, columnNames, limits};
+  let trainingDataSet = {trainingData, columnNames, limits};
   // console.log(trainingDataSet);
   return trainingDataSet;
 }
