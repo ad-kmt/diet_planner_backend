@@ -1,6 +1,6 @@
 const { evaluateQuizResult } = require("./ml/brain");
 const config = require("config");
-const { getFoodTestMealPlan } = require("./core/meal/mealPlanner");
+const { getMealPlan } = require("./core/meal/mealPlanner");
 const { GRAIN, DAIRY_LACTOSE, EGG } = require("./constants/gutTags");
 const Meal = require("../models/Meal");
 const { DEFAULT } = require("./constants/mealLimit");
@@ -15,20 +15,20 @@ exports.testMultipleMealPlan = async () => {
     dinner: false,
   };
 
-  let m = await getFoodTestMealPlan({
+  let m = await getMealPlan({
     userId: "6097e6ce2326a9115415b1d7",
     mealMaxLimit: DEFAULT,
     days: 2,
   });
 
-  m = await getFoodTestMealPlan({
+  m = await getMealPlan({
     userId: "6097e6ce2326a9115415b1d7",
     mealMaxLimit: DEFAULT,
     days: 2,
     mealMap: m.mealMap
   });
 
-  m = await getFoodTestMealPlan({
+  m = await getMealPlan({
     userId: "6097e6ce2326a9115415b1d7",
     mealMaxLimit: DEFAULT,
     days: 2,
@@ -44,7 +44,7 @@ exports.testFoodRestriction = async () => {
     dinner: false,
   };
 
-  let m = await getFoodTestMealPlan({
+  let m = await getMealPlan({
     userId: "6097e6ce2326a9115415b1d7",
     mealMaxLimit: 2,
     days: 2,

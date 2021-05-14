@@ -5,8 +5,10 @@ const jwt = require('jsonwebtoken');
 const { check, validationResult } = require('express-validator');
 
 const Admin = require('../../models/Admin');
-const role = require('../../services/utils/role');
+const role = require('../../utils/role');
 const { IsAdmin, verifyToken } = require('../../middleware/auth');
+const ApiError = require('../../utils/ApiError');
+const httpStatus = require('http-status');
 
 
 // @route    GET api/auth
@@ -36,13 +38,12 @@ const { IsAdmin, verifyToken } = require('../../middleware/auth');
  *      '404':
  *          description: Not found
 */
-router.get('/', verifyToken, IsAdmin,async (req, res) => {
+router.get('/auth', verifyToken, IsAdmin,async (req, res, next) => {
   try {
     const admin = await Admin.findById(req.admin.id).select('-password');
     res.json(admin);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    next(err);
   }
 });
 
@@ -71,13 +72,12 @@ router.get('/', verifyToken, IsAdmin,async (req, res) => {
  *       '404':
  *            description: Not found
 */
-router.get('/', verifyToken, IsAdmin, async (req, res) => {
+router.get('/', verifyToken, IsAdmin, async (req, res, next) => {
     try {
       const admins = await Admin.find();
       res.json(admins);
     } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
+      next(err);
     }
 });
 
@@ -110,13 +110,12 @@ router.get('/', verifyToken, IsAdmin, async (req, res) => {
  *       '404':
  *          description: Not found
 */
-router.get('/:adminId', verifyToken, IsAdmin, async (req, res) => {
+router.get('/:adminId', verifyToken, IsAdmin, async (req, res, next) => {
     try {
       const admin = await Admin.findById(req.params.adminId);
       res.json(admin);
     } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
+      next(err);
     }
 });
 
@@ -152,20 +151,18 @@ router.post('/', [
     check('username', 'username is required').not().isEmpty(),
     check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
 ], verifyToken, IsAdmin, 
- async (req, res) => {
+ async (req, res, next) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});
     }
-
-    // var {email, password} = req.body;
 
     try{
         // See if the admin exists
         let admin = await Admin.findOne({'username': req.body.username});
 
         if(admin){
-            return res.status(400).json({errors: [{msg: 'Admin with this username already exists'} ] });
+          throw new ApiError(httpStatus.BAD_REQUEST, 'Admin with this username already exists');
         }
 
         admin = new Admin(req.body);
@@ -180,8 +177,7 @@ router.post('/', [
         return res.json({msg: "Admin successfully created"});
 
     } catch(err){
-        console.log(err.message);
-        res.status(500).send('Server error');
+        next(err);
     }
 }
 );
@@ -221,7 +217,7 @@ router.post('/', [
 router.post( '/login',
   check('username', 'username is required').exists(),
   check('password', 'password is required').exists(),
-  async (req, res) => {
+  async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -232,17 +228,13 @@ router.post( '/login',
       let admin = await Admin.findOne({"username": username });
 
       if (!admin) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: 'Invalid Credentials' }] });
+        throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid Credentials');
       }
 
       const isMatch = await bcrypt.compare(password, admin.password);
 
       if (!isMatch) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: 'Invalid Credentials' }] });
+        throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid Credentials');
       }
 
       const payload = {
@@ -252,20 +244,18 @@ router.post( '/login',
         role: role.Admin
       };
 
-      jwt.sign(
+      let token = await jwt.sign(
         payload,
         process.env.JWT_SECRET,
-        { expiresIn: '2 days' },
-        (err, token) => {
-          if (err) throw err;
-          res.json({ 
-            token
-          });
-        }
+        { expiresIn: '2 days' }
       );
+
+      res.json({ 
+        token
+      });
+
     } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server error');
+      next(err);
     }
   }
 );
@@ -307,25 +297,15 @@ router.post( '/login',
  *      '404':
  *          description: Not found
 */
-router.put('/:adminId', verifyToken, IsAdmin, async (req, res) => {
+router.put('/:adminId', verifyToken, IsAdmin, async (req, res, next) => {
 
   try {
     const admin = await Admin.findByIdAndUpdate(req.params.adminId, {
       $set: req.body
-    }, (error, data) => {
-      if (error) {
-        console.log(error)
-        return next(error);
-      } else {
-        // res.json(data)
-        console.log('Admin updated successfully!')
-      }
     });
-    await admin.save();
     res.json(admin);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    next(error);
   }
 });
 
@@ -356,19 +336,16 @@ router.put('/:adminId', verifyToken, IsAdmin, async (req, res) => {
  *       '404':
  *          description: Not found
 */
-router.delete('/:adminId', verifyToken, IsAdmin, async (req, res) => {
+router.delete('/:adminId', verifyToken, IsAdmin, async (req, res, next) => {
     try {
       const admin = await Admin.findById(req.params.adminId);
-  
       if (!admin) {
-        return res.status(404).json({ msg: 'Admin not found' });
+        throw new ApiError(httpStatus.NOT_FOUND, 'Admin not found');
       }
-  
       await admin.remove();
       res.json({ msg: 'Admin removed' });
     } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
+      next(err);
     }
 });
 

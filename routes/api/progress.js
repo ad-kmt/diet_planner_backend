@@ -30,7 +30,7 @@ const User = require('../../models/User');
  *       '200':
  *          description: Successful
 */
-router.post('/', verifyToken, async (req, res) => {
+router.post('/', verifyToken, async (req, res, next) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -47,8 +47,7 @@ router.post('/', verifyToken, async (req, res) => {
         await User.findByIdAndUpdate(req.body.userId, user);
         res.json(progress);
       } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server Error');
+        next(err);
       }
     }
 );
@@ -80,24 +79,14 @@ router.post('/', verifyToken, async (req, res) => {
  *          description: Successful
  */
 
-router.put("/:progressId", verifyToken, async (req, res) => {
+router.put("/:progressId", verifyToken, async (req, res, next) => {
   try {
     const progress = await Progress.findByIdAndUpdate(req.params.progressId, {
       $set: req.body
-    }, (error, data) => {
-      if (error) {
-        console.log(error)
-        return next(error);
-      } else {
-        // res.json(data)
-        console.log('Progress updated successfully!')
-      }
     });
-    await progress.save();
     res.json(progress);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    next(err);
   }
 });
 

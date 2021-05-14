@@ -3,8 +3,8 @@ const User = require("../../../models/User");
 const mealType = require("../../constants/mealType");
 const gutTags = require("../../constants/gutTags");
 const {
-  getFoodTestMealPlan,
-  getWeeklyMealListWithTestFood,
+  getMealPlan,
+  getMealListForTestPhase,
   getNutriFactsFromCombo,
   getRandom,
   getComboList,
@@ -14,7 +14,9 @@ const {
 const {
   nutrientRatio,
   errorMargin,
-  shuffleListCount,
+  shuffleListReturnCount,
+  RANDOM_ITERATION_COUNT,
+  RANDOM_MEAL_LIST_SIZE,
 } = require("../../constants/mealPlannerConstants");
 const { SHUFFLE_MEAL } = require("../../constants/mealLimit");
 
@@ -134,9 +136,9 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
   const user = await User.findById(userId);
 
   let { phase, week, foodTest } = user.currentPhase;
-
+  console.log(user.currentPhase);
   if (phase == 1 && (week == 1 || week == 2 || week == 3)) {
-    let { meals } = await getFoodTestMealPlan({
+    let { meals } = await getMealPlan({
       userId: user.id,
       mealMaxLimit,
       extraFoodRestrictions,
@@ -147,7 +149,7 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
     await User.findByIdAndUpdate(userId, user);
     return meals;
   } else if (phase == 2 && foodTest == gutTags.GLUTEN) {
-    let meals = await getWeeklyMealListWithTestFood(
+    let meals = await getMealListForTestPhase(
       user.id,
       gutTags.GLUTEN,
       mealMaxLimit,
@@ -157,7 +159,7 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
     await User.findByIdAndUpdate(userId, user);
     return meals;
   } else if (phase == 2 && foodTest == gutTags.DAIRY) {
-    let meals = await getWeeklyMealListWithTestFood(
+    let meals = await getMealListForTestPhase(
       user.id,
       gutTags.DAIRY,
       mealMaxLimit,
@@ -167,7 +169,7 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
     await User.findByIdAndUpdate(userId, user);
     return meals;
   } else if (phase == 3 && foodTest == gutTags.EGG) {
-    let meals = await getWeeklyMealListWithTestFood(
+    let meals = await getMealListForTestPhase(
       user.id,
       gutTags.EGG,
       mealMaxLimit,
@@ -177,7 +179,7 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
     await User.findByIdAndUpdate(userId, user);
     return meals;
   } else if (phase == 3 && foodTest == gutTags.SOY) {
-    let meals = await getWeeklyMealListWithTestFood(
+    let meals = await getMealListForTestPhase(
       user.id,
       gutTags.SOY,
       mealMaxLimit,
@@ -187,7 +189,7 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
     await User.findByIdAndUpdate(userId, user);
     return meals;
   } else if (phase == 3 && foodTest == gutTags.RED_MEAT) {
-    let meals = await getWeeklyMealListWithTestFood(
+    let meals = await getMealListForTestPhase(
       user.id,
       gutTags.RED_MEAT,
       mealMaxLimit,
@@ -197,7 +199,7 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
     await User.findByIdAndUpdate(userId, user);
     return meals;
   } else if (phase == 3 && foodTest == gutTags.SEA_FOOD) {
-    let meals = await getWeeklyMealListWithTestFood(
+    let meals = await getMealListForTestPhase(
       user.id,
       gutTags.SEA_FOOD,
       mealMaxLimit,
@@ -207,7 +209,7 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
     await User.findByIdAndUpdate(userId, user);
     return meals;
   } else if (phase == 3 && foodTest == gutTags.CRUSTACEAN) {
-    let meals = await getWeeklyMealListWithTestFood(
+    let meals = await getMealListForTestPhase(
       user.id,
       gutTags.CRUSTACEAN,
       mealMaxLimit,
@@ -217,7 +219,7 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
     await User.findByIdAndUpdate(userId, user);
     return meals;
   } else if (phase == 3 && foodTest == gutTags.GRAIN) {
-    let meals = await getWeeklyMealListWithTestFood(
+    let meals = await getMealListForTestPhase(
       user.id,
       gutTags.GRAIN,
       mealMaxLimit,
@@ -227,7 +229,7 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
     await User.findByIdAndUpdate(userId, user);
     return meals;
   } else if (phase == 3 && foodTest == gutTags.FISH) {
-    let meals = await getWeeklyMealListWithTestFood(
+    let meals = await getMealListForTestPhase(
       user.id,
       gutTags.FISH,
       mealMaxLimit,
@@ -237,7 +239,7 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
     await User.findByIdAndUpdate(userId, user);
     return meals;
   } else if (phase == 3 && foodTest == gutTags.CORN) {
-    let meals = await getWeeklyMealListWithTestFood(
+    let meals = await getMealListForTestPhase(
       user.id,
       gutTags.CORN,
       mealMaxLimit,
@@ -247,7 +249,7 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
     await User.findByIdAndUpdate(userId, user);
     return meals;
   } else if (phase == 4) {
-    let meals = await getFoodTestMealPlan({
+    let {meals} = await getMealPlan({
       userId: user.id,
       mealMaxLimit,
       extraFoodRestrictions,
@@ -363,10 +365,10 @@ const shuffleBreakfastSingle = async (params) => {
       );
     }
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < RANDOM_ITERATION_COUNT; i++) {
       let breakfastComboListRandom = getRandom(
         breakfastComboList,
-        10 < breakfastComboList.length ? 10 : breakfastComboList.length
+        RANDOM_MEAL_LIST_SIZE < breakfastComboList.length ? RANDOM_MEAL_LIST_SIZE : breakfastComboList.length
       );
 
       for (let index in breakfastComboListRandom) {
@@ -390,7 +392,7 @@ const shuffleBreakfastSingle = async (params) => {
           b.calories + l.calories + d.calories + s.calories - dailyCals
         );
 
-        if (mealShuffleList.length < shuffleListCount) {
+        if (mealShuffleList.length < shuffleListReturnCount) {
           if (
             calErr <= margin * dailyCals &&
             pErr <= margin * dailyProteins &&
@@ -403,12 +405,12 @@ const shuffleBreakfastSingle = async (params) => {
               mealMap
             );
           }
-        } else if (mealShuffleList.length == shuffleListCount) {
+        } else if (mealShuffleList.length == shuffleListReturnCount) {
           break;
         }
       }
 
-      if (mealShuffleList.length == shuffleListCount) {
+      if (mealShuffleList.length == shuffleListReturnCount) {
         break;
       }
     }
@@ -425,7 +427,7 @@ const shuffleBreakfastSingle = async (params) => {
     console.log(`Meal Plan Length: ${mealShuffleList.length}`);
     console.log("-----------------------------------");
 
-    if (mealShuffleList.length == shuffleListCount) {
+    if (mealShuffleList.length == shuffleListReturnCount) {
       break;
     }
   }
@@ -559,7 +561,7 @@ const shuffleLunchSingle = async (params) => {
           b.calories + l.calories + d.calories + s.calories - dailyCals
         );
 
-        if (mealShuffleList.length < shuffleListCount) {
+        if (mealShuffleList.length < shuffleListReturnCount) {
           if (
             calErr <= margin * dailyCals &&
             pErr <= margin * dailyProteins &&
@@ -572,12 +574,12 @@ const shuffleLunchSingle = async (params) => {
               mealMap
             );
           }
-        } else if (mealShuffleList.length == shuffleListCount) {
+        } else if (mealShuffleList.length == shuffleListReturnCount) {
           break;
         }
       }
 
-      if (mealShuffleList.length == shuffleListCount) {
+      if (mealShuffleList.length == shuffleListReturnCount) {
         break;
       }
     }
@@ -594,7 +596,7 @@ const shuffleLunchSingle = async (params) => {
     console.log(`Meal Plan Length: ${mealShuffleList.length}`);
     console.log("-----------------------------------");
 
-    if (mealShuffleList.length == shuffleListCount) {
+    if (mealShuffleList.length == shuffleListReturnCount) {
       break;
     }
   }
@@ -702,10 +704,10 @@ const shuffleSnacksSingle = async (params) => {
       );
     }
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < RANDOM_ITERATION_COUNT; i++) {
       let snacksComboListRandom = getRandom(
         snacksComboList,
-        10 < snacksComboList.length ? 10 : snacksComboList.length
+        RANDOM_MEAL_LIST_SIZE < snacksComboList.length ? RANDOM_MEAL_LIST_SIZE : snacksComboList.length
       );
 
       for (let index in snacksComboListRandom) {
@@ -728,7 +730,7 @@ const shuffleSnacksSingle = async (params) => {
           b.calories + l.calories + d.calories + s.calories - dailyCals
         );
 
-        if (mealShuffleList.length < shuffleListCount) {
+        if (mealShuffleList.length < shuffleListReturnCount) {
           if (
             calErr <= margin * dailyCals &&
             pErr <= margin * dailyProteins &&
@@ -741,12 +743,12 @@ const shuffleSnacksSingle = async (params) => {
               mealMap
             );
           }
-        } else if (mealShuffleList.length == shuffleListCount) {
+        } else if (mealShuffleList.length == shuffleListReturnCount) {
           break;
         }
       }
 
-      if (mealShuffleList.length == shuffleListCount) {
+      if (mealShuffleList.length == shuffleListReturnCount) {
         break;
       }
     }
@@ -763,7 +765,7 @@ const shuffleSnacksSingle = async (params) => {
     console.log(`Meal Plan Length: ${mealShuffleList.length}`);
     console.log("-----------------------------------");
 
-    if (mealShuffleList.length == shuffleListCount) {
+    if (mealShuffleList.length == shuffleListReturnCount) {
       break;
     }
   }
@@ -871,10 +873,10 @@ const shuffleDinnerSingle = async (params) => {
       );
     }
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < RANDOM_ITERATION_COUNT; i++) {
       let dinnerComboListRandom = getRandom(
         dinnerComboList,
-        10 < dinnerComboList.length ? 10 : dinnerComboList.length
+        RANDOM_MEAL_LIST_SIZE < dinnerComboList.length ? RANDOM_MEAL_LIST_SIZE : dinnerComboList.length
       );
 
       for (let index in dinnerComboListRandom) {
@@ -897,7 +899,7 @@ const shuffleDinnerSingle = async (params) => {
           b.calories + l.calories + d.calories + s.calories - dailyCals
         );
 
-        if (mealShuffleList.length < shuffleListCount) {
+        if (mealShuffleList.length < shuffleListReturnCount) {
           if (
             calErr <= margin * dailyCals &&
             pErr <= margin * dailyProteins &&
@@ -910,12 +912,12 @@ const shuffleDinnerSingle = async (params) => {
               mealMap
             );
           }
-        } else if (mealShuffleList.length == shuffleListCount) {
+        } else if (mealShuffleList.length == shuffleListReturnCount) {
           break;
         }
       }
 
-      if (mealShuffleList.length == shuffleListCount) {
+      if (mealShuffleList.length == shuffleListReturnCount) {
         break;
       }
     }
@@ -932,7 +934,7 @@ const shuffleDinnerSingle = async (params) => {
     console.log(`Meal Plan Length: ${mealShuffleList.length}`);
     console.log("-----------------------------------");
 
-    if (mealShuffleList.length == shuffleListCount) {
+    if (mealShuffleList.length == shuffleListReturnCount) {
       break;
     }
   }
@@ -1025,10 +1027,10 @@ const shuffleBreakfast = async (params) => {
       margin
     );
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < RANDOM_ITERATION_COUNT; i++) {
       let breakfastComboListRandom = getRandom(
         breakfastComboList,
-        10 < breakfastComboList.length ? 10 : breakfastComboList.length
+        RANDOM_MEAL_LIST_SIZE < breakfastComboList.length ? RANDOM_MEAL_LIST_SIZE : breakfastComboList.length
       );
 
       for (let index in breakfastComboListRandom) {
@@ -1052,7 +1054,7 @@ const shuffleBreakfast = async (params) => {
           b.calories + l.calories + d.calories + s.calories - dailyCals
         );
 
-        if (mealShuffleList.length < shuffleListCount) {
+        if (mealShuffleList.length < shuffleListReturnCount) {
           if (
             calErr <= margin * dailyCals &&
             pErr <= margin * dailyProteins &&
@@ -1065,12 +1067,12 @@ const shuffleBreakfast = async (params) => {
               mealMap
             );
           }
-        } else if (mealShuffleList.length == shuffleListCount) {
+        } else if (mealShuffleList.length == shuffleListReturnCount) {
           break;
         }
       }
 
-      if (mealShuffleList.length == shuffleListCount) {
+      if (mealShuffleList.length == shuffleListReturnCount) {
         break;
       }
     }
@@ -1085,7 +1087,7 @@ const shuffleBreakfast = async (params) => {
     console.log(`Meal Plan Length: ${mealShuffleList.length}`);
     console.log("-----------------------------------");
 
-    if (mealShuffleList.length == shuffleListCount) {
+    if (mealShuffleList.length == shuffleListReturnCount) {
       break;
     }
   }
@@ -1182,10 +1184,10 @@ const shuffleLunch = async (params) => {
       margin
     );
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < RANDOM_ITERATION_COUNT; i++) {
       let lunchComboListRandom = getRandom(
         lunchComboList,
-        10 < lunchComboList.length ? 10 : lunchComboList.length
+        RANDOM_MEAL_LIST_SIZE < lunchComboList.length ? RANDOM_MEAL_LIST_SIZE : lunchComboList.length
       );
 
       for (let index in lunchComboListRandom) {
@@ -1208,7 +1210,7 @@ const shuffleLunch = async (params) => {
           b.calories + l.calories + d.calories + s.calories - dailyCals
         );
 
-        if (mealShuffleList.length < shuffleListCount) {
+        if (mealShuffleList.length < shuffleListReturnCount) {
           if (
             calErr <= margin * dailyCals &&
             pErr <= margin * dailyProteins &&
@@ -1221,12 +1223,12 @@ const shuffleLunch = async (params) => {
               mealMap
             );
           }
-        } else if (mealShuffleList.length == shuffleListCount) {
+        } else if (mealShuffleList.length == shuffleListReturnCount) {
           break;
         }
       }
 
-      if (mealShuffleList.length == shuffleListCount) {
+      if (mealShuffleList.length == shuffleListReturnCount) {
         break;
       }
     }
@@ -1241,7 +1243,7 @@ const shuffleLunch = async (params) => {
     console.log(`Meal Plan Length: ${mealShuffleList.length}`);
     console.log("-----------------------------------");
 
-    if (mealShuffleList.length == shuffleListCount) {
+    if (mealShuffleList.length == shuffleListReturnCount) {
       break;
     }
   }
@@ -1338,10 +1340,10 @@ const shuffleSnacks = async (params) => {
       margin
     );
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < RANDOM_ITERATION_COUNT; i++) {
       let snacksComboListRandom = getRandom(
         snacksComboList,
-        10 < snacksComboList.length ? 10 : snacksComboList.length
+        RANDOM_MEAL_LIST_SIZE < snacksComboList.length ? RANDOM_MEAL_LIST_SIZE : snacksComboList.length
       );
 
       for (let index in snacksComboListRandom) {
@@ -1364,7 +1366,7 @@ const shuffleSnacks = async (params) => {
           b.calories + l.calories + d.calories + s.calories - dailyCals
         );
 
-        if (mealShuffleList.length < shuffleListCount) {
+        if (mealShuffleList.length < shuffleListReturnCount) {
           if (
             calErr <= margin * dailyCals &&
             pErr <= margin * dailyProteins &&
@@ -1377,12 +1379,12 @@ const shuffleSnacks = async (params) => {
               mealMap
             );
           }
-        } else if (mealShuffleList.length == shuffleListCount) {
+        } else if (mealShuffleList.length == shuffleListReturnCount) {
           break;
         }
       }
 
-      if (mealShuffleList.length == shuffleListCount) {
+      if (mealShuffleList.length == shuffleListReturnCount) {
         break;
       }
     }
@@ -1397,7 +1399,7 @@ const shuffleSnacks = async (params) => {
     console.log(`Meal Plan Length: ${mealShuffleList.length}`);
     console.log("-----------------------------------");
 
-    if (mealShuffleList.length == shuffleListCount) {
+    if (mealShuffleList.length == shuffleListReturnCount) {
       break;
     }
   }
@@ -1494,10 +1496,10 @@ const shuffleDinner = async (params) => {
       margin
     );
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < RANDOM_ITERATION_COUNT; i++) {
       let dinnerComboListRandom = getRandom(
         dinnerComboList,
-        10 < dinnerComboList.length ? 10 : dinnerComboList.length
+        RANDOM_MEAL_LIST_SIZE < dinnerComboList.length ? RANDOM_MEAL_LIST_SIZE : dinnerComboList.length
       );
 
       for (let index in dinnerComboListRandom) {
@@ -1520,7 +1522,7 @@ const shuffleDinner = async (params) => {
           b.calories + l.calories + d.calories + s.calories - dailyCals
         );
 
-        if (mealShuffleList.length < shuffleListCount) {
+        if (mealShuffleList.length < shuffleListReturnCount) {
           if (
             calErr <= margin * dailyCals &&
             pErr <= margin * dailyProteins &&
@@ -1533,12 +1535,12 @@ const shuffleDinner = async (params) => {
               mealMap
             );
           }
-        } else if (mealShuffleList.length == shuffleListCount) {
+        } else if (mealShuffleList.length == shuffleListReturnCount) {
           break;
         }
       }
 
-      if (mealShuffleList.length == shuffleListCount) {
+      if (mealShuffleList.length == shuffleListReturnCount) {
         break;
       }
     }
@@ -1553,7 +1555,7 @@ const shuffleDinner = async (params) => {
     console.log(`Meal Plan Length: ${mealShuffleList.length}`);
     console.log("-----------------------------------");
 
-    if (mealShuffleList.length == shuffleListCount) {
+    if (mealShuffleList.length == shuffleListReturnCount) {
       break;
     }
   }

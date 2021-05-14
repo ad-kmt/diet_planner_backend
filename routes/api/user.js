@@ -6,7 +6,8 @@ const Payment = require("../../models/Payment");
 const Progress = require("../../models/Progress");
 const { verifyToken, IsAdmin, IsUser } = require("../../middleware/auth");
 const { next } = require("../../services/core/user/phaseService");
-
+const ApiError = require("../../utils/ApiError");
+const httpStatus = require("http-status");
 
 // @access   Private
 /**
@@ -38,13 +39,12 @@ const { next } = require("../../services/core/user/phaseService");
  *      '404':
  *          description: Not found
  */
-router.get("/:userId/progress", verifyToken ,async (req, res) => {
+router.get("/:userId/progress", verifyToken, async (req, res, next) => {
   try {
     const progress = await Progress.find({ userId: req.params.userId });
     res.json(progress);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    next(err);
   }
 });
 
@@ -77,14 +77,13 @@ router.get("/:userId/progress", verifyToken ,async (req, res) => {
  *                    type: array
  *                    items: *meal
  */
-router.get("/:userId/meal", verifyToken, async (req, res) => {
+router.get("/:userId/meal", verifyToken, async (req, res, next) => {
   try {
     //get basic meal plan for user
     const mealPlan = getMeals(req.params.userId);
     res.status(200).json(mealPlan);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    next(err);
   }
 });
 
@@ -114,13 +113,12 @@ router.get("/:userId/meal", verifyToken, async (req, res) => {
  *      '404':
  *          description: Not found
  */
-router.get("/", verifyToken, IsAdmin, async (req, res) => {
+router.get("/", verifyToken, IsAdmin, async (req, res, next) => {
   try {
     const users = await User.find();
     res.json(users);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json("Server Error");
+    next(err);
   }
 });
 
@@ -151,13 +149,12 @@ router.get("/", verifyToken, IsAdmin, async (req, res) => {
  *      '404':
  *          description: Not found
  */
- router.get('/:userId', verifyToken, async (req, res) => {
+router.get("/:userId", verifyToken, async (req, res, next) => {
   try {
     const user = await User.findById(req.params.userId);
     res.json(user);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    next(err);
   }
 });
 
@@ -186,51 +183,37 @@ router.get("/", verifyToken, IsAdmin, async (req, res) => {
  *       '200':
  *          description: Successful
  */
-router.put("/:userId", verifyToken, async (req, res) => {
+router.put("/:userId", verifyToken, async (req, res, next) => {
   try {
-    const { firstName, lastName} = req.body;
+    const { firstName, lastName } = req.body;
 
-    User.findById(req.params.userId, (err, user) => {
-      if (err || !user) {
-          return res.status(400).json({
-              error: 'User not found'
-          });
-      }
-      if (!firstName) {
-          return res.status(400).json({
-              error: 'First Name is required'
-          });
-      } else {
-          user.firstName = firstName;
-      }
+    let user = await User.findById(req.params.userId);
 
-      if (lastName) {
-        user.lastName = lastName;
-      }
+    if (err || !user) {
+      throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+    }
+    if (!firstName) {
+      throw new ApiError(httpStatus.BAD_REQUEST, "First Name is required");
+    } else {
+      user.firstName = firstName;
+    }
 
-      console.log(user);
+    if (lastName) {
+      user.lastName = lastName;
+    }
 
-      user.save((err, updatedUser) => {
-          if (err) {
-              console.log('USER UPDATE ERROR', err);
-              return res.status(400).json({
-                  error: 'User update failed'
-              });
-          }
-          // console.log(updatedUser);
-          const { id, firstName, lastName, email } = updatedUser;
-          res.json({
-              id,
-              firstName,
-              lastName,
-              email
-          });
-        });
+    console.log(user);
+
+    let updatedUser = await user.save();
+    
+    res.json({
+      id: updatedUser.id,
+      firstName: updatedUser.firstName,
+      lastName: updatedUser.lastName,
+      email: updatedUser.email,
     });
-
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    next(err);
   }
 });
 
@@ -261,21 +244,16 @@ router.put("/:userId", verifyToken, async (req, res) => {
  *      '204':
  *        description: user deleted successfully
  */
- router.delete('/:userId', verifyToken, async (req, res) => {
+router.delete("/:userId", verifyToken, async (req, res, next) => {
   try {
     const user = await User.findById(req.params.userId);
-
     if (!user) {
-      return res.status(404).json({ msg: "User not found" });
+      throw new ApiError(httpStatus.NOT_FOUND, "User not found");
     }
-
     await user.remove();
-
     res.json({ msg: "User removed" });
   } catch (err) {
-    console.error(err.message);
-
-    res.status(500).send("Server Error");
+    next(err);
   }
 });
 
@@ -310,24 +288,23 @@ router.put("/:userId", verifyToken, async (req, res) => {
  *      '404':
  *          description: Not found
  */
-router.get("/:userId/payment", verifyToken, async (req, res) => {
+router.get("/:userId/payment", verifyToken, async (req, res, next) => {
   try {
     const userPayments = await Payment.find({ userId: req.params.userId });
     res.json(userPayments);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    next(err);
   }
 });
 
 /**
  * @swagger
- * /api/user/{userId}/payment:
+ * /api/user/{userId}/phase/next:
  *  get:
  *    tags:
  *      - user
- *    description: Use to get a user's payments
- *    summary: Get all payments of a user
+ *    description: Use to go to next phase
+ *    summary: Use to go to next phase
  *    parameters:
  *       - in: path
  *         name: userId
@@ -340,6 +317,18 @@ router.get("/:userId/payment", verifyToken, async (req, res) => {
  *         schema:
  *          type: string
  *         required: true
+ *    requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *            type: object
+ *            properties:
+ *              phase:
+ *                type: Number
+ *              week:
+ *                type: Number
+ *              foodTest:
+ *                type: String
  *    responses:
  *      '200':
  *        description: A successful response
@@ -351,18 +340,23 @@ router.get("/:userId/payment", verifyToken, async (req, res) => {
  *      '404':
  *          description: Not found
  */
- router.post("/:userId/phase/next", verifyToken, IsUser, async (req, res) => {
-  try {
+router.post(
+  "/:userId/phase/next",
+  verifyToken,
+  IsUser,
+  async (req, res, next) => {
+    try {
+      let userId = req.params.userId;
+      let { completedPhase, nextPhase } = req.body;
 
-    let userId = req.params.userId;
-    let { completedPhase, nextPhase } = req.body;
-    await next(userId, completedPhase, nextPhase);
-    let user = await User.findById(req.params.userId).select('currentPhase')
-    res.status(201).json(user.currentPhase);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+      await next(userId, completedPhase, nextPhase);
+      
+      let user = await User.findById(req.params.userId).select("currentPhase");
+      res.status(201).json(user.currentPhase);
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
 module.exports = router;

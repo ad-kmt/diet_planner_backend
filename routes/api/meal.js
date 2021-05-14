@@ -1,8 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const { validationResult } = require("express-validator");
-const { verifyToken, IsAdmin } = require("../../middleware/auth");
+const httpStatus = require("http-status");
+const { verifyToken, IsAdmin, IsUser } = require("../../middleware/auth");
 const Meal = require("../../models/Meal");
+const { LESS_VARIETY, MORE_VARIETY } = require("../../services/constants/mealLimit");
+const { shuffleMealPlan, shuffleBreakfast, shuffleSnacks, shuffleLunch, shuffleDinner, shuffleBreakfastSingle, shuffleLunchSingle } = require("../../services/core/meal/mealShuffler");
+const ApiError = require("../../utils/ApiError");
 
 /**
  * @swagger
@@ -29,13 +33,12 @@ const Meal = require("../../models/Meal");
  *      '404':
  *          description: Not found
  */
-router.get("/", verifyToken,  async (req, res) => {
+router.get("/", verifyToken,  async (req, res, next) => {
   try {
     const meals = await Meal.find().select('name mealType proteins fats carbs calories');
     res.json(meals);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    next(err);
   }
 });
 
@@ -66,7 +69,7 @@ router.get("/", verifyToken,  async (req, res) => {
  *                  type: array
  *                  items: *meal
  */
-router.get("/", verifyToken, async (req, res) => {
+router.get("/", verifyToken, async (req, res, next) => {
   try {
     const filters = req.params;
     const { type, time, calories } = filters;
@@ -79,8 +82,7 @@ router.get("/", verifyToken, async (req, res) => {
 
     res.json(meals);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    next(err);
   }
 });
 
@@ -106,12 +108,11 @@ router.get("/", verifyToken, async (req, res) => {
  *       '200':
  *          description: Successful
  */
-router.post("/", verifyToken, IsAdmin, async (req, res) => {
+router.post("/", verifyToken, IsAdmin, async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-
   try {
     const newMeal = new Meal({
       name: req.body.name,
@@ -123,11 +124,9 @@ router.post("/", verifyToken, IsAdmin, async (req, res) => {
     });
 
     const meal = await newMeal.save();
-
     res.json(meal);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    next(err);
   }
 });
 
@@ -157,16 +156,13 @@ router.post("/", verifyToken, IsAdmin, async (req, res) => {
  *      '404':
  *          description: Not found
  */
-router.get("/:id", verifyToken, async (req, res) => {
+router.get("/:id", verifyToken, async (req, res, next) => {
   try {
     const meal = await Meal.findById(req.params.id);
-
     await meal.save();
-
     res.json(meal);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    next(err);
   }
 });
 
@@ -196,24 +192,14 @@ router.get("/:id", verifyToken, async (req, res) => {
  *       '200':
  *          description: Successful
  */
-router.put("/:id", verifyToken, IsAdmin, async (req, res) => {
+router.put("/:id", verifyToken, IsAdmin, async (req, res, next) => {
   try {
     const meal = await Meal.findByIdAndUpdate(req.params.id, {
       $set: req.body
-    }, (error, data) => {
-      if (error) {
-        console.log(error)
-        return next(error);
-      } else {
-        // res.json(data)
-        console.log('Meal updated successfully!')
-      }
     });
-    await meal.save();
     res.json(meal);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    next(err);
   }
 });
 
@@ -239,33 +225,29 @@ router.put("/:id", verifyToken, IsAdmin, async (req, res) => {
  *       '204':
  *          description: Successful
  */
-router.delete("/:id", verifyToken, IsAdmin, async (req, res) => {
+router.delete("/:id", verifyToken, IsAdmin, async (req, res, next) => {
   try {
     const meal = await Meal.findById(req.params.id);
 
     if (!meal) {
-      return res.status(404).json({ msg: "Meal not found" });
+      throw new ApiError(httpStatus.NOT_FOUND, "Meal not found");
     }
 
     await meal.remove();
     res.json({ msg: "Meal removed" });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    next(err);
   }
 });
 
+
 /**
  * @swagger
- * /api/meal/shuffle?type=xyz:
- *   get:
+ * /api/meal/shuffle/mealCombo:
+ *   post:
  *     tags:
  *       - meal
  *     parameters:
- *       - in: query
- *         name: type
- *         schema:
- *           type: string
  *       - in: header
  *         name: x-auth-token
  *         schema:
@@ -277,36 +259,175 @@ router.delete("/:id", verifyToken, IsAdmin, async (req, res) => {
  *           schema:
  *            type: object
  *            properties:
- *              breakfast:
+ *              mealId:
  *                type: string
- *              lunch:
+ *              mealCombo: *mealCombo
+ *              mealType:
  *                type: string
- *              dinner:
+ *                example: breakfast/lunch/snacks/dinner
+ *              foodTag:
  *                type: string
- *     summary: switch the current meal.
+ *              foodRestrictions:
+ *                type: array
+ *                items:
+ *                  type: string
+ *              gutHealing:
+ *                type: boolean
+ *     summary: Shuffle a meal combo inside a meal plan.
  *     responses:
  *       '200':
  *          description: Successful
  *          content:
  *            application/json:
- *              schema: *meal
+ *              schema: 
+ *                type: array
+ *                items:
+ *                  type: array
+ *                  items:
+ *                    type: string
  *       '404':
  *          description: Not found
 */
-router.get('/shuffle', verifyToken, async (req, res) => {
+router.post('/shuffle/meal', verifyToken, IsUser, async (req, res, next) => {
 
   try {
-    var shuffledMeal
-    if(req.query == "breakfast") shuffledMeal=shuffleBreakfast(req.body.id, req.body.mealCombo);
 
-    if(req.query == "lunch") shuffledMeal=shuffleLunch(req.body.userId, req.body.mealCombo);
+    let {mealId, mealCombo, mealType, foodTag, foodRestrictions, gutHealing} = req.body
 
-    if(req.query == "dinner") shuffledMeal=shuffleDinner(req.body.userId, req.body.mealCombo);
+    var shuffleMealList;
+    if(mealType == "breakfast") shuffleMealList= await shuffleBreakfastSingle({userId: req.user.id, mealCombo, shuffleMealId: mealId, foodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
 
-    res.json(shuffledMeal);
+    if(mealType == "lunch") shuffleMealList= await shuffleLunchSingle({userId: req.user.id, mealCombo, shuffleMealId: mealId, foodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
+
+    if(mealType == "snacks") shuffleMealList= await shuffleSnacksSingle({userId: req.user.id, mealCombo, shuffleMealId: mealId, foodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
+
+    if(mealType == "dinner") shuffleMealList= await shuffleDinnerSingle({userId: req.user.id, mealCombo, shuffleMealId: mealId, foodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
+
+    res.json(shuffleMealList);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    next(err);
+  }
+});
+
+
+
+/**
+ * @swagger
+ * /api/meal/shuffle/mealCombo:
+ *   post:
+ *     tags:
+ *       - meal
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *            type: object
+ *            properties:
+ *              mealCombo: *mealCombo
+ *              mealType:
+ *                type: string
+ *                example: breakfast/lunch/snacks/dinner
+ *              foodTag:
+ *                type: string
+ *              foodRestrictions:
+ *                type: array
+ *                items:
+ *                  type: string
+ *              gutHealing:
+ *                type: boolean
+ *     summary: Shuffle a meal combo inside a meal plan.
+ *     responses:
+ *       '200':
+ *          description: Successful
+ *          content:
+ *            application/json:
+ *              schema: 
+ *                type: array
+ *                items:
+ *                  type: array
+ *                  items:
+ *                    type: string
+ *       '404':
+ *          description: Not found
+*/
+router.post('/shuffle/mealCombo', verifyToken, IsUser, async (req, res, next) => {
+
+  try {
+
+    let {mealCombo, mealType, foodTag, foodRestrictions, gutHealing} = req.body
+
+    var shuffleMealList;
+    if(mealType == "breakfast") shuffleMealList= await shuffleBreakfast({userId: req.user.id, mealCombo, foodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
+
+    if(mealType == "lunch") shuffleMealList= await shuffleLunch({userId: req.user.id, mealCombo, foodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
+
+    if(mealType == "snacks") shuffleMealList= await shuffleSnacks({userId: req.user.id, mealCombo, foodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
+
+    if(mealType == "dinner") shuffleMealList= await shuffleDinner({userId: req.user.id, mealCombo, foodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
+
+    res.json(shuffleMealList);
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * @swagger
+ * /api/meal/shuffle/mealplan:
+ *   post:
+ *     tags:
+ *       - meal
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *          type: string
+ *         required: true
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *            type: object
+ *            properties:
+ *              variety:
+ *                type: string
+ *                example: "less/more" 
+ *              foodRestrictions:
+ *                type: array
+ *                items: 
+ *                  type: string
+ *     summary: Shuffle complete meal plan.
+ *     responses:
+ *       '200':
+ *          description: Successful
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: array
+ *                items: *mealCombo
+ *       '404':
+ *          description: Not found
+*/
+router.post('/shuffle/mealplan', verifyToken, IsUser, async (req, res, next) => {
+
+  try {
+    let {variety, foodRestrictions} = req.body;
+    let mealMaxLimit;
+    if(variety == "less"){
+      mealMaxLimit = LESS_VARIETY;
+    } else if(variety == "more"){
+      mealMaxLimit = MORE_VARIETY;
+    }
+    let meals = await shuffleMealPlan(req.user.id, mealMaxLimit, foodRestrictions);
+    res.json(meals);
+  } catch (err) {
+    next(err);
   }
 });
 

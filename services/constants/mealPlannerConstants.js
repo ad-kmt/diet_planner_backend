@@ -7,4 +7,7 @@ exports.nutrientRatio={
 
 exports.errorMargin=0.01
 
-exports.shuffleListCount=5
+exports.shuffleListReturnCount=5
+exports.GET_MEAL_MARGIN=0.5;
+exports.RANDOM_ITERATION_COUNT=10;
+exports.RANDOM_MEAL_LIST_SIZE=10;

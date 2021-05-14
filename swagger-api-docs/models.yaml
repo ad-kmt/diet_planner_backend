@@ -224,3 +224,23 @@ progress: &progress
       type: boolean
     poop:
       type: string
+
+mealCombo: &mealCombo
+  type: object
+  properties:
+    breakfast:
+      type: array
+      items: 
+        type: string
+    lunch:
+      type: array
+      items: 
+        type: string
+    snacks:
+      type: array
+      items:
+        type: string
+    dinner:
+      type: array
+      items:
+        type: string

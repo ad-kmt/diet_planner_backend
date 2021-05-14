@@ -7,7 +7,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const { DateTime } = require("luxon");
 const {
   getWeeklyMealPlan,
-  getFoodTestMealPlan,
+  getMealPlan,
 } = require("../meal/mealPlanner");
 const mealLimit = require("../../constants/mealLimit");
 
@@ -83,17 +83,19 @@ exports.postPaymentUpdate = async (userId, plan) => {
         },
       },
     };
-    let { meals } = await getFoodTestMealPlan({
+    let { meals } = await getMealPlan({
       userId: user.id,
       mealMaxLimit: mealLimit.DEFAULT,
       days: 7,
       gutHealing: true,
     });
+    
     user.mealPlan = {
       startDate: phaseStartDate,
       endDate: weekEndDate,
       meals,
     };
+    
     // console.log(user);
     await User.findByIdAndUpdate(user.id, user);
 
