@@ -46,22 +46,22 @@
                 "type": "single"
             },
             {
-                "options": [20],
+                "answer": 20,
                 "question": "Age",
                 "type": "number"
             },
             {
-                "options": [175],
+                "answer": 175,
                 "question": "Height",
                 "type": "number"
             },
             {
-                "options": [70],
+                "answer": 70,
                 "question": "Weight",
                 "type": "number"
             },
             {
-                "options": [60],
+                "answer": 60,
                 "question": "Dersired weight",
                 "type": "number"
             }
@@ -443,6 +443,42 @@
                     }
                 ],
                 "question": "Which of these apply to you?",
+                "type": "multiple"
+            },
+            {
+                "options": [
+                    {
+                        "option": "No Meat at all",
+                        "selected": false
+
+                    },
+                    {
+                        "option": "No Red Meat only",
+                        "selected": false
+
+                    },
+                    {
+                        "option": "No Fish",
+                        "selected": false
+                    },
+                    {
+                        "option": "No Crustaceans",
+                        "selected": false
+                    },
+                    {
+                        "option": "No Sea Food at all",
+                        "selected": false
+                    },
+                    {
+                        "option": "No Milk & Dairy products",
+                        "selected": true
+                    },
+                    {
+                        "option": "No Eggs",
+                        "selected": false
+                    }
+                ],
+                "question": "Any particular food restrictions?",
                 "type": "multiple"
             }
         ],

@@ -12,17 +12,5 @@
       "MA": "Mal-Absorption",
       "NoP": "No Problem"
     }
-  },
-  "excelToMongo": {
-    "Recipe code": "code",
-    "Meal type": "mealType",
-    "Recipe category": "category",
-    "Name of the recipe": "name",
-    "Source link": "source",
-    "Image": "image",
-    "Meal prep time": "prepTime",
-    "Cooking time": "cookingTime",
-    "Servings": "servings",
-    "Yield": "yield"
   }
 }

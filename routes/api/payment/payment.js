@@ -34,13 +34,12 @@ const Payment = require('../../../models/Payment');
  *      '404':
  *          description: Not found
  */
- router.get('/', verifyToken, IsAdmin,  async (req, res) => {
+ router.get('/', verifyToken, IsAdmin,  async (req, res, next) => {
     try {
       const payments = await Payment.find();
       res.json(payments);
     } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
+      next(err);
     }
 });
 
@@ -70,13 +69,12 @@ const Payment = require('../../../models/Payment');
  *      '404':
  *          description: Not found
  */
- router.get('/:id', verifyToken, IsAdmin,  async (req, res) => {
+ router.get('/:id', verifyToken, IsAdmin,  async (req, res, next) => {
   try {
     const payments = await Payment.findById(req.params.id);
     res.json(payments);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    next(err);
   }
 });
 

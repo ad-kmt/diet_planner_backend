@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
+const httpStatus = require('http-status');
 
 const { verifyToken, IsAdmin } = require("../../middleware/auth");
 
@@ -28,13 +29,12 @@ const Plan = require('../../models/Plan');
  *      '404':
  *          description: Not found
  */
- router.get('/', async (req, res) => {
+ router.get('/', async (req, res, next) => {
     try {
       const plans = await Plan.find();
       res.json(plans);
     } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
+      next(err);
     }
 });
 
@@ -62,7 +62,7 @@ const Plan = require('../../models/Plan');
  *       '404':
  *          description: Not found
 */
-router.post('/', verifyToken, IsAdmin, async (req, res) => {
+router.post('/', verifyToken, IsAdmin, async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -81,8 +81,7 @@ router.post('/', verifyToken, IsAdmin, async (req, res) => {
 
       res.json(plan);
     } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
+      next(err);
     }
   }
 );
@@ -115,24 +114,14 @@ router.post('/', verifyToken, IsAdmin, async (req, res) => {
  *       '404':
  *          description: Not found
  */
-  router.put("/:planId", verifyToken, IsAdmin, async (req, res) => {
+  router.put("/:planId", verifyToken, IsAdmin, async (req, res, next) => {
     try {
       const plan = await Plan.findByIdAndUpdate(req.params.planId, {
         $set: req.body
-      }, (error, data) => {
-        if (error) {
-          console.log(error)
-          return next(error);
-        } else {
-          // res.json(data)
-          console.log('Plan updated successfully!')
-        }
       });
-      await plan.save();
       res.json(plan);
     } catch (err) {
-      console.error(err.message);
-      res.status(500).send("Server Error");
+      next(err);
     }
 });
 
@@ -160,19 +149,16 @@ router.post('/', verifyToken, IsAdmin, async (req, res) => {
  *       '404':
  *          description: Not found
  */
- router.delete("/:planId", verifyToken, IsAdmin, async (req, res) => {
+ router.delete("/:planId", verifyToken, IsAdmin, async (req, res, next) => {
   try {
     const plan = await Plan.findById(req.params.planId);
-
     if (!plan) {
-      return res.status(404).json({ msg: "Plan not found" });
+      throw new ApiError(httpStatus.NOT_FOUND, "Plan not found" );
     }
-
     await plan.remove();
     res.json({ msg: "Plan removed" });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    next(err);
   }
 });
 

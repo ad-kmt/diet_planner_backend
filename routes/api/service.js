@@ -32,7 +32,7 @@ const {verifyToken, IsAdmin, IsUser}= require("../../middleware/auth");
  *       '200':
  *          description: Successful
  */
- router.post("/upload/quiz-data", verifyToken, IsAdmin, async (req, res) => {
+ router.post("/upload/quiz-data", verifyToken, IsAdmin, async (req, res, next) => {
     try {
       var file = req.files.quizExcelFile;
       await file.mv('data/quiz-data.xlsx');
@@ -40,8 +40,7 @@ const {verifyToken, IsAdmin, IsUser}= require("../../middleware/auth");
       await trainModelFromExcel();
       res.json("Success: File uploaded, database updated, new training model created.");
     } catch (err) {
-      console.error(err.message);
-      res.status(500).send("Server Error: File could not be uploaded");
+      next(err);
     }
   });
 
@@ -72,15 +71,14 @@ const {verifyToken, IsAdmin, IsUser}= require("../../middleware/auth");
  *       '200':
  *          description: Successful
  */
-router.post("/upload/meal-data", verifyToken, IsAdmin, async (req, res) => {
+router.post("/upload/meal-data", verifyToken, IsAdmin, async (req, res, next) => {
 try {
     var file = req.files.mealExcelFile;
     await file.mv('data/meal-data.xlsx');
     await populateMealDb();
     res.json("Success: File uploaded, database updated");
 } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error: File could not be uploaded");
+    next(err);
 }
 });
 
