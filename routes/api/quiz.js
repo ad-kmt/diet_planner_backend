@@ -6,6 +6,8 @@ const {verifyToken, IsAdmin, IsUser}= require("../../middleware/auth");
 const {quizEvaluator} = require("../../services/core/quiz/quizEvaluator");
 const {quizEvaluator2} = require("../../services/core/quiz/quizEvaluator2");
 const User = require("../../models/User");
+const ApiError = require("../../utils/ApiError");
+const httpStatus = require("http-status");
 // const conclusion=require('../../data/conclusion.json');
 
 // @route    GET /api/quiz
@@ -28,13 +30,12 @@ const User = require("../../models/User");
  *              type: array
  *              items: *quizSection
  */
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
   try {
     const questions = await Quiz.find();
     res.json(questions);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    next(err);
   }
 });
 
@@ -61,7 +62,7 @@ router.get("/", async (req, res) => {
  *          description: Successful
  *
  */
-router.post("/answers", verifyToken, IsUser,async (req, res) => {
+router.post("/answers", verifyToken, IsUser, async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -70,22 +71,12 @@ router.post("/answers", verifyToken, IsUser,async (req, res) => {
   try {
     let gender,age,quizResponse,healthRecords;
     const input = req.body;
-    const result = quizEvaluator(input);
-    
-    input[0].questions[0].options.map(option => {
-      if(option.selected) gender = option.option;
-    });
-    quizResponse = input;
-    age = input[0].questions[2].options[0];
-    
-    healthRecords=result.healthRecords;
-    const user = {gender,age,quizResponse,healthRecords}
-    await User.findByIdAndUpdate(req.user.id, user);
+    const result = await quizEvaluator(input, req.user.id);
+
     // console.log(result);
     res.status(200).json(result);
   } catch (err) {
-    console.error(err.message);
-    return res.status(500).send("Server Error");
+    next(err);
   }
 });
 
@@ -140,7 +131,7 @@ router.post("/answersNew", verifyToken, IsUser,async (req, res) => {
  *       '200':
  *          description: Successful
  */
-router.post("/", verifyToken, IsAdmin, async (req, res) => {
+router.post("/", verifyToken, IsAdmin, async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -156,8 +147,7 @@ router.post("/", verifyToken, IsAdmin, async (req, res) => {
 
     res.json(quiz);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    next(err);
   }
 });
 
@@ -187,24 +177,14 @@ router.post("/", verifyToken, IsAdmin, async (req, res) => {
  *       '200':
  *          description: Successful
  */
-  router.put("/:id", verifyToken, IsAdmin, async (req, res) => {
+  router.put("/:id", verifyToken, IsAdmin, async (req, res, next) => {
     try {
       const quiz = await Quiz.findByIdAndUpdate(req.params.id, {
         $set: req.body
-      }, (error, data) => {
-        if (error) {
-          console.log(error)
-          return next(error);
-        } else {
-          // res.json(data)
-          console.log('Quiz section updated successfully!')
-        }
       });
-      await quiz.save();
       res.json(quiz);
     } catch (err) {
-      console.error(err.message);
-      res.status(500).send("Server Error");
+      next(err);
     }
   });
 
@@ -230,19 +210,18 @@ router.post("/", verifyToken, IsAdmin, async (req, res) => {
  *       '204':
  *          description: Successful
  */
-router.delete("/:id", verifyToken, IsAdmin, async (req, res) => {
+router.delete("/:id", verifyToken, IsAdmin, async (req, res, next) => {
   try {
     const quiz = await Quiz.findById(req.params.id);
 
     if (!quiz) {
-      return res.status(404).json({ msg: "Quiz section not found" });
+      throw new ApiError(httpStatus.NOT_FOUND, "Quiz section not found");
     }
 
     await quiz.remove();
     res.json({ msg: "Quiz section removed" });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    next(err);
   }
 });
 
