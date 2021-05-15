@@ -174,7 +174,7 @@ router.post(
  *                  type: string
  *                  example: Signup success. Please login to continue.
  */
-router.post("/account-activation", async (req, res, next) => {
+router.post("/account-activation-after-signup", async (req, res, next) => {
   try {
     const { token } = req.body;
     if (!token) {
@@ -220,6 +220,58 @@ router.post("/account-activation", async (req, res, next) => {
     next(error);
   }
 });
+
+
+
+router.post("/account-activation-after-payment", async (req, res, next) => {
+  try {
+    const { token, password } = req.body;
+    if (!token) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        "Token required in request body."
+      );
+    } else {
+      let decoded = await jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION);
+
+      const { firstName, lastName, email } = decoded;
+
+      // See if the user exists
+      let user = await User.findOne({ email });
+      if (user) {
+        throw new ApiError(httpStatus.BAD_REQUEST, "User already activated.");
+      }
+
+      user = new User({
+        firstName,
+        lastName,
+        email,
+        account: {
+          local: {
+            password,
+          },
+        },
+      });
+
+      // Encrypt the password
+      const salt = await bcrypt.genSalt(10);
+
+      user.account.local.password = await bcrypt.hash(password, salt);
+
+      //Saving user in DB
+      await user.save();
+
+      res.json({
+        message: "Account activated successfully. Please login to continue.",
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+
 
 /**
  * @swagger

@@ -69,7 +69,6 @@ router.post("/answers", verifyToken, IsUser, async (req, res, next) => {
   }
 
   try {
-    let gender,age,quizResponse,healthRecords;
     const input = req.body;
     const result = await quizEvaluator(input, req.user.id);
 
@@ -87,19 +86,9 @@ router.post("/answersNew", verifyToken, IsUser,async (req, res, next) => {
   }
 
   try {
-    let gender,age,quizResponse,healthRecords;
     const input = req.body;
-    const result = await quizEvaluator2(input);
+    const result = await quizEvaluator2(input, req.user.id);
     
-    input[0].questions[0].options.map(option => {
-      if(option.selected) gender = option.option;
-    });
-    quizResponse = input;
-    age = input[0].questions[2].options[0];
-    
-    healthRecords=result.healthRecords;
-    const user = {gender,age,quizResponse,healthRecords}
-    await User.findByIdAndUpdate(req.user.id, user);
     // console.log(result);
     res.status(200).json(result);
   } catch (err) {
