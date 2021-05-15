@@ -3,17 +3,18 @@ const httpStatus = require('http-status');
 require("dotenv").config();
 const router = express.Router();
 const { verifyToken, IsUser } = require('../../../middleware/auth');
+const { sendAccountActivationLink } = require('../../../services/core/auth/authService');
 const { paymentViaStripe } = require('../../../services/core/user/paymentService');
 const ApiError = require('../../../utils/ApiError');
 
 
-router.post("/", verifyToken, IsUser,  async (req, res, next) => {
+router.post("/", async (req, res, next) => {
     try{
-        const user = req.user;
-        const {plan, token} = req.body;
+        const {user, plan, token} = req.body;
 
         if(plan){
             let payment = await paymentViaStripe(user.id, plan, token);
+            sendAccountActivationLink();
             return res.status(201).send(payment);
         }
         else{
