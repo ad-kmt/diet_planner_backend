@@ -8,6 +8,7 @@ const { verifyToken, IsAdmin, IsUser } = require("../../middleware/auth");
 const { next } = require("../../services/core/user/phaseService");
 const ApiError = require("../../utils/ApiError");
 const httpStatus = require("http-status");
+const { quizEvaluator } = require("../../services/core/quiz/quizEvaluator");
 
 // @access   Private
 /**
@@ -205,7 +206,7 @@ router.put("/:userId", verifyToken, async (req, res, next) => {
     console.log(user);
 
     let updatedUser = await user.save();
-    
+
     res.json({
       id: updatedUser.id,
       firstName: updatedUser.firstName,
@@ -350,7 +351,7 @@ router.post(
       let { completedPhase, nextPhase } = req.body;
 
       await next(userId, completedPhase, nextPhase);
-      
+
       let user = await User.findById(req.params.userId).select("currentPhase");
       res.status(201).json(user.currentPhase);
     } catch (err) {
@@ -358,5 +359,93 @@ router.post(
     }
   }
 );
+
+/**
+ * @swagger
+ * /api/user/quiz:
+ *   post:
+ *     tags:
+ *       - user
+ *     summary: post quiz answers.
+ *     description: Use to post answers to quiz question to get result as a response. \'answer\' field inside request body can be a number/string/array{jsonObject} depending on question type.
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema: 
+ *              type: object
+ *              properties: 
+ *                firstName: 
+ *                  type: string
+ *                lastName:
+ *                  type: string
+ *                email:
+ *                  type: string
+ *                quizResponse:
+ *                  type: array
+ *                  items: *quizSectionAnswer
+ *     responses:
+ *       '200':
+ *          content:
+ *            application/json:
+ *              schema:
+ *                  type: object
+ *                  properties: 
+ *                    user:
+ *                      type: object
+ *                      properties:
+ *                        id: 
+ *                          type: string    
+ *                        firstName: 
+ *                          type: string
+ *                        lastName:
+ *                          type: string
+ *                        email:
+ *                          type: string
+ *                    result:
+ *                      type: object
+ *                      properties:
+ *                        conclusions:
+ *                          type: object
+ *                        healthRecords:
+ *                          type: object
+ *                        estimation:
+ *                          type: object
+ *          description: Successful
+ *
+ */
+router.post("/quiz", async (req, res, next) => {
+  try {
+    const { firstName, lastName, email, quizResponse } = req.body;
+
+    let user = await User.findOne({ email });
+
+    if (user) {
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.quizResponse = quizResponse;
+    } else {
+      user = new User({
+        firstName,
+        lastName,
+        email,
+        quizResponse,
+      });
+    }
+    //2 times update(1 here and 1 inside quizEvaluator) can be reduced to single update.
+    user = await user.save();
+    const result = await quizEvaluator(quizResponse, user.id);
+    res.status(200).json({
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+      },
+      result,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;

@@ -63,22 +63,17 @@ router.get("/", async (req, res, next) => {
  *
  */
 router.post("/answers", verifyToken, IsUser, async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
 
   try {
-    let gender,age,quizResponse,healthRecords;
     const input = req.body;
     const result = await quizEvaluator(input, req.user.id);
-
     // console.log(result);
     res.status(200).json(result);
   } catch (err) {
     next(err);
   }
 });
+
 
 router.post("/answersNew", verifyToken, IsUser,async (req, res, next) => {
   const errors = validationResult(req);
@@ -131,11 +126,6 @@ router.post("/answersNew", verifyToken, IsUser,async (req, res, next) => {
  *          description: Successful
  */
 router.post("/", verifyToken, IsAdmin, async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
   try {
     const newQuiz = new Quiz({
       section: req.body.section,

@@ -85,9 +85,6 @@ const UserSchemaOld = new mongoose.Schema({
     }
 });
 
-
-
-
 const mealPlanSchema = new mongoose.Schema({
     startDate: Date,
     endDate: Date,
@@ -111,6 +108,10 @@ const UserSchema = new mongoose.Schema({
         type: String
     },
     account: {
+        isActivated: {
+            type: Boolean,
+            default: false,
+        },
         local:{
             password: {
                 type: String,

@@ -63,10 +63,6 @@ const Plan = require('../../models/Plan');
  *          description: Not found
 */
 router.post('/', verifyToken, IsAdmin, async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
 
     try {
       const newPlan = new Plan({

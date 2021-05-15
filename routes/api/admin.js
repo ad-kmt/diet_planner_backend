@@ -9,6 +9,7 @@ const role = require('../../utils/role');
 const { IsAdmin, verifyToken } = require('../../middleware/auth');
 const ApiError = require('../../utils/ApiError');
 const httpStatus = require('http-status');
+const { validate } = require('../../middleware/validate');
 
 
 // @route    GET api/auth
@@ -150,7 +151,7 @@ router.get('/:adminId', verifyToken, IsAdmin, async (req, res, next) => {
 router.post('/', [
     check('username', 'username is required').not().isEmpty(),
     check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
-], verifyToken, IsAdmin, 
+], validate, verifyToken, IsAdmin, 
  async (req, res, next) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
@@ -217,6 +218,7 @@ router.post('/', [
 router.post( '/login',
   check('username', 'username is required').exists(),
   check('password', 'password is required').exists(),
+  validate,
   async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
