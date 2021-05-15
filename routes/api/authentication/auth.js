@@ -13,6 +13,7 @@ const httpStatus = require("http-status");
 const logger = require("../../../config/logger");
 const { BAD_REQUEST, UNAUTHORIZED } = require("http-status");
 const router = express.Router();
+const { validate } = require("../../../middleware/validate");
 
 // @route    GET api/auth
 // @desc     Get user by token
@@ -98,15 +99,12 @@ router.post(
       "Please enter a password with 6 or more characters"
     ).isLength({ min: 6 }),
   ],
+  validate,
   async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { firstName, lastName, email, password } = req.body;
-
     try {
+      
+      const { firstName, lastName, email, password } = req.body;
+
       // See if the user exists
       let user = await User.findOne({ email: email });
       if (user) {
@@ -456,11 +454,8 @@ router.post(
   "/login",
   check("email", "Please include a valid email").isEmail(),
   check("password", "Password is required").exists(),
+  validate,
   async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
 
     try {
       const { email, password } = req.body;
