@@ -133,7 +133,7 @@ router.post(
       };
 
       //Sending Mail to User email-ID
-      sendEmailWithNodemailer(req, res, next, emailData);
+      await sendEmailWithNodemailer(emailData);
 
       res.json({
         message: `Activation link has been sent to ${email}. Follow the instructions there to activate your account.`,
@@ -236,20 +236,23 @@ router.post("/account-activation-after-payment", async (req, res, next) => {
 
       // See if the user exists
       let user = await User.findOne({ email });
-      if (user) {
+      if (user.isActivated) {
         throw new ApiError(httpStatus.BAD_REQUEST, "User already activated.");
       }
 
-      user = new User({
-        firstName,
-        lastName,
-        email,
-        account: {
-          local: {
-            password,
-          },
-        },
-      });
+      // user = new User({
+      //   firstName,
+      //   lastName,
+      //   email,
+      //   account: {
+      //     isActivated: true,
+      //     local: {
+      //       password,
+      //     },
+      //   },
+      // });
+
+      user.account.isActivated=true;
 
       // Encrypt the password
       const salt = await bcrypt.genSalt(10);
@@ -257,7 +260,7 @@ router.post("/account-activation-after-payment", async (req, res, next) => {
       user.account.local.password = await bcrypt.hash(password, salt);
 
       //Saving user in DB
-      await user.save();
+      await User.findByIdAndUpdate(user.id, user);
 
       res.json({
         message: "Account activated successfully. Please login to continue.",
@@ -334,7 +337,7 @@ router.put("/forgot-password", async (req, res, next) => {
     await user.updateOne({ "account.local.resetPasswordLink": token });
 
     //Sending mail to user with forgot password link
-    sendEmailWithNodemailer(req, res, next, emailData);
+    await sendEmailWithNodemailer(emailData);
 
     res.json({
       message: `Password reset link has been sent to ${email}.`,

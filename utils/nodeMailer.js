@@ -1,7 +1,7 @@
 const nodeMailer = require("nodemailer");
-require('dotenv').config();
+require("dotenv").config();
 
-exports.sendEmailWithNodemailer = (req, res, next, emailData) => {
+exports.sendEmailWithNodemailer = async (emailData) => {
   const transporter = nodeMailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
@@ -15,17 +15,19 @@ exports.sendEmailWithNodemailer = (req, res, next, emailData) => {
       ciphers: "SSLv3",
     },
   });
- 
-  return transporter
-    .sendMail(emailData)
-    .then((info) => {
-      console.log(`Message sent: ${info.response}`);
-      // return res.json({
-      //   message: `Activation link has been sent to your email. Follow the instructions there to activate your account`,
-      // });
-    })
-    .catch((err) => {
-      console.log(`Problem sending email: ${err}`);
-      next(err);
-    });
+
+  // return transporter
+  //   .sendMail(emailData)
+  //   .then((info) => {
+  //     console.log(`Message sent: ${info.response}`);
+  //     // return res.json({
+  //     //   message: `Activation link has been sent to your email. Follow the instructions there to activate your account`,
+  //     // });
+  //   })
+  //   .catch((err) => {
+  //     console.log(`Problem sending email: ${err}`);
+  //     next(err);
+  //   });
+
+  await transporter.sendMail(emailData);
 };

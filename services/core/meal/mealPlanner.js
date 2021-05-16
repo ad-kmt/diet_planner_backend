@@ -777,7 +777,7 @@ const getMealPlan = async (params) => {
       //protein //fats //carbs
     });
 
-  for (; margin <= 0.5; margin = margin + 0.02) {
+  for (; margin <= 0.5; margin = margin + 0.1) {
 
     let breakfastComboList = getComboList(
       breakfastList,

@@ -13,13 +13,13 @@ router.post("/", async (req, res, next) => {
         const {user, plan, token} = req.body;
 
         if(plan){
-            let payment = await paymentViaStripe(user.id, plan, token);
-            sendAccountActivationLink();
-            return res.status(201).send(payment);
+            var payment = await paymentViaStripe(user.id, plan, token);
+            await sendAccountActivationLink(user);
         }
         else{
             throw new ApiError(httpStatus.BAD_REQUEST, "Plan was not selected");
         }
+        res.json({message: `Account Activation link has been sent to ${user.email}`});
     }
     catch(err){
         next(err);

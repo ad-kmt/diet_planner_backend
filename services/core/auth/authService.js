@@ -1,4 +1,9 @@
+const User = require("../../../models/User");
+const ApiError = require("../../../utils/ApiError");
 const { sendEmailWithNodemailer } = require("../../../utils/nodeMailer");
+const jwt = require("jsonwebtoken");
+const httpStatus = require("http-status");
+require("dotenv").config();
 
 exports.sendAccountActivationLink = async (user) => {
     const { firstName, lastName, email } = user;
@@ -12,8 +17,7 @@ exports.sendAccountActivationLink = async (user) => {
       //Generating token for Email Activation
       const token = jwt.sign(
         { firstName, lastName, email },
-        process.env.JWT_ACCOUNT_ACTIVATION,
-        { expiresIn: "10m" }
+        process.env.JWT_ACCOUNT_ACTIVATION
       );
 
       //Generating Email Body
@@ -31,5 +35,5 @@ exports.sendAccountActivationLink = async (user) => {
       };
 
       //Sending Mail to User email-ID
-      sendEmailWithNodemailer(req, res, next, emailData);
+      await sendEmailWithNodemailer(emailData);
 }
