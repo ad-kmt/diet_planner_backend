@@ -101,23 +101,59 @@ var quizEvaluator2 = async (input, userId) => {
     let trainingData = trainingDataSet.trainingData;
     let columns = trainingDataSet.columnNames;
     let limits = trainingDataSet.limits;
-    let conclusionSum=[];
+    let symptomsWeight = trainingDataSet.weight;
+    let conclusionScore=[];
+    let conclusionWeight=[];
     for(let i=0;i<columns.length;i++){
-        let sum=0;
+        let score=0;
+        let weightSum=0;
         for(let j=0;j<symptoms.length;j++){
             if(symptoms[j]===1 && trainingData[i][j]>0){
-                sum+=trainingData[i][j];
+                score+=trainingData[i][j];
+                weightSum+=symptomsWeight[j];
             }
         }
-        conclusionSum.push(sum);
+        conclusionScore.push(score);
+        conclusionWeight.push(weightSum);
     }
 
     let quizConclusion=[];
+    let quizConclusionWeight=[];
     
-    for(let i=0;i<conclusionSum.length;i++){
-        if(conclusionSum[i]>=limits[i]) quizConclusion.push(columns[i]);
+    for(let i=0;i<conclusionScore.length;i++){
+        if(conclusionScore[i]>=limits[i]){
+            quizConclusion.push(columns[i]);
+            quizConclusionWeight.push(conclusionWeight[i]);
+        }
     }
-
+    
+    var majorConclusion=[];
+    var minorConclusion=[];
+    let maxWeight=0;
+    majorConclusion.push(columns[0]);
+    if(quizConclusion.length===0){
+        for(let i=0;i<columns.length;i++){
+            if(conclusionScore[i]>=4 && conclusionWeight[i]>maxWeight){
+                majorConclusion[0]=columns[i];
+                maxWeight=conclusionWeight[i];
+            }
+        }
+        for(let i=0;i<columns.length;i++){
+            if(conclusionScore[i]>=4 && columns[i]!=majorConclusion[0]) minorConclusion.push(columns[i]);
+        }
+    }
+    else{
+        for(let i=0;i<quizConclusion.length;i++){
+            if(quizConclusionWeight[i]>maxWeight){
+                majorConclusion[0]=quizConclusion[i];
+                maxWeight=quizConclusionWeight[i];
+            }
+        }
+        for(let i=0;i<quizConclusion.length;i++){
+            if(quizConclusion[i]!==majorConclusion[0]) minorConclusion.push(quizConclusion[i]);
+        }
+    }
+    const finalConclusion={majorConclusion, minorConclusion};
     //EVALUATING FOOD RESTRICTIONS FROM QUIZ
     let foodRestrictions=[];
 
@@ -169,7 +205,7 @@ var quizEvaluator2 = async (input, userId) => {
         desiredWeight, 
         desiredCalories,
         desiredNutrients, 
-        quizConclusion, 
+        quizConclusion: finalConclusion, 
         foodRestrictions, 
         activity
     };
@@ -179,7 +215,7 @@ var quizEvaluator2 = async (input, userId) => {
     const user = {gender,age,quizResponse,healthRecords}
     await User.findByIdAndUpdate(userId, user);
 
-    let result = {quizConclusion, healthRecords, estimation};
+    let result = {finalConclusion, healthRecords, estimation};
     
 
     return result;

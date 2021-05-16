@@ -176,7 +176,10 @@ const UserSchema = new mongoose.Schema({
             fats: {type: Number},
             carbs: {type: Number}
         },
-        quizConclusion: [String],
+        quizConclusion: {
+            majorConclusion: [String],
+            minorConclusion: [String]
+        },
         foodRestrictions: [String],
         activity: {type: String}
     },
