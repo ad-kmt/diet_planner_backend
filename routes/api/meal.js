@@ -5,7 +5,7 @@ const httpStatus = require("http-status");
 const { verifyToken, IsAdmin, IsUser } = require("../../middleware/auth");
 const Meal = require("../../models/Meal");
 const { LESS_VARIETY, MORE_VARIETY } = require("../../services/constants/mealLimit");
-const { shuffleMealPlan, shuffleBreakfast, shuffleSnacks, shuffleLunch, shuffleDinner, shuffleBreakfastSingle, shuffleLunchSingle } = require("../../services/core/meal/mealShuffler");
+const { shuffleMealPlan, shuffleBreakfast, shuffleSnacks, shuffleLunch, shuffleDinner, shuffleBreakfastSingle, shuffleLunchSingle, shuffleSnacksSingle, shuffleDinnerSingle } = require("../../services/core/meal/mealShuffler");
 const ApiError = require("../../utils/ApiError");
 
 /**
