@@ -777,7 +777,7 @@ const getMealPlan = async (params) => {
       //protein //fats //carbs
     });
 
-  for (; margin <= 0.5; margin = margin + 0.1) {
+  for (; margin <= 0.5; margin = margin + 0.02) {
 
     let breakfastComboList = getComboList(
       breakfastList,
@@ -899,10 +899,10 @@ const getMealPlan = async (params) => {
 
               if (mealPlan.length < days) {
                 if (
-                  calErr <= margin * dailyCals &&
-                  pErr <= margin * dailyProteins &&
-                  fErr <= margin * dailyFats &&
-                  cErr <= margin * dailyCarbs
+                  calErr <= margin * dailyCals 
+                  // pErr <= margin * dailyProteins &&
+                  // fErr <= margin * dailyFats &&
+                  // cErr <= margin * dailyCarbs
                 ) {
                   mealPlan.push(dayMealCombo);
                   addDayMealComboToMealMap(dayMealCombo, mealMap);
@@ -980,7 +980,7 @@ const getMealListForTestPhase = async (
   let mealObjectDay1to2 = await getMealPlan({
     userId,
     mealMaxLimit: mealMaxLimit,
-    extraFoodRestrictions: extraFoodRestrictions.concat([foodTest]),
+    extraFoodRestrictions: extraFoodRestrictions ? extraFoodRestrictions.concat([foodTest]) : [foodTest],
     days: 2,
     gutHealing: true,
   });
@@ -1021,8 +1021,8 @@ const getMealListForTestPhase = async (
     userId,
     mealMaxLimit: mealMaxLimit,
     days: 2,
-    extraFoodRestrictions: extraFoodRestrictions.concat([foodTest]),
-    mealMap: mealObjectDay2.mealMap,
+    extraFoodRestrictions: extraFoodRestrictions ? extraFoodRestrictions.concat([foodTest]) : [foodTest],
+    mealMap: mealObjectDay5.mealMap,
   });
 
   let meals = mealObjectDay1to2.meals;

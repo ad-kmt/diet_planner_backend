@@ -15,7 +15,7 @@ const httpStatus = require("http-status");
 
 
 
-exports.nextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) => {
+exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) => {
   let user = await User.findById(userId).select("currentPhase phases mealPlan");
 
   // console.log(user);
@@ -113,7 +113,7 @@ exports.nextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) => {
         user.phases.phase2.endDate = newWeekStartDate.plus({ days: 6 });
 
         //change currentMealPlan
-        let meals = getMealListForTestPhase(gutTags.GLUTEN, mealLimit.DEFAULT);
+        let meals = await getMealListForTestPhase(userId, gutTags.GLUTEN, mealLimit.DEFAULT);
 
         user.mealPlan = {
           startDate: newWeekStartDate,
@@ -129,14 +129,14 @@ exports.nextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) => {
         user.currentPhase.endDate = newWeekEndDate;
         user.currentPhase.week = 2;
         user.currentPhase.phase = 2;
-        user.currentPhase.foodTest = gutTags.DAIRY_LACTOSE;
+        user.currentPhase.foodTest = gutTags.DAIRY;
 
         user.phases.phase2.dairy.status = phaseStatus.IN_PROGRESS;
         user.phases.phase2.dairy.startDate = newWeekStartDate;
         user.phases.phase2.dairy.endDate = newWeekEndDate;
 
         //change currentMealPlan
-        let meals = getMealListForTestPhase(gutTags.DAIRY, mealLimit.DEFAULT);
+        let meals = await getMealListForTestPhase(userId, gutTags.DAIRY, mealLimit.DEFAULT);
 
         user.mealPlan = {
           startDate: newWeekStartDate,
@@ -166,7 +166,7 @@ exports.nextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) => {
         user.phases.phase3.egg.endDate = newWeekEndDate;
        
         //change currentMealPlan
-        let meals = getMealListForTestPhase(gutTags.EGG, mealLimit.DEFAULT)
+        let meals = await getMealListForTestPhase(userId, gutTags.EGG, mealLimit.DEFAULT)
 
         user.mealPlan = {
           startDate: newWeekStartDate,
@@ -192,7 +192,7 @@ exports.nextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) => {
         user.phases.phase3.corn.endDate = newWeekEndDate;
         
         //change currentMealPlan
-        let meals = getMealListForTestPhase(gutTags.CORN, mealLimit.DEFAULT);
+        let meals = await getMealListForTestPhase(userId, gutTags.CORN, mealLimit.DEFAULT);
 
         user.mealPlan = {
           startDate: newWeekStartDate,
@@ -217,7 +217,7 @@ exports.nextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) => {
         user.phases.phase3.redMeat.startDate = newWeekStartDate;
         user.phases.phase3.redMeat.endDate = newWeekEndDate;
         //change currentMealPlan
-        let meals = getMealListForTestPhase(gutTags.RED_MEAT, mealLimit.DEFAULT)
+        let meals = await getMealListForTestPhase(userId, gutTags.RED_MEAT, mealLimit.DEFAULT)
         user.mealPlan = {
           startDate: newWeekStartDate,
           endDate: newWeekEndDate,
@@ -240,7 +240,7 @@ exports.nextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) => {
         user.phases.phase3.grain.startDate = newWeekStartDate;
         user.phases.phase3.grain.endDate = newWeekEndDate;
         //change currentMealPlan
-        let meals = getMealListForTestPhase(gutTags.GRAIN, mealLimit.DEFAULT)
+        let meals = await getMealListForTestPhase(userId, gutTags.GRAIN, mealLimit.DEFAULT)
         user.mealPlan = {
           startDate: newWeekStartDate,
           endDate: newWeekEndDate,
@@ -263,7 +263,7 @@ exports.nextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) => {
         user.phases.phase3.soy.startDate = newWeekStartDate;
         user.phases.phase3.soy.endDate = newWeekEndDate;
         //change currentMealPlan
-        let meals = getMealListForTestPhase(gutTags.SOY, mealLimit.DEFAULT);
+        let meals = await getMealListForTestPhase(userId, gutTags.SOY, mealLimit.DEFAULT);
         user.mealPlan = {
           startDate: newWeekStartDate,
           endDate: newWeekEndDate,
@@ -286,7 +286,7 @@ exports.nextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) => {
         user.phases.phase3.seaFood.startDate = newWeekStartDate;
         user.phases.phase3.seaFood.endDate = newWeekEndDate;
         //change currentMealPlan
-        let meals = getMealListForTestPhase(gutTags.SEA_FOOD, mealLimit.DEFAULT);
+        let meals = await getMealListForTestPhase(userId, gutTags.SEA_FOOD, mealLimit.DEFAULT);
         user.mealPlan = {
           startDate: newWeekStartDate,
           endDate: newWeekEndDate,
@@ -309,7 +309,7 @@ exports.nextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) => {
         user.phases.phase3.fish.startDate = newWeekStartDate;
         user.phases.phase3.fish.endDate = newWeekEndDate;
         //change currentMealPlan
-        let meals = getMealListForTestPhase(gutTags.FISH, mealLimit.DEFAULT);
+        let meals = await getMealListForTestPhase(userId, gutTags.FISH, mealLimit.DEFAULT);
         user.mealPlan = {
           startDate: newWeekStartDate,
           endDate: newWeekEndDate,
@@ -332,7 +332,7 @@ exports.nextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) => {
         user.phases.phase3.crustacean.startDate = newWeekStartDate;
         user.phases.phase3.crustacean.endDate = newWeekEndDate;
         //change currentMealPlan
-        let meals = getMealListForTestPhase(gutTags.CRUSTACEAN, mealLimit.DEFAULT);
+        let meals = await getMealListForTestPhase(userId, gutTags.CRUSTACEAN, mealLimit.DEFAULT);
         user.mealPlan = {
           startDate: newWeekStartDate,
           endDate: newWeekEndDate,

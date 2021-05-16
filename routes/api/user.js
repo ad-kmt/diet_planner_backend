@@ -4,7 +4,7 @@ const User = require("../../models/User");
 const Payment = require("../../models/Payment");
 const Progress = require("../../models/Progress");
 const { verifyToken, IsAdmin, IsUser } = require("../../middleware/auth");
-const { nextPhase } = require("../../services/core/user/phaseService");
+const { goToNextPhase } = require("../../services/core/user/phaseService");
 const ApiError = require("../../utils/ApiError");
 const httpStatus = require("http-status");
 const { quizEvaluator } = require("../../services/core/quiz/quizEvaluator");
@@ -77,7 +77,7 @@ router.get("/:userId/progress", verifyToken, async (req, res, next) => {
  *                    type: array
  *                    items: *meal
  */
-router.get("/mealPlan", verifyToken, isUser, async (req, res, next) => {
+router.get("/mealPlan", verifyToken, IsUser, async (req, res, next) => {
   try {
     //get basic meal plan for user
     const user = await User.findById(req.user.id).select("mealPlan");
@@ -349,7 +349,7 @@ router.post(
       let userId = req.params.userId;
       let { completedPhase, nextPhase } = req.body;
 
-      await nextPhase(userId, completedPhase, nextPhase);
+      await goToNextPhase(userId, completedPhase, nextPhase);
 
       let user = await User.findById(req.params.userId).select("currentPhase");
       res.status(201).json(user.currentPhase);

@@ -7,7 +7,7 @@ const fileUpload = require('express-fileupload');
 require("dotenv").config();
 const ApiError = require('./utils/ApiError');
 const { errorConverter, errorHandler } = require('./middleware/error');
-
+const httpStatus = require('http-status');
 
 const app = express();
 

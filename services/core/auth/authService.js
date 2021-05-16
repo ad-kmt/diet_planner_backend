@@ -4,6 +4,7 @@ const { sendEmailWithNodemailer } = require("../../../utils/nodeMailer");
 const jwt = require("jsonwebtoken");
 const httpStatus = require("http-status");
 require("dotenv").config();
+const bcrypt = require("bcryptjs");
 
 exports.generateHashedPass = async (password) => {
   // Encrypt the password

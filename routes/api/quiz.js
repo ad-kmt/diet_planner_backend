@@ -4,7 +4,6 @@ const { validationResult } = require("express-validator");
 const Quiz = require("../../models/Quiz");
 const {verifyToken, IsAdmin, IsUser}= require("../../middleware/auth");
 const {quizEvaluator} = require("../../services/core/quiz/quizEvaluator");
-const {quizEvaluator2} = require("../../services/core/quiz/quizEvaluator2");
 const User = require("../../models/User");
 const ApiError = require("../../utils/ApiError");
 const httpStatus = require("http-status");
