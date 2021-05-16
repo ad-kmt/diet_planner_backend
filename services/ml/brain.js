@@ -57,6 +57,7 @@ var getTrainingDataSetFromExcel = async function(){
   let columnNames = [];
   var trainingData = [];
   var limits=[];
+  var weight=[]
   /**
    * col1: Ques. no.
    * col2: Symptoms
@@ -70,8 +71,10 @@ var getTrainingDataSetFromExcel = async function(){
    *  output: {"ResultCategory": "1"}
    * }
    */
-
-  for (let j = 2; j < rows[0].length; j++) {
+  for(let i=2;i<rows.length;i++){
+    weight.push(rows[i][2]);
+  }
+  for (let j = 3; j < rows[0].length; j++) {
     columnNames.push(rows[0][j]);
     limits.push(rows[1][j]);
 
@@ -84,7 +87,7 @@ var getTrainingDataSetFromExcel = async function(){
     //pushing to training data set
     trainingData.push(input);
   }
-  let trainingDataSet = {trainingData, columnNames, limits};
+  let trainingDataSet = {trainingData, columnNames, limits, weight};
   // console.log(trainingDataSet);
   return trainingDataSet;
 }
