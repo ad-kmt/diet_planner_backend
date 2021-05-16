@@ -5,7 +5,7 @@ const Payment = new mongoose.Schema({
     amount: {type: Number},
     currency: {type: String},
     date: {type: Date},
-    plan: {type: String},
+    planId: {type: mongoose.Schema.Types.ObjectId},
     description: {type: String}
 });
 

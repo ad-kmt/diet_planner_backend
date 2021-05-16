@@ -10,6 +10,8 @@ const { DateTime } = require("luxon");
 const User = require("../../../models/User");
 const gutTags = require("../../constants/gutTags");
 const Meal = require("../../../models/Meal");
+const ApiError = require("../../../utils/ApiError");
+const httpStatus = require("http-status");
 
 
 
@@ -410,6 +412,13 @@ exports.startPhasePlan = async (user) => {
     endDate: weekEndDate,
     meals,
   };
+
+  user.currentPlan.startDate = phaseStartDate;
+  if(!user.currentPlan){
+    throw new ApiError(httpStatus.BAD_REQUEST, "User doesn't have any upcoming plans!")
+  }
+  let planExpiryDate = phaseStartDate.plus({ days: user.currentPlan.duration });
+  user.currentPlan.expiryDate = planExpiryDate;
   
   // console.log(user);
   await User.findByIdAndUpdate(user.id, user);

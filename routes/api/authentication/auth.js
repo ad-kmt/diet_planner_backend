@@ -15,6 +15,7 @@ const { BAD_REQUEST, UNAUTHORIZED } = require("http-status");
 const router = express.Router();
 const { validate } = require("../../../middleware/validate");
 const { generateHashedPass } = require("../../../services/core/auth/authService");
+const { startPhasePlan } = require("../../../services/core/user/phaseService");
 
 // @route    GET api/auth
 // @desc     Get user by token
@@ -220,7 +221,7 @@ router.post("/account-activation-after-signup", async (req, res, next) => {
 
 
 
-router.post("/account-activation-after-payment", async (req, res, next) => {
+router.post("/account-activation", async (req, res, next) => {
   try {
     const { token, password } = req.body;
     if (!token) {
@@ -246,6 +247,9 @@ router.post("/account-activation-after-payment", async (req, res, next) => {
 
       //Saving user in DB
       await User.findByIdAndUpdate(user.id, user);
+      
+      //Starting Phase Plan
+      await startPhasePlan(user);
 
       res.json({
         message: "Account activated successfully. Please login to continue.",
@@ -470,8 +474,8 @@ router.post(
 
       const { id, firstName, lastName } = user;
 
-      let token = await jwt.sign(payload, process.env.JWT_SECRET, {
-        expiresIn: "5 days",
+      let token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: "7d",
       });
 
       res.json({
@@ -570,6 +574,7 @@ router.post("/google-login", async (req, res, next) => {
       });
     } else {
       const newUser = new User();
+      newUser.account.isActivated = true;
       newUser.account.google.id = sub;
       newUser.firstName = given_name;
       newUser.lastName = family_name;
@@ -669,6 +674,12 @@ router.post("/facebook-login", (req, res, next) => {
           });
         } else {
           user = new User({
+            account:{
+              isActivated: true,
+              facebook: {
+                id: userID
+              },
+            },
             firstName: first_name,
             lastName: last_name,
             email,
