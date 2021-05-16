@@ -10,6 +10,7 @@ const { IsAdmin, verifyToken } = require('../../middleware/auth');
 const ApiError = require('../../utils/ApiError');
 const httpStatus = require('http-status');
 const { validate } = require('../../middleware/validate');
+const { generateHashedPass } = require('../../services/core/auth/authService');
 
 
 // @route    GET api/auth
@@ -169,9 +170,7 @@ router.post('/', [
         admin = new Admin(req.body);
 
         // Encrypt the password
-        const salt = await bcrypt.genSalt(10);
-
-        admin.password = await bcrypt.hash(req.body.password, salt);
+        admin.password = await generateHashedPass(password);
 
         await admin.save();
 

@@ -5,7 +5,7 @@ const { getMeals } = require("../../services/core/meal/mealPlanner");
 const Payment = require("../../models/Payment");
 const Progress = require("../../models/Progress");
 const { verifyToken, IsAdmin, IsUser } = require("../../middleware/auth");
-const { next } = require("../../services/core/user/phaseService");
+const { nextPhase } = require("../../services/core/user/phaseService");
 const ApiError = require("../../utils/ApiError");
 const httpStatus = require("http-status");
 const { quizEvaluator } = require("../../services/core/quiz/quizEvaluator");
@@ -350,7 +350,7 @@ router.post(
       let userId = req.params.userId;
       let { completedPhase, nextPhase } = req.body;
 
-      await next(userId, completedPhase, nextPhase);
+      await nextPhase(userId, completedPhase, nextPhase);
 
       let user = await User.findById(req.params.userId).select("currentPhase");
       res.status(201).json(user.currentPhase);
@@ -434,6 +434,7 @@ router.post("/quiz", async (req, res, next) => {
     //2 times update(1 here and 1 inside quizEvaluator) can be reduced to single update.
     user = await user.save();
     const result = await quizEvaluator(quizResponse, user.id);
+    
     res.status(200).json({
       user: {
         id: user.id,

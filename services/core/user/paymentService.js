@@ -10,6 +10,7 @@ const {
   getMealPlan,
 } = require("../meal/mealPlanner");
 const mealLimit = require("../../constants/mealLimit");
+const { startPhasePlan } = require("./phaseService");
 
 exports.paymentViaStripe = async (userId, plan, token) => {
   let user = await User.findById(userId).select("id email");
@@ -59,45 +60,9 @@ exports.postPaymentUpdate = async (userId, plan) => {
       expiryDate,
     };
 
-    //PHASE 1
-    let phaseStartDate = DateTime.now().plus({ days: 1 });
-    let phaseEndDate = phaseStartDate.plus({ days: 20 });
-    let weekEndDate = phaseStartDate.plus({ days: 6 });
-
-    user.currentPhase = {
-      phase: 1,
-      week: 1,
-      startDate: phaseStartDate,
-      endDate: weekEndDate,
-    };
-
-    user.phases = {
-      phase1: {
-        startDate: phaseStartDate,
-        endDate: phaseEndDate,
-        status: phaseStatus.IN_PROGRESS,
-        week1: {
-          startDate: phaseStartDate,
-          endDate: weekEndDate,
-          status: phaseStatus.IN_PROGRESS,
-        },
-      },
-    };
-    let { meals } = await getMealPlan({
-      userId: user.id,
-      mealMaxLimit: mealLimit.DEFAULT,
-      days: 7,
-      gutHealing: true,
-    });
-    
-    user.mealPlan = {
-      startDate: phaseStartDate,
-      endDate: weekEndDate,
-      meals,
-    };
-    
-    // console.log(user);
     await User.findByIdAndUpdate(user.id, user);
+    
+    await startPhasePlan(user);
 
     return payment;
   } catch (error) {

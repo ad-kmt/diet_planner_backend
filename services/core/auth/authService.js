@@ -5,6 +5,12 @@ const jwt = require("jsonwebtoken");
 const httpStatus = require("http-status");
 require("dotenv").config();
 
+exports.generateHashedPass = async (password) => {
+  // Encrypt the password
+  const salt = await bcrypt.genSalt(10);
+  return await bcrypt.hash(password, salt);
+}
+
 exports.sendAccountActivationLink = async (user) => {
     const { firstName, lastName, email } = user;
 

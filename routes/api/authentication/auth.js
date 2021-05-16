@@ -14,6 +14,7 @@ const logger = require("../../../config/logger");
 const { BAD_REQUEST, UNAUTHORIZED } = require("http-status");
 const router = express.Router();
 const { validate } = require("../../../middleware/validate");
+const { generateHashedPass } = require("../../../services/core/auth/authService");
 
 // @route    GET api/auth
 // @desc     Get user by token
@@ -181,7 +182,7 @@ router.post("/account-activation-after-signup", async (req, res, next) => {
         "Token required in request body."
       );
     } else {
-      let decoded = await jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION);
+      let decoded = jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION);
 
       const { firstName, lastName, email, password } = decoded;
 
@@ -203,9 +204,7 @@ router.post("/account-activation-after-signup", async (req, res, next) => {
       });
 
       // Encrypt the password
-      const salt = await bcrypt.genSalt(10);
-
-      user.account.local.password = await bcrypt.hash(password, salt);
+      user.account.local.password = await generateHashedPass(password);
 
       //Saving user in DB
       await user.save();
@@ -240,24 +239,10 @@ router.post("/account-activation-after-payment", async (req, res, next) => {
         throw new ApiError(httpStatus.BAD_REQUEST, "User already activated.");
       }
 
-      // user = new User({
-      //   firstName,
-      //   lastName,
-      //   email,
-      //   account: {
-      //     isActivated: true,
-      //     local: {
-      //       password,
-      //     },
-      //   },
-      // });
-
       user.account.isActivated=true;
 
       // Encrypt the password
-      const salt = await bcrypt.genSalt(10);
-
-      user.account.local.password = await bcrypt.hash(password, salt);
+      user.account.local.password = await generateHashedPass(password);
 
       //Saving user in DB
       await User.findByIdAndUpdate(user.id, user);
@@ -387,7 +372,7 @@ router.put("/reset-password", async (req, res, next) => {
       );
     }
 
-    let decoded = await jwt.verify(
+    let decoded = jwt.verify(
       resetPasswordLink,
       process.env.JWT_RESET_PASSWORD
     );
@@ -397,9 +382,7 @@ router.put("/reset-password", async (req, res, next) => {
     });
 
     // Encrypt the password
-    const salt = await bcrypt.genSalt(10);
-
-    user.account.local.password = await bcrypt.hash(newPassword, salt);
+    user.account.local.password = await generateHashedPass(password);
     user.account.local.resetPasswordLink = "";
     await User.findByIdAndUpdate(user.id, user);
 

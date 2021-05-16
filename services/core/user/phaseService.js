@@ -13,7 +13,7 @@ const Meal = require("../../../models/Meal");
 
 
 
-exports.next = async (userId, completedPhase, nextPhase, mealMaxLimit) => {
+exports.nextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) => {
   let user = await User.findById(userId).select("currentPhase phases mealPlan");
 
   // console.log(user);
@@ -372,6 +372,48 @@ exports.next = async (userId, completedPhase, nextPhase, mealMaxLimit) => {
 
   await User.findByIdAndUpdate(userId, user);
 };
+
+exports.startPhasePlan = async (user) => {
+  //PHASE 1
+  let phaseStartDate = DateTime.now().plus({ days: 1 });
+  let phaseEndDate = phaseStartDate.plus({ days: 20 });
+  let weekEndDate = phaseStartDate.plus({ days: 6 });
+
+  user.currentPhase = {
+    phase: 1,
+    week: 1,
+    startDate: phaseStartDate,
+    endDate: weekEndDate,
+  };
+
+  user.phases = {
+    phase1: {
+      startDate: phaseStartDate,
+      endDate: phaseEndDate,
+      status: phaseStatus.IN_PROGRESS,
+      week1: {
+        startDate: phaseStartDate,
+        endDate: weekEndDate,
+        status: phaseStatus.IN_PROGRESS,
+      },
+    },
+  };
+  let { meals } = await getMealPlan({
+    userId: user.id,
+    mealMaxLimit: mealLimit.DEFAULT,
+    days: 7,
+    gutHealing: true,
+  });
+  
+  user.mealPlan = {
+    startDate: phaseStartDate,
+    endDate: weekEndDate,
+    meals,
+  };
+  
+  // console.log(user);
+  await User.findByIdAndUpdate(user.id, user);
+}
 
 /**
  * Buys Plan: start date = utc next
