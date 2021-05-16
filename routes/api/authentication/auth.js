@@ -14,6 +14,8 @@ const logger = require("../../../config/logger");
 const { BAD_REQUEST, UNAUTHORIZED } = require("http-status");
 const router = express.Router();
 const { validate } = require("../../../middleware/validate");
+const { generateHashedPass } = require("../../../services/core/auth/authService");
+const { startPhasePlan } = require("../../../services/core/user/phaseService");
 
 // @route    GET api/auth
 // @desc     Get user by token
@@ -181,7 +183,7 @@ router.post("/account-activation-after-signup", async (req, res, next) => {
         "Token required in request body."
       );
     } else {
-      let decoded = await jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION);
+      let decoded = jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION);
 
       const { firstName, lastName, email, password } = decoded;
 
@@ -203,9 +205,7 @@ router.post("/account-activation-after-signup", async (req, res, next) => {
       });
 
       // Encrypt the password
-      const salt = await bcrypt.genSalt(10);
-
-      user.account.local.password = await bcrypt.hash(password, salt);
+      user.account.local.password = await generateHashedPass(password);
 
       //Saving user in DB
       await user.save();
@@ -221,7 +221,7 @@ router.post("/account-activation-after-signup", async (req, res, next) => {
 
 
 
-router.post("/account-activation-after-payment", async (req, res, next) => {
+router.post("/account-activation", async (req, res, next) => {
   try {
     const { token, password } = req.body;
     if (!token) {
@@ -240,27 +240,16 @@ router.post("/account-activation-after-payment", async (req, res, next) => {
         throw new ApiError(httpStatus.BAD_REQUEST, "User already activated.");
       }
 
-      // user = new User({
-      //   firstName,
-      //   lastName,
-      //   email,
-      //   account: {
-      //     isActivated: true,
-      //     local: {
-      //       password,
-      //     },
-      //   },
-      // });
-
       user.account.isActivated=true;
 
       // Encrypt the password
-      const salt = await bcrypt.genSalt(10);
-
-      user.account.local.password = await bcrypt.hash(password, salt);
+      user.account.local.password = await generateHashedPass(password);
 
       //Saving user in DB
       await User.findByIdAndUpdate(user.id, user);
+      
+      //Starting Phase Plan
+      await startPhasePlan(user);
 
       res.json({
         message: "Account activated successfully. Please login to continue.",
@@ -387,7 +376,7 @@ router.put("/reset-password", async (req, res, next) => {
       );
     }
 
-    let decoded = await jwt.verify(
+    let decoded = jwt.verify(
       resetPasswordLink,
       process.env.JWT_RESET_PASSWORD
     );
@@ -397,9 +386,7 @@ router.put("/reset-password", async (req, res, next) => {
     });
 
     // Encrypt the password
-    const salt = await bcrypt.genSalt(10);
-
-    user.account.local.password = await bcrypt.hash(newPassword, salt);
+    user.account.local.password = await generateHashedPass(password);
     user.account.local.resetPasswordLink = "";
     await User.findByIdAndUpdate(user.id, user);
 
@@ -487,8 +474,8 @@ router.post(
 
       const { id, firstName, lastName } = user;
 
-      let token = await jwt.sign(payload, process.env.JWT_SECRET, {
-        expiresIn: "5 days",
+      let token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: "7d",
       });
 
       res.json({
@@ -587,6 +574,7 @@ router.post("/google-login", async (req, res, next) => {
       });
     } else {
       const newUser = new User();
+      newUser.account.isActivated = true;
       newUser.account.google.id = sub;
       newUser.firstName = given_name;
       newUser.lastName = family_name;
@@ -686,6 +674,12 @@ router.post("/facebook-login", (req, res, next) => {
           });
         } else {
           user = new User({
+            account:{
+              isActivated: true,
+              facebook: {
+                id: userID
+              },
+            },
             firstName: first_name,
             lastName: last_name,
             email,

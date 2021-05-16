@@ -11,13 +11,11 @@ exports.verifyToken = function (req, res, next) {
 
     if (!token) {
       throw new  ApiError(httpStatus.UNAUTHORIZED, "No token, authorization denied");
-      // return res.status(401).json({ msg: "Token is not valid" });
     } else {
       // Verify token
       jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
         if (error) {
           throw new  ApiError(httpStatus.UNAUTHORIZED, "Token is not valid");
-          // return res.status(401).json({ msg: "Token is not valid" });
         } else {
           if (decoded.role == role.Admin) {
             req.admin = decoded.admin;

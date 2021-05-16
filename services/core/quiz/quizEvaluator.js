@@ -1,16 +1,14 @@
-const { evaluateQuizResult } = require("../../ml/brain");
+const { getTrainingDataSetFromExcel } = require("../../ml/brain");
 const { GENDER, ACTIVITY, FOOD_INTOLERANCE, FOOD_RESTRICTIONS} = require("../../constants/quizConstants");
 const gutTags= require("../../constants/gutTags");
 const User = require("../../../models/User");
 
-
 var quizEvaluator = async (input, userId) => {
-    
+
     let section1 = input[0];
     let section2 = input[1];
     let section3 = input[2];
     let section4 = input[3];
-
 
     // ------------------------- SECTION 1 - ABOUT YOU -----------------------------
 
@@ -87,23 +85,75 @@ var quizEvaluator = async (input, userId) => {
         carbs=(desiredCalories-(proteins*4))*0.55/4;
     }
     estimatedDays=Math.abs(weight - desiredWeight)*1100/desiredCalories*7;
-    
+
     // ------------------------- SECTION 2 & 3 - ABOUT YOUR GUT & LIFESTYLE -----------------------------
 
-    //Input to ML Model to detect evaluate conclusion from quiz/symptoms.
-    let symptomsData=[];
-
+    let symptoms=[];
     section2.questions.map(question => question.options.map(option=> {
-        option.selected ? symptomsData.push(1) : symptomsData.push(0);
+      option.selected ? symptoms.push(1) : symptoms.push(0);
     }));
     section3.questions.map(question => question.options.map(option=> {
-        option.selected ? symptomsData.push(1) : symptomsData.push(0);
+      option.selected ? symptoms.push(1) : symptoms.push(0);
     }));
 
-    const conclusions = evaluateQuizResult(symptomsData);
-    let quizConclusion=conclusions;
-
+    let trainingDataSet = await getTrainingDataSetFromExcel();
     
+    let trainingData = trainingDataSet.trainingData;
+    let columns = trainingDataSet.columnNames;
+    let limits = trainingDataSet.limits;
+    let symptomsWeight = trainingDataSet.weight;
+    let conclusionScore=[];
+    let conclusionWeight=[];
+    for(let i=0;i<columns.length;i++){
+        let score=0;
+        let weightSum=0;
+        for(let j=0;j<symptoms.length;j++){
+            if(symptoms[j]===1 && trainingData[i][j]>0){
+                score+=trainingData[i][j];
+                weightSum+=symptomsWeight[j];
+            }
+        }
+        conclusionScore.push(score);
+        conclusionWeight.push(weightSum);
+    }
+
+    let quizConclusion=[];
+    let quizConclusionWeight=[];
+    
+    for(let i=0;i<conclusionScore.length;i++){
+        if(conclusionScore[i]>=limits[i]){
+            quizConclusion.push(columns[i]);
+            quizConclusionWeight.push(conclusionWeight[i]);
+        }
+    }
+    
+    var majorConclusion=[];
+    var minorConclusion=[];
+    let maxWeight=0;
+    majorConclusion.push(columns[0]);
+    if(quizConclusion.length===0){
+        for(let i=0;i<columns.length;i++){
+            if(conclusionScore[i]>=4 && conclusionWeight[i]>maxWeight){
+                majorConclusion[0]=columns[i];
+                maxWeight=conclusionWeight[i];
+            }
+        }
+        for(let i=0;i<columns.length;i++){
+            if(conclusionScore[i]>=4 && columns[i]!=majorConclusion[0]) minorConclusion.push(columns[i]);
+        }
+    }
+    else{
+        for(let i=0;i<quizConclusion.length;i++){
+            if(quizConclusionWeight[i]>maxWeight){
+                majorConclusion[0]=quizConclusion[i];
+                maxWeight=quizConclusionWeight[i];
+            }
+        }
+        for(let i=0;i<quizConclusion.length;i++){
+            if(quizConclusion[i]!==majorConclusion[0]) minorConclusion.push(quizConclusion[i]);
+        }
+    }
+    const finalConclusion={majorConclusion, minorConclusion};
     //EVALUATING FOOD RESTRICTIONS FROM QUIZ
     let foodRestrictions=[];
 
@@ -119,6 +169,7 @@ var quizEvaluator = async (input, userId) => {
     });
 
     //FOOD RESTRICTIONS
+    console.log(section3.questions[4]);
     section3.questions[4].options.forEach(o => {
         if(o.selected){
             if(o.option === FOOD_RESTRICTIONS.MEAT){
@@ -154,7 +205,7 @@ var quizEvaluator = async (input, userId) => {
         desiredWeight, 
         desiredCalories,
         desiredNutrients, 
-        quizConclusion, 
+        quizConclusion: finalConclusion, 
         foodRestrictions, 
         activity
     };
@@ -164,10 +215,11 @@ var quizEvaluator = async (input, userId) => {
     const user = {gender,age,quizResponse,healthRecords}
     await User.findByIdAndUpdate(userId, user);
 
-    let result = {conclusions, healthRecords, estimation};
+    let result = {conclusions: finalConclusion, healthRecords, estimation};
     
 
     return result;
+
 }
 
 module.exports = {

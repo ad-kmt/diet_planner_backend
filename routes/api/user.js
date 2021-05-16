@@ -1,11 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../../models/User");
-const { getMeals } = require("../../services/core/meal/mealPlanner");
 const Payment = require("../../models/Payment");
 const Progress = require("../../models/Progress");
 const { verifyToken, IsAdmin, IsUser } = require("../../middleware/auth");
-const { next } = require("../../services/core/user/phaseService");
+const { nextPhase } = require("../../services/core/user/phaseService");
 const ApiError = require("../../utils/ApiError");
 const httpStatus = require("http-status");
 const { quizEvaluator } = require("../../services/core/quiz/quizEvaluator");
@@ -78,11 +77,11 @@ router.get("/:userId/progress", verifyToken, async (req, res, next) => {
  *                    type: array
  *                    items: *meal
  */
-router.get("/:userId/meal", verifyToken, async (req, res, next) => {
+router.get("/mealPlan", verifyToken, isUser, async (req, res, next) => {
   try {
     //get basic meal plan for user
-    const mealPlan = getMeals(req.params.userId);
-    res.status(200).json(mealPlan);
+    const user = await User.findById(req.user.id).select("mealPlan");
+    res.status(200).json(user.mealPlan);
   } catch (err) {
     next(err);
   }
@@ -350,7 +349,7 @@ router.post(
       let userId = req.params.userId;
       let { completedPhase, nextPhase } = req.body;
 
-      await next(userId, completedPhase, nextPhase);
+      await nextPhase(userId, completedPhase, nextPhase);
 
       let user = await User.findById(req.params.userId).select("currentPhase");
       res.status(201).json(user.currentPhase);
@@ -423,6 +422,9 @@ router.post("/quiz", async (req, res, next) => {
       user.firstName = firstName;
       user.lastName = lastName;
       user.quizResponse = quizResponse;
+
+      user = await User.findByIdAndUpdate(user.id, user);
+
     } else {
       user = new User({
         firstName,
@@ -430,10 +432,12 @@ router.post("/quiz", async (req, res, next) => {
         email,
         quizResponse,
       });
+      user = await user.save();
     }
     //2 times update(1 here and 1 inside quizEvaluator) can be reduced to single update.
-    user = await user.save();
+    
     const result = await quizEvaluator(quizResponse, user.id);
+    
     res.status(200).json({
       user: {
         id: user.id,

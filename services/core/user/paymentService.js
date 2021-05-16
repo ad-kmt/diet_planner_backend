@@ -10,10 +10,17 @@ const {
   getMealPlan,
 } = require("../meal/mealPlanner");
 const mealLimit = require("../../constants/mealLimit");
+const { startPhasePlan } = require("./phaseService");
+const ApiError = require("../../../utils/ApiError");
+const { http } = require("winston");
+const httpStatus = require("http-status");
 
 exports.paymentViaStripe = async (userId, plan, token) => {
   let user = await User.findById(userId).select("id email");
 
+  if(!user){
+    throw new ApiError(httpStatus.BAD_REQUEST, "user doesn't exist");
+  }
   const customer = await stripe.customers.create({
     email: token.email,
     source: token.id,
@@ -36,67 +43,32 @@ exports.paymentViaStripe = async (userId, plan, token) => {
 
 exports.postPaymentUpdate = async (userId, plan) => {
   try {
-    const startDate = DateTime.now();
-    const expiryDate = DateTime.now().plus({ days: plan.duration });
+  
+    if(!plan){
+      throw new ApiError(httpStatus.BAD_REQUEST, "Plan cannont be null");
+    }
 
     let user = {
       id: userId,
     };
 
+    //Need to add Plan Id
     const payment = await Payment.create({
       userId: user.id,
       amount: plan.sellingPrice,
       currency: "inr",
       date: DateTime.now(),
-      plan: plan.name,
+      planId: plan.id,
     });
 
     user.currentPlan = {
+      planId: plan.id,
       name: plan.name,
       price: plan.sellingPrice,
       paymentId: payment.id,
-      startDate,
-      expiryDate,
+      duration: plan.duration,
     };
 
-    //PHASE 1
-    let phaseStartDate = DateTime.now().plus({ days: 1 });
-    let phaseEndDate = phaseStartDate.plus({ days: 20 });
-    let weekEndDate = phaseStartDate.plus({ days: 6 });
-
-    user.currentPhase = {
-      phase: 1,
-      week: 1,
-      startDate: phaseStartDate,
-      endDate: weekEndDate,
-    };
-
-    user.phases = {
-      phase1: {
-        startDate: phaseStartDate,
-        endDate: phaseEndDate,
-        status: phaseStatus.IN_PROGRESS,
-        week1: {
-          startDate: phaseStartDate,
-          endDate: weekEndDate,
-          status: phaseStatus.IN_PROGRESS,
-        },
-      },
-    };
-    let { meals } = await getMealPlan({
-      userId: user.id,
-      mealMaxLimit: mealLimit.DEFAULT,
-      days: 7,
-      gutHealing: true,
-    });
-    
-    user.mealPlan = {
-      startDate: phaseStartDate,
-      endDate: weekEndDate,
-      meals,
-    };
-    
-    // console.log(user);
     await User.findByIdAndUpdate(user.id, user);
 
     return payment;
