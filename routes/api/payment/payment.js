@@ -13,7 +13,7 @@ const Payment = require('../../../models/Payment');
  * /api/payment:
  *  get:
  *    tags:
- *      - user
+ *      - payment
  *    parameters:
  *      -  in: header
  *         name: x-auth-token
@@ -49,7 +49,7 @@ const Payment = require('../../../models/Payment');
  * /api/payments/{paymentId}:
  *  get:
  *    tags:
- *      - user
+ *      - payment
  *    parameters:
  *      -  in: header
  *         name: x-auth-token

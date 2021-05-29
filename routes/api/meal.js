@@ -4,7 +4,7 @@ const { validationResult } = require("express-validator");
 const httpStatus = require("http-status");
 const { verifyToken, IsAdmin, IsUser } = require("../../middleware/auth");
 const Meal = require("../../models/Meal");
-const { LESS_VARIETY, MORE_VARIETY } = require("../../services/constants/mealLimit");
+const { LESS_VARIETY, MORE_VARIETY, DEFAULT } = require("../../services/constants/mealLimit");
 const { shuffleMealPlan, shuffleBreakfast, shuffleSnacks, shuffleLunch, shuffleDinner, shuffleBreakfastSingle, shuffleLunchSingle, shuffleSnacksSingle, shuffleDinnerSingle } = require("../../services/core/meal/mealShuffler");
 const ApiError = require("../../utils/ApiError");
 
@@ -239,7 +239,7 @@ router.delete("/:id", verifyToken, IsAdmin, async (req, res, next) => {
 
 /**
  * @swagger
- * /api/meal/shuffle/mealCombo:
+ * /api/meal/shuffle/meal:
  *   post:
  *     tags:
  *       - meal
@@ -269,7 +269,7 @@ router.delete("/:id", verifyToken, IsAdmin, async (req, res, next) => {
  *                  type: string
  *              gutHealing:
  *                type: boolean
- *     summary: Shuffle a meal combo inside a meal plan.
+ *     summary: Shuffle a single meal, inside a meal combo, inside a meal plan.
  *     responses:
  *       '200':
  *          description: Successful
@@ -419,6 +419,8 @@ router.post('/shuffle/mealplan', verifyToken, IsUser, async (req, res, next) => 
       mealMaxLimit = LESS_VARIETY;
     } else if(variety == "more"){
       mealMaxLimit = MORE_VARIETY;
+    } else {
+      mealMaxLimit = DEFAULT;
     }
     let meals = await shuffleMealPlan(req.user.id, mealMaxLimit, foodRestrictions);
     res.json(meals);
