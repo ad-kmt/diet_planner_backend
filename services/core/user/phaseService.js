@@ -25,26 +25,26 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
         user.phases.phase1.week2.status = phaseStatus.DONE;
     } else if (completedPhase.phase == 1 && completedPhase.week == 3){
         user.phases.phase1.week3.status = phaseStatus.DONE;
-    } else if (completedPhase.phase == 2 && completedPhase.foodTest == gutTags.GLUTEN){
+    } else if (completedPhase.phase == 2 && completedPhase.testFoodTag == gutTags.GLUTEN){
         user.phases.phase1.status = phaseStatus.DONE
         user.phases.phase2.gluten.status = phaseStatus.DONE;
-    } else if (completedPhase.phase == 2 && completedPhase.foodTest == gutTags.DAIRY){
+    } else if (completedPhase.phase == 2 && completedPhase.testFoodTag == gutTags.DAIRY){
         user.phases.phase2.dairy.status = phaseStatus.DONE;
-    } else if (completedPhase.phase == 3 && completedPhase.foodTest == gutTags.EGG){
+    } else if (completedPhase.phase == 3 && completedPhase.testFoodTag == gutTags.EGG){
         user.phases.phase3.egg.status = phaseStatus.DONE;
-    } else if (completedPhase.phase == 3 && completedPhase.foodTest == gutTags.CORN){
+    } else if (completedPhase.phase == 3 && completedPhase.testFoodTag == gutTags.CORN){
         user.phases.phase3.corn.status = phaseStatus.DONE;
-    } else if (completedPhase.phase == 3 && completedPhase.foodTest == gutTags.RED_MEAT){
+    } else if (completedPhase.phase == 3 && completedPhase.testFoodTag == gutTags.RED_MEAT){
         user.phases.phase3.redMeat.status = phaseStatus.DONE;
-    } else if (completedPhase.phase == 3 && completedPhase.foodTest == gutTags.GRAIN){
+    } else if (completedPhase.phase == 3 && completedPhase.testFoodTag == gutTags.GRAIN){
         user.phases.phase3.grain.status = phaseStatus.DONE;
-    } else if (completedPhase.phase == 3 && completedPhase.foodTest == gutTags.FISH){
+    } else if (completedPhase.phase == 3 && completedPhase.testFoodTag == gutTags.FISH){
         user.phases.phase3.fish.status = phaseStatus.DONE;
-    } else if (completedPhase.phase == 3 && completedPhase.foodTest == gutTags.SOY){
+    } else if (completedPhase.phase == 3 && completedPhase.testFoodTag == gutTags.SOY){
         user.phases.phase3.soy.status = phaseStatus.DONE;
-    } else if (completedPhase.phase == 3 && completedPhase.foodTest == gutTags.CRUSTACEAN){
+    } else if (completedPhase.phase == 3 && completedPhase.testFoodTag == gutTags.CRUSTACEAN){
         user.phases.phase3.crustacean.status = phaseStatus.DONE;
-    } else if (completedPhase.phase == 3 && completedPhase.foodTest == gutTags.SEA_FOOD){
+    } else if (completedPhase.phase == 3 && completedPhase.testFoodTag == gutTags.SEA_FOOD){
         user.phases.phase3.seaFood.status = phaseStatus.DONE;
     } else {
       throw new ApiError(httpStatus.BAD_REQUEST, "Completed Phase is not in correct format");
@@ -93,7 +93,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
         endDate: newWeekEndDate,
         meals,
       };
-    } else if (nextPhase.phase == 2 && nextPhase.foodTest == gutTags.GLUTEN) {
+    } else if (nextPhase.phase == 2 && nextPhase.testFoodTag == gutTags.GLUTEN) {
 
         user.phases.phase1.status = phaseStatus.DONE
 
@@ -105,7 +105,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
         user.currentPhase.endDate = newWeekEndDate;
         user.currentPhase.week = 1;
         user.currentPhase.phase = 2;
-        user.currentPhase.foodTest = gutTags.GLUTEN
+        user.currentPhase.testFoodTag = gutTags.GLUTEN
 
         user.phases.phase2.gluten.status = phaseStatus.IN_PROGRESS;
         user.phases.phase2.gluten.startDate = newWeekStartDate;
@@ -121,7 +121,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
           endDate: newWeekEndDate,
           meals,
         };
-    } else if (nextPhase.phase == 2 && nextPhase.foodTest == gutTags.DAIRY) {
+    } else if (nextPhase.phase == 2 && nextPhase.testFoodTag == gutTags.DAIRY) {
         //change currentPhase values
         let newWeekStartDate = DateTime.now();
         let newWeekEndDate = newWeekStartDate.plus({ days: 6 });
@@ -130,7 +130,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
         user.currentPhase.endDate = newWeekEndDate;
         user.currentPhase.week = 2;
         user.currentPhase.phase = 2;
-        user.currentPhase.foodTest = gutTags.DAIRY;
+        user.currentPhase.testFoodTag = gutTags.DAIRY;
 
         user.phases.phase2.dairy.status = phaseStatus.IN_PROGRESS;
         user.phases.phase2.dairy.startDate = newWeekStartDate;
@@ -144,7 +144,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
           endDate: newWeekEndDate,
           meals,
         };
-    } else if (nextPhase.phase == 3 && nextPhase.foodTest == gutTags.EGG){
+    } else if (nextPhase.phase == 3 && nextPhase.testFoodTag == gutTags.EGG){
 
         //change phase 2 status
         user.phases.phase2.status = phaseStatus.DONE
@@ -157,7 +157,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
         user.currentPhase.endDate = newWeekEndDate;
         user.currentPhase.week = null;
         user.currentPhase.phase = 3;
-        user.currentPhase.foodTest = gutTags.EGG;
+        user.currentPhase.testFoodTag = gutTags.EGG;
 
         if(user.phases.phase3.startDate==null){
           user.phases.phase3.startDate=newWeekStartDate;
@@ -174,7 +174,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
           endDate: newWeekEndDate,
           meals,
         };
-    } else if (nextPhase.phase == 3 && nextPhase.foodTest == gutTags.CORN){
+    } else if (nextPhase.phase == 3 && nextPhase.testFoodTag == gutTags.CORN){
         
         //change phase 2 status
         user.phases.phase2.status = phaseStatus.DONE
@@ -186,7 +186,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
         user.currentPhase.endDate = newWeekEndDate;
         user.currentPhase.week = null;
         user.currentPhase.phase = 3;
-        user.currentPhase.foodTest = gutTags.CORN;
+        user.currentPhase.testFoodTag = gutTags.CORN;
 
         user.phases.phase3.corn.status = phaseStatus.IN_PROGRESS;
         user.phases.phase3.corn.startDate = newWeekStartDate;
@@ -200,7 +200,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
           endDate: newWeekEndDate,
           meals,
         };
-    } else if (nextPhase.phase == 3 && nextPhase.foodTest == gutTags.RED_MEAT){ 
+    } else if (nextPhase.phase == 3 && nextPhase.testFoodTag == gutTags.RED_MEAT){ 
         
         //change phase 2 status
         user.phases.phase2.status = phaseStatus.DONE
@@ -212,7 +212,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
         user.currentPhase.endDate = newWeekEndDate;
         user.currentPhase.week = null;
         user.currentPhase.phase = 3;
-        user.currentPhase.foodTest = gutTags.RED_MEAT;
+        user.currentPhase.testFoodTag = gutTags.RED_MEAT;
 
         user.phases.phase3.redMeat.status = phaseStatus.IN_PROGRESS;
         user.phases.phase3.redMeat.startDate = newWeekStartDate;
@@ -224,7 +224,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
           endDate: newWeekEndDate,
           meals,
         };
-    } else if (nextPhase.phase == 3 && nextPhase.foodTest == gutTags.GRAIN){
+    } else if (nextPhase.phase == 3 && nextPhase.testFoodTag == gutTags.GRAIN){
         //change phase 2 status
         user.phases.phase2.status = phaseStatus.DONE
         //change currentPhase values
@@ -235,7 +235,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
         user.currentPhase.endDate = newWeekEndDate;
         user.currentPhase.week = null;
         user.currentPhase.phase = 3;
-        user.currentPhase.foodTest = gutTags.GRAIN;
+        user.currentPhase.testFoodTag = gutTags.GRAIN;
 
         user.phases.phase3.grain.status = phaseStatus.IN_PROGRESS;
         user.phases.phase3.grain.startDate = newWeekStartDate;
@@ -247,7 +247,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
           endDate: newWeekEndDate,
           meals,
         };
-    } else if (nextPhase.phase == 3 && nextPhase.foodTest == gutTags.SOY){
+    } else if (nextPhase.phase == 3 && nextPhase.testFoodTag == gutTags.SOY){
         //change phase 2 status
         user.phases.phase2.status = phaseStatus.DONE
         //change currentPhase values
@@ -258,7 +258,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
         user.currentPhase.endDate = newWeekEndDate;
         user.currentPhase.phase = 3;
         user.currentPhase.week = null;
-        user.currentPhase.foodTest = gutTags.SOY;
+        user.currentPhase.testFoodTag = gutTags.SOY;
 
         user.phases.phase3.soy.status = phaseStatus.IN_PROGRESS;
         user.phases.phase3.soy.startDate = newWeekStartDate;
@@ -270,7 +270,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
           endDate: newWeekEndDate,
           meals,
         };
-    } else if (nextPhase.phase == 3 && nextPhase.foodTest == gutTags.SEA_FOOD){
+    } else if (nextPhase.phase == 3 && nextPhase.testFoodTag == gutTags.SEA_FOOD){
         //change phase 2 status
         user.phases.phase2.status = phaseStatus.DONE
         //change currentPhase values
@@ -281,7 +281,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
         user.currentPhase.endDate = newWeekEndDate;
         user.currentPhase.phase = 3;
         user.currentPhase.week = null;
-        user.currentPhase.foodTest = gutTags.SEA_FOOD;
+        user.currentPhase.testFoodTag = gutTags.SEA_FOOD;
 
         user.phases.phase3.seaFood.status = phaseStatus.IN_PROGRESS;
         user.phases.phase3.seaFood.startDate = newWeekStartDate;
@@ -293,7 +293,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
           endDate: newWeekEndDate,
           meals,
         };
-    } else if (nextPhase.phase == 3 && nextPhase.foodTest == gutTags.FISH){
+    } else if (nextPhase.phase == 3 && nextPhase.testFoodTag == gutTags.FISH){
         //change phase 2 status
         user.phases.phase2.status = phaseStatus.DONE
         //change currentPhase values
@@ -304,7 +304,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
         user.currentPhase.endDate = newWeekEndDate;
         user.currentPhase.phase = 3;
         user.currentPhase.week = null;
-        user.currentPhase.foodTest = gutTags.FISH;
+        user.currentPhase.testFoodTag = gutTags.FISH;
 
         user.phases.phase3.fish.status = phaseStatus.IN_PROGRESS;
         user.phases.phase3.fish.startDate = newWeekStartDate;
@@ -316,7 +316,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
           endDate: newWeekEndDate,
           meals,
         };
-    } else if (nextPhase.phase == 3 && nextPhase.foodTest == gutTags.CRUSTACEAN){
+    } else if (nextPhase.phase == 3 && nextPhase.testFoodTag == gutTags.CRUSTACEAN){
         //change phase 2 status
         user.phases.phase2.status = phaseStatus.DONE
         //change currentPhase values
@@ -327,7 +327,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
         user.currentPhase.endDate = newWeekEndDate;
         user.currentPhase.phase = 3;
         user.currentPhase.week = null;
-        user.currentPhase.foodTest = gutTags.CRUSTACEAN;
+        user.currentPhase.testFoodTag = gutTags.CRUSTACEAN;
 
         user.phases.phase3.crustacean.status = phaseStatus.IN_PROGRESS;
         user.phases.phase3.crustacean.startDate = newWeekStartDate;
@@ -353,7 +353,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
         user.currentPhase.endDate = newWeekEndDate;
         user.currentPhase.phase = 4;
         user.currentPhase.week = null;
-        user.currentPhase.foodTest = null;
+        user.currentPhase.testFoodTag = null;
 
         user.phases.phase4.startDate = newWeekStartDate;
         user.phases.phase4.status = phaseStatus.IN_PROGRESS;

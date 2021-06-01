@@ -261,7 +261,7 @@ router.delete("/:id", verifyToken, IsAdmin, async (req, res, next) => {
  *              mealType:
  *                type: string
  *                example: breakfast/lunch/snacks/dinner
- *              foodTag:
+ *              testFoodTag:
  *                type: string
  *              foodRestrictions:
  *                type: array
@@ -288,16 +288,16 @@ router.post('/shuffle/meal', verifyToken, IsUser, async (req, res, next) => {
 
   try {
 
-    let {mealId, mealCombo, mealType, foodTag, foodRestrictions, gutHealing} = req.body
+    let {mealId, mealCombo, mealType, testFoodTag, foodRestrictions, gutHealing} = req.body
 
     var shuffleMealList;
-    if(mealType == "breakfast") shuffleMealList= await shuffleBreakfastSingle({userId: req.user.id, mealCombo, shuffleMealId: mealId, foodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
+    if(mealType == "breakfast") shuffleMealList= await shuffleBreakfastSingle({userId: req.user.id, mealCombo, shuffleMealId: mealId, testFoodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
 
-    if(mealType == "lunch") shuffleMealList= await shuffleLunchSingle({userId: req.user.id, mealCombo, shuffleMealId: mealId, foodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
+    if(mealType == "lunch") shuffleMealList= await shuffleLunchSingle({userId: req.user.id, mealCombo, shuffleMealId: mealId, testFoodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
 
-    if(mealType == "snacks") shuffleMealList= await shuffleSnacksSingle({userId: req.user.id, mealCombo, shuffleMealId: mealId, foodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
+    if(mealType == "snacks") shuffleMealList= await shuffleSnacksSingle({userId: req.user.id, mealCombo, shuffleMealId: mealId, testFoodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
 
-    if(mealType == "dinner") shuffleMealList= await shuffleDinnerSingle({userId: req.user.id, mealCombo, shuffleMealId: mealId, foodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
+    if(mealType == "dinner") shuffleMealList= await shuffleDinnerSingle({userId: req.user.id, mealCombo, shuffleMealId: mealId, testFoodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
 
     res.json(shuffleMealList);
   } catch (err) {
@@ -329,7 +329,7 @@ router.post('/shuffle/meal', verifyToken, IsUser, async (req, res, next) => {
  *              mealType:
  *                type: string
  *                example: breakfast/lunch/snacks/dinner
- *              foodTag:
+ *              testFoodTag:
  *                type: string
  *              foodRestrictions:
  *                type: array
@@ -356,16 +356,16 @@ router.post('/shuffle/mealCombo', verifyToken, IsUser, async (req, res, next) =>
 
   try {
 
-    let {mealCombo, mealType, foodTag, foodRestrictions, gutHealing} = req.body
+    let {mealCombo, mealType, testFoodTag, foodRestrictions, gutHealing} = req.body
 
     var shuffleMealList;
-    if(mealType == "breakfast") shuffleMealList= await shuffleBreakfast({userId: req.user.id, mealCombo, foodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
+    if(mealType == "breakfast") shuffleMealList= await shuffleBreakfast({userId: req.user.id, mealCombo, testFoodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
 
-    if(mealType == "lunch") shuffleMealList= await shuffleLunch({userId: req.user.id, mealCombo, foodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
+    if(mealType == "lunch") shuffleMealList= await shuffleLunch({userId: req.user.id, mealCombo, testFoodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
 
-    if(mealType == "snacks") shuffleMealList= await shuffleSnacks({userId: req.user.id, mealCombo, foodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
+    if(mealType == "snacks") shuffleMealList= await shuffleSnacks({userId: req.user.id, mealCombo, testFoodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
 
-    if(mealType == "dinner") shuffleMealList= await shuffleDinner({userId: req.user.id, mealCombo, foodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
+    if(mealType == "dinner") shuffleMealList= await shuffleDinner({userId: req.user.id, mealCombo, testFoodTag, extraFoodRestrictions: foodRestrictions, gutHealing});
 
     res.json(shuffleMealList);
   } catch (err) {

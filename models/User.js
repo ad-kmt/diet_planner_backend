@@ -107,7 +107,7 @@ const UserSchema = new mongoose.Schema({
         week: Number,
         startDate: Date,
         endDate: Date,
-        foodTest: String,
+        testFoodTag: String,
     },
     mealPlan: mealPlanSchema,
     phases: {

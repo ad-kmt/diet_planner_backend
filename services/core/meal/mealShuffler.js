@@ -47,17 +47,17 @@ const getMealList = async (
   dailyRequirement,
   margin,
   foodRestrictions,
-  foodTag,
+  testFoodTag,
   gutHealing
 ) => {
   let gutHealingQueryCondition = getGutHealingQueryCondition(gutHealing);
   let mealList;
-  if (foodTag != null) {
+  if (testFoodTag != null) {
     mealList = await Meal.find({
       mealType: mealType,
       calories: { $lte: dailyRequirement.calories * (1 + margin) },
       gutHealing: gutHealingQueryCondition,
-      $and: [{ gutTags: foodTag }, { gutTags: { $nin: foodRestrictions } }],
+      $and: [{ gutTags: testFoodTag }, { gutTags: { $nin: foodRestrictions } }],
       //protein //fats //carbs
     });
   } else {
@@ -136,7 +136,7 @@ const getNewComboListForExistingCombo = (
 const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
   const user = await User.findById(userId);
 
-  let { phase, week, foodTest } = user.currentPhase;
+  let { phase, week, testFoodTag } = user.currentPhase;
   console.log(user.currentPhase);
   if (phase == 1 && (week == 1 || week == 2 || week == 3)) {
     let { meals } = await getMealPlan({
@@ -149,7 +149,7 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
     user.mealPlan.meals = meals;
     await User.findByIdAndUpdate(userId, user);
     return meals;
-  } else if (phase == 2 && foodTest == gutTags.GLUTEN) {
+  } else if (phase == 2 && testFoodTag == gutTags.GLUTEN) {
     let meals = await getMealListForTestPhase(
       user.id,
       gutTags.GLUTEN,
@@ -159,7 +159,7 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
     user.mealPlan.meals = meals;
     await User.findByIdAndUpdate(userId, user);
     return meals;
-  } else if (phase == 2 && foodTest == gutTags.DAIRY) {
+  } else if (phase == 2 && testFoodTag == gutTags.DAIRY) {
     let meals = await getMealListForTestPhase(
       user.id,
       gutTags.DAIRY,
@@ -169,7 +169,7 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
     user.mealPlan.meals = meals;
     await User.findByIdAndUpdate(userId, user);
     return meals;
-  } else if (phase == 3 && foodTest == gutTags.EGG) {
+  } else if (phase == 3 && testFoodTag == gutTags.EGG) {
     let meals = await getMealListForTestPhase(
       user.id,
       gutTags.EGG,
@@ -179,7 +179,7 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
     user.mealPlan.meals = meals;
     await User.findByIdAndUpdate(userId, user);
     return meals;
-  } else if (phase == 3 && foodTest == gutTags.SOY) {
+  } else if (phase == 3 && testFoodTag == gutTags.SOY) {
     let meals = await getMealListForTestPhase(
       user.id,
       gutTags.SOY,
@@ -189,7 +189,7 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
     user.mealPlan.meals = meals;
     await User.findByIdAndUpdate(userId, user);
     return meals;
-  } else if (phase == 3 && foodTest == gutTags.RED_MEAT) {
+  } else if (phase == 3 && testFoodTag == gutTags.RED_MEAT) {
     let meals = await getMealListForTestPhase(
       user.id,
       gutTags.RED_MEAT,
@@ -199,7 +199,7 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
     user.mealPlan.meals = meals;
     await User.findByIdAndUpdate(userId, user);
     return meals;
-  } else if (phase == 3 && foodTest == gutTags.SEA_FOOD) {
+  } else if (phase == 3 && testFoodTag == gutTags.SEA_FOOD) {
     let meals = await getMealListForTestPhase(
       user.id,
       gutTags.SEA_FOOD,
@@ -209,7 +209,7 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
     user.mealPlan.meals = meals;
     await User.findByIdAndUpdate(userId, user);
     return meals;
-  } else if (phase == 3 && foodTest == gutTags.CRUSTACEAN) {
+  } else if (phase == 3 && testFoodTag == gutTags.CRUSTACEAN) {
     let meals = await getMealListForTestPhase(
       user.id,
       gutTags.CRUSTACEAN,
@@ -219,7 +219,7 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
     user.mealPlan.meals = meals;
     await User.findByIdAndUpdate(userId, user);
     return meals;
-  } else if (phase == 3 && foodTest == gutTags.GRAIN) {
+  } else if (phase == 3 && testFoodTag == gutTags.GRAIN) {
     let meals = await getMealListForTestPhase(
       user.id,
       gutTags.GRAIN,
@@ -229,7 +229,7 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
     user.mealPlan.meals = meals;
     await User.findByIdAndUpdate(userId, user);
     return meals;
-  } else if (phase == 3 && foodTest == gutTags.FISH) {
+  } else if (phase == 3 && testFoodTag == gutTags.FISH) {
     let meals = await getMealListForTestPhase(
       user.id,
       gutTags.FISH,
@@ -239,7 +239,7 @@ const shuffleMealPlan = async (userId, mealMaxLimit, extraFoodRestrictions) => {
     user.mealPlan.meals = meals;
     await User.findByIdAndUpdate(userId, user);
     return meals;
-  } else if (phase == 3 && foodTest == gutTags.CORN) {
+  } else if (phase == 3 && testFoodTag == gutTags.CORN) {
     let meals = await getMealListForTestPhase(
       user.id,
       gutTags.CORN,
@@ -267,16 +267,16 @@ const shuffleBreakfastSingle = async (params) => {
     userId,
     shuffleMealId,
     mealCombo,
-    foodTag,
+    testFoodTag,
     extraFoodRestrictions,
     gutHealing,
   } = params;
 
   const user = await User.findById(userId);
 
-  if (user.healthRecords.foodRestrictions.includes(foodTag)) {
+  if (user.healthRecords.foodRestrictions.includes(testFoodTag)) {
     throw new Error(
-      `Food tag - ${foodTag}, is restricted for user - ${user.id}`
+      `Food tag - ${testFoodTag}, is restricted for user - ${user.id}`
     );
   }
 
@@ -323,7 +323,7 @@ const shuffleBreakfastSingle = async (params) => {
       dailyBreakfastRequirement,
       GET_MEAL_MARGIN,
       foodRestrictions,
-      foodTag,
+      testFoodTag,
       gutHealing
     );
 
@@ -341,7 +341,7 @@ const shuffleBreakfastSingle = async (params) => {
       dailyBreakfastRequirement,
       GET_MEAL_MARGIN,
       foodRestrictions,
-      foodTag,
+      testFoodTag,
       gutHealing
     );
 
@@ -407,7 +407,7 @@ const shuffleBreakfastSingle = async (params) => {
 
     console.log(`Margin: ${margin * 100}%`);
     console.log(
-      `Test Food: ${foodTag || "-"} | Food Restrictions: ${
+      `Test Food: ${testFoodTag || "-"} | Food Restrictions: ${
         user.healthRecords.foodRestrictions
       } | Gut Healing: ${gutHealing || "-"};`
     );
@@ -434,16 +434,16 @@ const shuffleLunchSingle = async (params) => {
     userId,
     shuffleMealId,
     mealCombo,
-    foodTag,
+    testFoodTag,
     extraFoodRestrictions,
     gutHealing,
   } = params;
 
   const user = await User.findById(userId);
 
-  if (user.healthRecords.foodRestrictions.includes(foodTag)) {
+  if (user.healthRecords.foodRestrictions.includes(testFoodTag)) {
     throw new Error(
-      `Food tag - ${foodTag}, is restricted for user - ${user.id}`
+      `Food tag - ${testFoodTag}, is restricted for user - ${user.id}`
     );
   }
 
@@ -486,7 +486,7 @@ const shuffleLunchSingle = async (params) => {
       dailyLunchRequirement,
       GET_MEAL_MARGIN,
       foodRestrictions,
-      foodTag,
+      testFoodTag,
       gutHealing
     );
 
@@ -504,7 +504,7 @@ const shuffleLunchSingle = async (params) => {
       dailyLunchRequirement,
       GET_MEAL_MARGIN,
       foodRestrictions,
-      foodTag,
+      testFoodTag,
       gutHealing
     );
 
@@ -570,7 +570,7 @@ const shuffleLunchSingle = async (params) => {
 
     console.log(`Margin: ${margin * 100}%`);
     console.log(
-      `Test Food: ${foodTag || "-"} | Food Restrictions: ${
+      `Test Food: ${testFoodTag || "-"} | Food Restrictions: ${
         user.healthRecords.foodRestrictions
       } | Gut Healing: ${gutHealing || "-"};`
     );
@@ -597,16 +597,16 @@ const shuffleSnacksSingle = async (params) => {
     userId,
     shuffleMealId,
     mealCombo,
-    foodTag,
+    testFoodTag,
     extraFoodRestrictions,
     gutHealing,
   } = params;
 
   const user = await User.findById(userId);
 
-  if (user.healthRecords.foodRestrictions.includes(foodTag)) {
+  if (user.healthRecords.foodRestrictions.includes(testFoodTag)) {
     throw new Error(
-      `Food tag - ${foodTag}, is restricted for user - ${user.id}`
+      `Food tag - ${testFoodTag}, is restricted for user - ${user.id}`
     );
   }
 
@@ -649,7 +649,7 @@ const shuffleSnacksSingle = async (params) => {
       dailySnacksRequirement,
       GET_MEAL_MARGIN,
       foodRestrictions,
-      foodTag,
+      testFoodTag,
       gutHealing
     );
 
@@ -667,7 +667,7 @@ const shuffleSnacksSingle = async (params) => {
       dailySnacksRequirement,
       GET_MEAL_MARGIN,
       foodRestrictions,
-      foodTag,
+      testFoodTag,
       gutHealing
     );
 
@@ -732,7 +732,7 @@ const shuffleSnacksSingle = async (params) => {
     }
     console.log(`Margin: ${margin * 100}%`);
     console.log(
-      `Test Food: ${foodTag || "-"} | Food Restrictions: ${
+      `Test Food: ${testFoodTag || "-"} | Food Restrictions: ${
         user.healthRecords.foodRestrictions
       } | Gut Healing: ${gutHealing || "-"};`
     );
@@ -759,16 +759,16 @@ const shuffleDinnerSingle = async (params) => {
     userId,
     shuffleMealId,
     mealCombo,
-    foodTag,
+    testFoodTag,
     extraFoodRestrictions,
     gutHealing,
   } = params;
 
   const user = await User.findById(userId);
 
-  if (user.healthRecords.foodRestrictions.includes(foodTag)) {
+  if (user.healthRecords.foodRestrictions.includes(testFoodTag)) {
     throw new Error(
-      `Food tag - ${foodTag}, is restricted for user - ${user.id}`
+      `Food tag - ${testFoodTag}, is restricted for user - ${user.id}`
     );
   }
 
@@ -811,7 +811,7 @@ const shuffleDinnerSingle = async (params) => {
       dailyDinnerRequirement,
       GET_MEAL_MARGIN,
       foodRestrictions,
-      foodTag,
+      testFoodTag,
       gutHealing
     );
 
@@ -829,7 +829,7 @@ const shuffleDinnerSingle = async (params) => {
       dailyDinnerRequirement,
       GET_MEAL_MARGIN,
       foodRestrictions,
-      foodTag,
+      testFoodTag,
       gutHealing
     );
 
@@ -894,7 +894,7 @@ const shuffleDinnerSingle = async (params) => {
     }
     console.log(`Margin: ${margin * 100}%`);
     console.log(
-      `Test Food: ${foodTag || "-"} | Food Restrictions: ${
+      `Test Food: ${testFoodTag || "-"} | Food Restrictions: ${
         user.healthRecords.foodRestrictions
       } | Gut Healing: ${gutHealing || "-"};`
     );
@@ -917,7 +917,7 @@ const shuffleDinnerSingle = async (params) => {
 };
 
 const shuffleBreakfast = async (params) => {
-  let { userId, mealCombo, foodTag, extraFoodRestrictions, gutHealing } =
+  let { userId, mealCombo, testFoodTag, extraFoodRestrictions, gutHealing } =
     params;
 
   //get user data (tdcr)
@@ -925,9 +925,9 @@ const shuffleBreakfast = async (params) => {
 
   let gutHealingQueryCondition = getGutHealingQueryCondition(gutHealing);
 
-  if (user.healthRecords.foodRestrictions.includes(foodTag)) {
+  if (user.healthRecords.foodRestrictions.includes(testFoodTag)) {
     throw new Error(
-      `Food tag - ${foodTag}, is restricted for user - ${user.id}`
+      `Food tag - ${testFoodTag}, is restricted for user - ${user.id}`
     );
   }
 
@@ -976,7 +976,7 @@ const shuffleBreakfast = async (params) => {
     dailyBreakfastRequirement,
     GET_MEAL_MARGIN,
     foodRestrictions,
-    foodTag,
+    testFoodTag,
     gutHealing
   );
 
@@ -1037,7 +1037,7 @@ const shuffleBreakfast = async (params) => {
     }
     console.log(`Margin: ${margin * 100}%`);
     console.log(
-      `Test Food: ${foodTag || "-"} | Food Restrictions: ${
+      `Test Food: ${testFoodTag || "-"} | Food Restrictions: ${
         user.healthRecords.foodRestrictions
       } | Gut Healing: ${gutHealing || "-"};`
     );
@@ -1061,7 +1061,7 @@ const shuffleBreakfast = async (params) => {
 };
 
 const shuffleLunch = async (params) => {
-  let { userId, mealCombo, foodTag, extraFoodRestrictions, gutHealing } =
+  let { userId, mealCombo, testFoodTag, extraFoodRestrictions, gutHealing } =
     params;
 
   //get user data (tdcr)
@@ -1069,9 +1069,9 @@ const shuffleLunch = async (params) => {
 
   let gutHealingQueryCondition = getGutHealingQueryCondition(gutHealing);
 
-  if (user.healthRecords.foodRestrictions.includes(foodTag)) {
+  if (user.healthRecords.foodRestrictions.includes(testFoodTag)) {
     throw new Error(
-      `Food tag - ${foodTag}, is restricted for user - ${user.id}`
+      `Food tag - ${testFoodTag}, is restricted for user - ${user.id}`
     );
   }
 
@@ -1120,7 +1120,7 @@ const shuffleLunch = async (params) => {
     dailyLunchRequirement,
     GET_MEAL_MARGIN,
     foodRestrictions,
-    foodTag,
+    testFoodTag,
     gutHealing
   );
 
@@ -1181,7 +1181,7 @@ const shuffleLunch = async (params) => {
     }
     console.log(`Margin: ${margin * 100}%`);
     console.log(
-      `Test Food: ${foodTag || "-"} | Food Restrictions: ${
+      `Test Food: ${testFoodTag || "-"} | Food Restrictions: ${
         user.healthRecords.foodRestrictions
       } | Gut Healing: ${gutHealing || "-"};`
     );
@@ -1205,7 +1205,7 @@ const shuffleLunch = async (params) => {
 };
 
 const shuffleSnacks = async (params) => {
-  let { userId, mealCombo, foodTag, extraFoodRestrictions, gutHealing } =
+  let { userId, mealCombo, testFoodTag, extraFoodRestrictions, gutHealing } =
     params;
 
   //get user data (tdcr)
@@ -1213,9 +1213,9 @@ const shuffleSnacks = async (params) => {
 
   let gutHealingQueryCondition = getGutHealingQueryCondition(gutHealing);
 
-  if (user.healthRecords.foodRestrictions.includes(foodTag)) {
+  if (user.healthRecords.foodRestrictions.includes(testFoodTag)) {
     throw new Error(
-      `Food tag - ${foodTag}, is restricted for user - ${user.id}`
+      `Food tag - ${testFoodTag}, is restricted for user - ${user.id}`
     );
   }
 
@@ -1264,7 +1264,7 @@ const shuffleSnacks = async (params) => {
     dailySnacksRequirement,
     GET_MEAL_MARGIN,
     foodRestrictions,
-    foodTag,
+    testFoodTag,
     gutHealing
   );
 
@@ -1325,7 +1325,7 @@ const shuffleSnacks = async (params) => {
     }
     console.log(`Margin: ${margin * 100}%`);
     console.log(
-      `Test Food: ${foodTag || "-"} | Food Restrictions: ${
+      `Test Food: ${testFoodTag || "-"} | Food Restrictions: ${
         user.healthRecords.foodRestrictions
       } | Gut Healing: ${gutHealing || "-"};`
     );
@@ -1349,7 +1349,7 @@ const shuffleSnacks = async (params) => {
 };
 
 const shuffleDinner = async (params) => {
-  let { userId, mealCombo, foodTag, extraFoodRestrictions, gutHealing } =
+  let { userId, mealCombo, testFoodTag, extraFoodRestrictions, gutHealing } =
     params;
 
   //get user data (tdcr)
@@ -1357,9 +1357,9 @@ const shuffleDinner = async (params) => {
 
   let gutHealingQueryCondition = getGutHealingQueryCondition(gutHealing);
 
-  if (user.healthRecords.foodRestrictions.includes(foodTag)) {
+  if (user.healthRecords.foodRestrictions.includes(testFoodTag)) {
     throw new Error(
-      `Food tag - ${foodTag}, is restricted for user - ${user.id}`
+      `Food tag - ${testFoodTag}, is restricted for user - ${user.id}`
     );
   }
 
@@ -1408,7 +1408,7 @@ const shuffleDinner = async (params) => {
     dailyDinnerRequirement,
     margin,
     foodRestrictions,
-    foodTag,
+    testFoodTag,
     gutHealing
   );
 
@@ -1470,7 +1470,7 @@ const shuffleDinner = async (params) => {
 
     console.log(`Margin: ${margin * 100}%`);
     console.log(
-      `Test Food: ${foodTag || "-"} | Food Restrictions: ${
+      `Test Food: ${testFoodTag || "-"} | Food Restrictions: ${
         user.healthRecords.foodRestrictions
       } | Gut Healing: ${gutHealing || "-"};`
     );

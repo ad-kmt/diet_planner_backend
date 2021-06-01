@@ -2,7 +2,7 @@
     "currentPhase": {
         "name": "Phase1",
         "week": "1",
-        "foodTest": ""
+        "testFoodTag": ""
     },
     "mealPlan": {
         "current": {
@@ -63,7 +63,7 @@
                     "type": "String",
                     "default": "phaseStatus.PENDING"
                 },
-                "foodTest": "GLUTEN"
+                "testFoodTag": "GLUTEN"
             },
             "week2": {
                 "startDate": "29-05",
@@ -72,7 +72,7 @@
                     "type": "String",
                     "default": "phaseStatus.PENDING"
                 },
-                "foodTest": "DAIRY LACTOSE"
+                "testFoodTag": "DAIRY LACTOSE"
             }
         }
     }

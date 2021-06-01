@@ -330,7 +330,7 @@ router.get("/:userId/payment", verifyToken, async (req, res, next) => {
  *                    type: number
  *                  week:
  *                    type: number
- *                  foodTest:
+ *                  testFoodTag:
  *                    type: string             
  *              nextPhase:
  *                type: object
@@ -339,7 +339,7 @@ router.get("/:userId/payment", verifyToken, async (req, res, next) => {
  *                    type: number
  *                  week:
  *                    type: number
- *                  foodTest:
+ *                  testFoodTag:
  *                    type: string
  *    responses:
  *      '200':

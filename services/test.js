@@ -48,7 +48,7 @@ exports.testFoodRestriction = async () => {
     userId: "6097e6ce2326a9115415b1d7",
     mealMaxLimit: 2,
     days: 2,
-    foodTest: EGG,
+    testFoodTag: EGG,
     testMeals: testMeals,
   });
 }

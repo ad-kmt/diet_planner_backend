@@ -140,7 +140,7 @@ const checkMealLimitStatusInMealMap = (mealCombo, maxLimit, mealMap) => {
 
 /**
  *
- * @param {Object} params - userId, mealMaxLimit, days, foodTag, extraFoodRestrictions, testMeals, mealMap, gutHealing
+ * @param {Object} params - userId, mealMaxLimit, days, testFoodTag, extraFoodRestrictions, testMeals, mealMap, gutHealing
  * @returns {Object} - mealMap, meals
  * LATEST
  */
@@ -149,7 +149,7 @@ const getMealPlan = async (params) => {
     userId,                     // {mongoose.objectId} user for which meal plan is generated
     mealMaxLimit,               // {number} max times a single meal can repeat in whole meal plan
     days,                       // {number} number of days of meal plan
-    foodTest,                    // {string} test food to be present in meal plan
+    testFoodTag,                    // {string} test food to be present in meal plan
     testMeals,                  // {object} an object of format {breakfast: boolean, lunch: boolean, snacks: boolean, dinner: boolean}
                                 // which will make sure where to add test food
     extraFoodRestrictions,      // {array} array of extra foodTags to be excluded
@@ -173,9 +173,9 @@ const getMealPlan = async (params) => {
 
   const user = await User.findById(userId);
 
-  if (user.healthRecords.foodRestrictions.includes(foodTest)) {
+  if (user.healthRecords.foodRestrictions.includes(testFoodTag)) {
     throw new Error(
-      `Food tag - ${foodTest}, is restricted for user - ${user.id}`
+      `Food tag - ${testFoodTag}, is restricted for user - ${user.id}`
     );
   }
 
@@ -227,14 +227,14 @@ const getMealPlan = async (params) => {
   }
 
   var breakfastList;
-  if (foodTest != null && testMeals != null && testMeals.breakfast) {
+  if (testFoodTag != null && testMeals != null && testMeals.breakfast) {
     breakfastList = await Meal.find({
       mealType: mealType.BREAKFAST,
       calories: {
         $lte: dailyBreakfastRequirement.calories * (1 + GET_MEAL_MARGIN),
       },
       gutHealing: gutHealingQueryCondition,
-      $and: [{ gutTags: foodTest }, { gutTags: { $nin: foodRestrictions } }],
+      $and: [{ gutTags: testFoodTag }, { gutTags: { $nin: foodRestrictions } }],
       //protein //fats //carbs
     });
   } else {
@@ -250,14 +250,14 @@ const getMealPlan = async (params) => {
   }
 
   var lunchList;
-  if (foodTest != null && testMeals != null && testMeals.lunch) {
+  if (testFoodTag != null && testMeals != null && testMeals.lunch) {
     lunchList = await Meal.find({
       mealType: mealType.MAIN_MEAL,
       calories: {
         $lte: dailyLunchRequirement.calories * (1 + GET_MEAL_MARGIN),
       },
       gutHealing: gutHealingQueryCondition,
-      $and: [{ gutTags: foodTest }, { gutTags: { $nin: foodRestrictions } }],
+      $and: [{ gutTags: testFoodTag }, { gutTags: { $nin: foodRestrictions } }],
       //protein //fats //carbs
     });
   } else {
@@ -272,14 +272,14 @@ const getMealPlan = async (params) => {
     });
   }
   var snacksList;
-  if (foodTest != null && testMeals != null && testMeals.snacks) {
+  if (testFoodTag != null && testMeals != null && testMeals.snacks) {
     snacksList = await Meal.find({
       mealType: mealType.SNACKS,
       calories: {
         $lte: dailySnacksRequirement.calories * (1 + GET_MEAL_MARGIN),
       },
       gutHealing: gutHealingQueryCondition,
-      $and: [{ gutTags: foodTest }, { gutTags: { $nin: foodRestrictions } }],
+      $and: [{ gutTags: testFoodTag }, { gutTags: { $nin: foodRestrictions } }],
       //protein //fats //carbs
     });
   } else {
@@ -295,14 +295,14 @@ const getMealPlan = async (params) => {
   }
 
   var dinnerList;
-  if (foodTest != null && testMeals != null && testMeals.dinner) {
+  if (testFoodTag != null && testMeals != null && testMeals.dinner) {
     dinnerList = await Meal.find({
       mealType: mealType.MAIN_MEAL,
       calories: {
         $lte: dailyDinnerRequirement.calories * (1 + GET_MEAL_MARGIN),
       },
       gutHealing: gutHealingQueryCondition,
-      $and: [{ gutTags: foodTest }, { gutTags: { $nin: foodRestrictions } }],
+      $and: [{ gutTags: testFoodTag }, { gutTags: { $nin: foodRestrictions } }],
       //protein //fats //carbs
     });
   } else {
@@ -487,7 +487,7 @@ const getMealPlan = async (params) => {
     }
     console.log(`Margin: ${margin * 100}% Random Iteration Count:  ${RANDOM_ITERATION_COUNT} Random meal combo size: ${RANDOM_MEAL_LIST_SIZE}`);
     console.log(
-      `Test Food: ${foodTest || "-"} | Food Restrictions: ${
+      `Test Food: ${testFoodTag || "-"} | Food Restrictions: ${
         user.healthRecords.foodRestrictions
       } | Gut Healing: ${gutHealing || "-"};`
     );
@@ -534,7 +534,7 @@ const getMealPlan = async (params) => {
 
 const getMealListForTestPhase = async (
   userId,
-  foodTest,
+  testFoodTag,
   mealMaxLimit,
   extraFoodRestrictions
 ) => {
@@ -544,8 +544,8 @@ const getMealListForTestPhase = async (
     userId,
     mealMaxLimit: mealMaxLimit,
     extraFoodRestrictions: extraFoodRestrictions
-      ? extraFoodRestrictions.concat([foodTest])
-      : [foodTest],
+      ? extraFoodRestrictions.concat([testFoodTag])
+      : [testFoodTag],
     days: 2,
     gutHealing: true,
   });
@@ -561,7 +561,7 @@ const getMealListForTestPhase = async (
     mealMaxLimit: mealMaxLimit,
     days: 2,
     extraFoodRestrictions,
-    foodTest: foodTest,
+    testFoodTag: testFoodTag,
     testMeals: testMealsDay3to4,
     mealMap: mealObjectDay1to2.mealMap,
   });
@@ -577,7 +577,7 @@ const getMealListForTestPhase = async (
     mealMaxLimit: mealMaxLimit,
     days: 1,
     extraFoodRestrictions,
-    foodTest,
+    testFoodTag,
     testMeals: testMealsDay5,
     mealMap: mealObjectDay3to4.mealMap,
   });
@@ -587,8 +587,8 @@ const getMealListForTestPhase = async (
     mealMaxLimit: mealMaxLimit,
     days: 2,
     extraFoodRestrictions: extraFoodRestrictions
-      ? extraFoodRestrictions.concat([foodTest])
-      : [foodTest],
+      ? extraFoodRestrictions.concat([testFoodTag])
+      : [testFoodTag],
     mealMap: mealObjectDay5.mealMap,
   });
 
