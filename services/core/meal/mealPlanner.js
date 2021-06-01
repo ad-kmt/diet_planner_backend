@@ -630,6 +630,7 @@ const getMealPlan = async (params) => {
 
   console.log("Received data from database");
 
+
   for (; margin <= 0.5; margin = margin + 0.01) {
     for (let i = 0; i < RANDOM_ITERATION_COUNT; i++) {
       let breakfastComboListRandom = getRandom(
@@ -752,7 +753,7 @@ const getMealPlan = async (params) => {
 
       if (mealPlan.length == days) break;
     }
-    console.log(`Margin: ${margin * 100}%`);
+    console.log(`Margin: ${margin * 100}% Random Iteration Count:  ${RANDOM_ITERATION_COUNT} Random meal combo size: ${RANDOM_MEAL_LIST_SIZE}`);
     console.log(
       `Test Food: ${foodTest || "-"} | Food Restrictions: ${
         user.healthRecords.foodRestrictions
