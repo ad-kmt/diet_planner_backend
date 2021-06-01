@@ -36,6 +36,8 @@ const getComboList = (
   let comboList = [];
 
   primaryMealList.forEach((primaryMeal) => {
+
+    // only single primary meal in combo
     if (
       primaryMeal.calories >= dailyRequirement.calories * (1 - margin) &&
       primaryMeal.calories <= dailyRequirement.calories * (1 + margin)
@@ -45,6 +47,7 @@ const getComboList = (
       comboList.push(combo);
     }
 
+    // 2 primary meals in combo
     primaryMealList.forEach((primaryMeal2) => {
       if (
         primaryMeal.calories + primaryMeal2.calories >=
@@ -60,6 +63,7 @@ const getComboList = (
       }
     });
 
+    // one primary meal and one secondary meal in combo
     secondaryMealList.forEach((secondaryMeal) => {
       if (
         primaryMeal.calories + secondaryMeal.calories >=
@@ -457,13 +461,7 @@ const getMealPlan = async (params) => {
                 b.calories + l.calories + d.calories + s.calories - dailyCals
               );
 
-              const dayMealCombo = {
-                breakfast: breakfastCombo.map((meal) => meal.id),
-                lunch: lunchCombo.map((meal) => meal.id),
-                snacks: snacksCombo.map((meal) => meal.id),
-                dinner: dinnerCombo.map((meal) => meal.id),
-                err: calErr,
-              };
+             
 
               if (mealPlan.length < days) {
                 if (
@@ -472,6 +470,14 @@ const getMealPlan = async (params) => {
                   // fErr <= margin * dailyFats &&
                   // cErr <= margin * dailyCarbs
                 ) {
+                  const dayMealCombo = {
+                    breakfast: breakfastCombo.map((meal) => meal.id),
+                    lunch: lunchCombo.map((meal) => meal.id),
+                    snacks: snacksCombo.map((meal) => meal.id),
+                    dinner: dinnerCombo.map((meal) => meal.id),
+                    err: calErr,
+                  };
+                  
                   mealPlan.push(dayMealCombo);
                   addDayMealComboToMealMap(dayMealCombo, mealMap);
                 }
