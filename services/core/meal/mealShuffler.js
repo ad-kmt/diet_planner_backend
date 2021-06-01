@@ -12,9 +12,9 @@ const {
   addMealComboToMealMap,
 } = require("./mealPlanner");
 const {
-  nutrientRatio,
-  errorMargin,
-  shuffleListReturnCount,
+  NUTRI_RATIO,
+  ERROR_MARGIN,
+  SHUFFLE_LIST_COUNT,
   RANDOM_ITERATION_COUNT,
   RANDOM_MEAL_LIST_SIZE,
 } = require("../../constants/mealPlannerConstants");
@@ -289,8 +289,8 @@ const shuffleBreakfastSingle = async (params) => {
   const dailyFats = user.healthRecords.desiredNutrients.fats;
   const dailyCarbs = user.healthRecords.desiredNutrients.carbs;
 
-  const nutriRatio = nutrientRatio;
-  let margin = errorMargin;
+  const nutriRatio = NUTRI_RATIO;
+  let margin = ERROR_MARGIN;
 
   const dailyBreakfastRequirement = {
     calories: nutriRatio.breakfast * dailyCals,
@@ -392,7 +392,7 @@ const shuffleBreakfastSingle = async (params) => {
           b.calories + l.calories + d.calories + s.calories - dailyCals
         );
 
-        if (mealShuffleList.length < shuffleListReturnCount) {
+        if (mealShuffleList.length < SHUFFLE_LIST_COUNT) {
           if (
             calErr <= margin * dailyCals &&
             pErr <= margin * dailyProteins &&
@@ -405,12 +405,12 @@ const shuffleBreakfastSingle = async (params) => {
               mealMap
             );
           }
-        } else if (mealShuffleList.length == shuffleListReturnCount) {
+        } else if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
           break;
         }
       }
 
-      if (mealShuffleList.length == shuffleListReturnCount) {
+      if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
         break;
       }
     }
@@ -427,7 +427,7 @@ const shuffleBreakfastSingle = async (params) => {
     console.log(`Meal Plan Length: ${mealShuffleList.length}`);
     console.log("-----------------------------------");
 
-    if (mealShuffleList.length == shuffleListReturnCount) {
+    if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
       break;
     }
   }
@@ -462,8 +462,8 @@ const shuffleLunchSingle = async (params) => {
   const dailyFats = user.healthRecords.desiredNutrients.fats;
   const dailyCarbs = user.healthRecords.desiredNutrients.carbs;
 
-  const nutriRatio = nutrientRatio;
-  let margin = errorMargin;
+  const nutriRatio = NUTRI_RATIO;
+  let margin = ERROR_MARGIN;
 
   const dailyLunchRequirement = {
     calories: nutriRatio.lunch * dailyCals,
@@ -561,7 +561,7 @@ const shuffleLunchSingle = async (params) => {
           b.calories + l.calories + d.calories + s.calories - dailyCals
         );
 
-        if (mealShuffleList.length < shuffleListReturnCount) {
+        if (mealShuffleList.length < SHUFFLE_LIST_COUNT) {
           if (
             calErr <= margin * dailyCals &&
             pErr <= margin * dailyProteins &&
@@ -574,12 +574,12 @@ const shuffleLunchSingle = async (params) => {
               mealMap
             );
           }
-        } else if (mealShuffleList.length == shuffleListReturnCount) {
+        } else if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
           break;
         }
       }
 
-      if (mealShuffleList.length == shuffleListReturnCount) {
+      if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
         break;
       }
     }
@@ -596,7 +596,7 @@ const shuffleLunchSingle = async (params) => {
     console.log(`Meal Plan Length: ${mealShuffleList.length}`);
     console.log("-----------------------------------");
 
-    if (mealShuffleList.length == shuffleListReturnCount) {
+    if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
       break;
     }
   }
@@ -631,8 +631,8 @@ const shuffleSnacksSingle = async (params) => {
   const dailyFats = user.healthRecords.desiredNutrients.fats;
   const dailyCarbs = user.healthRecords.desiredNutrients.carbs;
 
-  const nutriRatio = nutrientRatio;
-  let margin = errorMargin;
+  const nutriRatio = NUTRI_RATIO;
+  let margin = ERROR_MARGIN;
 
   const dailySnacksRequirement = {
     calories: nutriRatio.snacks * dailyCals,
@@ -730,7 +730,7 @@ const shuffleSnacksSingle = async (params) => {
           b.calories + l.calories + d.calories + s.calories - dailyCals
         );
 
-        if (mealShuffleList.length < shuffleListReturnCount) {
+        if (mealShuffleList.length < SHUFFLE_LIST_COUNT) {
           if (
             calErr <= margin * dailyCals &&
             pErr <= margin * dailyProteins &&
@@ -743,12 +743,12 @@ const shuffleSnacksSingle = async (params) => {
               mealMap
             );
           }
-        } else if (mealShuffleList.length == shuffleListReturnCount) {
+        } else if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
           break;
         }
       }
 
-      if (mealShuffleList.length == shuffleListReturnCount) {
+      if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
         break;
       }
     }
@@ -765,7 +765,7 @@ const shuffleSnacksSingle = async (params) => {
     console.log(`Meal Plan Length: ${mealShuffleList.length}`);
     console.log("-----------------------------------");
 
-    if (mealShuffleList.length == shuffleListReturnCount) {
+    if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
       break;
     }
   }
@@ -800,8 +800,8 @@ const shuffleDinnerSingle = async (params) => {
   const dailyFats = user.healthRecords.desiredNutrients.fats;
   const dailyCarbs = user.healthRecords.desiredNutrients.carbs;
 
-  const nutriRatio = nutrientRatio;
-  let margin = errorMargin;
+  const nutriRatio = NUTRI_RATIO;
+  let margin = ERROR_MARGIN;
 
   const dailyDinnerRequirement = {
     calories: nutriRatio.dinner * dailyCals,
@@ -899,7 +899,7 @@ const shuffleDinnerSingle = async (params) => {
           b.calories + l.calories + d.calories + s.calories - dailyCals
         );
 
-        if (mealShuffleList.length < shuffleListReturnCount) {
+        if (mealShuffleList.length < SHUFFLE_LIST_COUNT) {
           if (
             calErr <= margin * dailyCals &&
             pErr <= margin * dailyProteins &&
@@ -912,12 +912,12 @@ const shuffleDinnerSingle = async (params) => {
               mealMap
             );
           }
-        } else if (mealShuffleList.length == shuffleListReturnCount) {
+        } else if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
           break;
         }
       }
 
-      if (mealShuffleList.length == shuffleListReturnCount) {
+      if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
         break;
       }
     }
@@ -934,7 +934,7 @@ const shuffleDinnerSingle = async (params) => {
     console.log(`Meal Plan Length: ${mealShuffleList.length}`);
     console.log("-----------------------------------");
 
-    if (mealShuffleList.length == shuffleListReturnCount) {
+    if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
       break;
     }
   }
@@ -971,8 +971,8 @@ const shuffleBreakfast = async (params) => {
   const dailyFats = user.healthRecords.desiredNutrients.fats;
   const dailyCarbs = user.healthRecords.desiredNutrients.carbs;
 
-  const nutriRatio = nutrientRatio;
-  let margin = errorMargin;
+  const nutriRatio = NUTRI_RATIO;
+  let margin = ERROR_MARGIN;
 
   const dailyBreakfastRequirement = {
     calories: nutriRatio.breakfast * dailyCals,
@@ -1054,7 +1054,7 @@ const shuffleBreakfast = async (params) => {
           b.calories + l.calories + d.calories + s.calories - dailyCals
         );
 
-        if (mealShuffleList.length < shuffleListReturnCount) {
+        if (mealShuffleList.length < SHUFFLE_LIST_COUNT) {
           if (
             calErr <= margin * dailyCals &&
             pErr <= margin * dailyProteins &&
@@ -1067,12 +1067,12 @@ const shuffleBreakfast = async (params) => {
               mealMap
             );
           }
-        } else if (mealShuffleList.length == shuffleListReturnCount) {
+        } else if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
           break;
         }
       }
 
-      if (mealShuffleList.length == shuffleListReturnCount) {
+      if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
         break;
       }
     }
@@ -1087,7 +1087,7 @@ const shuffleBreakfast = async (params) => {
     console.log(`Meal Plan Length: ${mealShuffleList.length}`);
     console.log("-----------------------------------");
 
-    if (mealShuffleList.length == shuffleListReturnCount) {
+    if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
       break;
     }
   }
@@ -1128,8 +1128,8 @@ const shuffleLunch = async (params) => {
   const dailyFats = user.healthRecords.desiredNutrients.fats;
   const dailyCarbs = user.healthRecords.desiredNutrients.carbs;
 
-  const nutriRatio = nutrientRatio;
-  let margin = errorMargin;
+  const nutriRatio = NUTRI_RATIO;
+  let margin = ERROR_MARGIN;
 
   const dailyLunchRequirement = {
     calories: nutriRatio.lunch * dailyCals,
@@ -1210,7 +1210,7 @@ const shuffleLunch = async (params) => {
           b.calories + l.calories + d.calories + s.calories - dailyCals
         );
 
-        if (mealShuffleList.length < shuffleListReturnCount) {
+        if (mealShuffleList.length < SHUFFLE_LIST_COUNT) {
           if (
             calErr <= margin * dailyCals &&
             pErr <= margin * dailyProteins &&
@@ -1223,12 +1223,12 @@ const shuffleLunch = async (params) => {
               mealMap
             );
           }
-        } else if (mealShuffleList.length == shuffleListReturnCount) {
+        } else if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
           break;
         }
       }
 
-      if (mealShuffleList.length == shuffleListReturnCount) {
+      if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
         break;
       }
     }
@@ -1243,7 +1243,7 @@ const shuffleLunch = async (params) => {
     console.log(`Meal Plan Length: ${mealShuffleList.length}`);
     console.log("-----------------------------------");
 
-    if (mealShuffleList.length == shuffleListReturnCount) {
+    if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
       break;
     }
   }
@@ -1284,8 +1284,8 @@ const shuffleSnacks = async (params) => {
   const dailyFats = user.healthRecords.desiredNutrients.fats;
   const dailyCarbs = user.healthRecords.desiredNutrients.carbs;
 
-  const nutriRatio = nutrientRatio;
-  let margin = errorMargin;
+  const nutriRatio = NUTRI_RATIO;
+  let margin = ERROR_MARGIN;
 
   const dailySnacksRequirement = {
     calories: nutriRatio.snacks * dailyCals,
@@ -1366,7 +1366,7 @@ const shuffleSnacks = async (params) => {
           b.calories + l.calories + d.calories + s.calories - dailyCals
         );
 
-        if (mealShuffleList.length < shuffleListReturnCount) {
+        if (mealShuffleList.length < SHUFFLE_LIST_COUNT) {
           if (
             calErr <= margin * dailyCals &&
             pErr <= margin * dailyProteins &&
@@ -1379,12 +1379,12 @@ const shuffleSnacks = async (params) => {
               mealMap
             );
           }
-        } else if (mealShuffleList.length == shuffleListReturnCount) {
+        } else if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
           break;
         }
       }
 
-      if (mealShuffleList.length == shuffleListReturnCount) {
+      if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
         break;
       }
     }
@@ -1399,7 +1399,7 @@ const shuffleSnacks = async (params) => {
     console.log(`Meal Plan Length: ${mealShuffleList.length}`);
     console.log("-----------------------------------");
 
-    if (mealShuffleList.length == shuffleListReturnCount) {
+    if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
       break;
     }
   }
@@ -1440,8 +1440,8 @@ const shuffleDinner = async (params) => {
   const dailyFats = user.healthRecords.desiredNutrients.fats;
   const dailyCarbs = user.healthRecords.desiredNutrients.carbs;
 
-  const nutriRatio = nutrientRatio;
-  let margin = errorMargin;
+  const nutriRatio = NUTRI_RATIO;
+  let margin = ERROR_MARGIN;
 
   const dailyDinnerRequirement = {
     calories: nutriRatio.dinner * dailyCals,
@@ -1522,7 +1522,7 @@ const shuffleDinner = async (params) => {
           b.calories + l.calories + d.calories + s.calories - dailyCals
         );
 
-        if (mealShuffleList.length < shuffleListReturnCount) {
+        if (mealShuffleList.length < SHUFFLE_LIST_COUNT) {
           if (
             calErr <= margin * dailyCals &&
             pErr <= margin * dailyProteins &&
@@ -1535,12 +1535,12 @@ const shuffleDinner = async (params) => {
               mealMap
             );
           }
-        } else if (mealShuffleList.length == shuffleListReturnCount) {
+        } else if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
           break;
         }
       }
 
-      if (mealShuffleList.length == shuffleListReturnCount) {
+      if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
         break;
       }
     }
@@ -1555,7 +1555,7 @@ const shuffleDinner = async (params) => {
     console.log(`Meal Plan Length: ${mealShuffleList.length}`);
     console.log("-----------------------------------");
 
-    if (mealShuffleList.length == shuffleListReturnCount) {
+    if (mealShuffleList.length == SHUFFLE_LIST_COUNT) {
       break;
     }
   }

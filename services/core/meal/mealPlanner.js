@@ -2,8 +2,8 @@ const Meal = require("../../../models/Meal");
 const User = require("../../../models/User");
 const mealType = require("../../constants/mealType");
 const {
-  nutrientRatio,
-  errorMargin,
+  NUTRI_RATIO,
+  ERROR_MARGIN,
   GET_MEAL_MARGIN,
   RANDOM_ITERATION_COUNT,
   RANDOM_MEAL_LIST_SIZE
@@ -198,23 +198,25 @@ const checkMealLimitStatusInMealMap = (mealCombo, maxLimit, mealMap) => {
  */
 const getMealPlan = async (params) => {
   let {
-    userId,
-    mealMaxLimit,
-    days,
-    foodTag,
-    extraFoodRestrictions,
-    testMeals,
-    mealMap,
-    gutHealing,
+    userId,                     // {mongoose.objectId} user for which meal plan is generated
+    mealMaxLimit,               // {number} max times a single meal can repeat in whole meal plan
+    days,                       // {number} number of days of meal plan
+    foodTag,                    // {string} test food to be present in meal plan
+    testMeals,                  // {object} an object of format {breakfast: boolean, lunch: boolean, snacks: boolean, dinner: boolean}
+                                // which will make sure where to add test food
+    extraFoodRestrictions,      // {array} array of extra foodTags to be excluded
+    mealMap,                    // {map} map which contains information of meals and their count in meal plan
+    gutHealing,                 // {boolean}, true if only gut healing meals have to be included
   } = params;
 
-  if (mealMap != null) {
-    for (let [key, value] of mealMap) {
-      console.log(key + " = " + value);
-    }
-  }
+  // if (mealMap != null) {
+  //   for (let [key, value] of mealMap) {
+  //     console.log(key + " = " + value);
+  //   }
+  // }
 
   let gutHealingQueryCondition;
+
   if (gutHealing) {
     gutHealingQueryCondition = { $in: [true] };
   } else {
@@ -239,9 +241,9 @@ const getMealPlan = async (params) => {
   const dailyFats = user.healthRecords.desiredNutrients.fats;
   const dailyCarbs = user.healthRecords.desiredNutrients.carbs;
 
-  const nutriRatio = nutrientRatio;
+  const nutriRatio = NUTRI_RATIO;
 
-  let margin = errorMargin;
+  let margin = ERROR_MARGIN;
 
   const dailyBreakfastRequirement = {
     calories: nutriRatio.breakfast * dailyCals,
