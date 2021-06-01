@@ -6,7 +6,6 @@ require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const { DateTime } = require("luxon");
 const {
-  getWeeklyMealPlan,
   getMealPlan,
 } = require("../meal/mealPlanner");
 const mealLimit = require("../../constants/mealLimit");

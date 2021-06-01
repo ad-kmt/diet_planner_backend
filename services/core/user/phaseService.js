@@ -2,7 +2,6 @@ const mealLimit = require("../../constants/mealLimit");
 const phaseNames = require("../../constants/phaseName");
 const phaseStatus = require("../../constants/status");
 const {
-  getWeeklyMealPlan,
   getMealPlan,
   getMealListForTestPhase
 } = require("../meal/mealPlanner");

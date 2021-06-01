@@ -9,7 +9,7 @@ const {  trainModelFromExcel } = require('./services/ml/brain');
 const { populateMealDb } = require('./services/core/meal/mealExcelToDb');
 const { populateQuizDb } = require('./services/core/quiz/quizExcelToDb');
 const fileUpload = require('express-fileupload');
-const {  getWeeklyMealPlan, getMealPlan } = require('./services/core/meal/mealPlanner');
+const { getMealPlan } = require('./services/core/meal/mealPlanner');
 require("dotenv").config();
 const {DateTime} = require('luxon');
 const { postPaymentUpdate } = require('./services/core/user/paymentService');
@@ -66,8 +66,6 @@ app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 // populateMealDb();
 // trainModelFromExcel();
 // populateQuizDb();
-// getWeeklyMealPlanA("6089a677c9858f10cc25fcff");
-// getWeeklyMealPlan("6089a677c9858f10cc25fcff", 3, 7);
 // let plan = {
 //     name: "FG4L",
 //     productBy: "Sebastian Fitness Solutions",

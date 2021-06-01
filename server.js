@@ -8,7 +8,7 @@ const {  trainModelFromExcel } = require('./services/ml/brain');
 const { populateMealDb } = require('./services/core/meal/mealExcelToDb');
 const { populateQuizDb } = require('./services/core/quiz/quizExcelToDb');
 const test = require('./services/test');
-const {  getWeeklyMealPlan, getMealPlan } = require('./services/core/meal/mealPlanner');
+const { getMealPlan } = require('./services/core/meal/mealPlanner');
 const {DateTime} = require('luxon');
 const { postPaymentUpdate } = require('./services/core/user/paymentService');
 const { GLUTEN, EGG, DAIRY_LACTOSE, DAIRY, GRAIN } = require('./services/constants/gutTags');
@@ -59,8 +59,6 @@ process.on('SIGTERM', () => {
 // populateMealDb();
 // trainModelFromExcel();
 // populateQuizDb();
-// getWeeklyMealPlanA("6089a677c9858f10cc25fcff");
-// getWeeklyMealPlan("6089a677c9858f10cc25fcff", 3, 7);
 // let plan = {
 //     name: "FG4L",
 //     productBy: "Sebastian Fitness Solutions",
