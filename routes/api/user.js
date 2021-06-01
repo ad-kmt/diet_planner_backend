@@ -300,7 +300,7 @@ router.get("/:userId/payment", verifyToken, async (req, res, next) => {
 /**
  * @swagger
  * /api/user/{userId}/phase/next:
- *  get:
+ *  post:
  *    tags:
  *      - user
  *    description: Use to go to next phase
@@ -322,13 +322,25 @@ router.get("/:userId/payment", verifyToken, async (req, res, next) => {
  *         application/json:
  *           schema:
  *            type: object
- *            properties:
- *              phase:
- *                type: Number
- *              week:
- *                type: Number
- *              foodTest:
- *                type: String
+ *            properties: 
+ *              completedPhase:
+ *                type: object
+ *                properties:
+ *                  phase:
+ *                    type: number
+ *                  week:
+ *                    type: number
+ *                  foodTest:
+ *                    type: string             
+ *              nextPhase:
+ *                type: object
+ *                properties:
+ *                  phase:
+ *                    type: number
+ *                  week:
+ *                    type: number
+ *                  foodTest:
+ *                    type: string
  *    responses:
  *      '200':
  *        description: A successful response

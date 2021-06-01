@@ -146,34 +146,7 @@ router.post(
   }
 );
 
-/**
- * @swagger
- * /api/auth/account-activation:
- *   post:
- *     tags:
- *       - auth
- *     summary: Activate User's Account.
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               token:
- *                 type: string
- *                 example: jwt account activation token
- *     responses:
- *       '200':
- *          description: Successful
- *       content:
- *          application/json:
- *              schema:
- *               type: object
- *               properties:
- *                message:
- *                  type: string
- *                  example: Signup success. Please login to continue.
- */
+
 router.post("/account-activation-after-signup", async (req, res, next) => {
   try {
     const { token } = req.body;
@@ -220,10 +193,40 @@ router.post("/account-activation-after-signup", async (req, res, next) => {
 });
 
 
-
+/**
+ * @swagger
+ * /api/auth/account-activation:
+ *   post:
+ *     tags:
+ *       - auth
+ *     summary: Activate User's Account.
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 example: jwt account activation token
+ *               password:
+ *                 type: string
+ *     responses:
+ *       '200':
+ *          description: Successful
+ *       content:
+ *          application/json:
+ *              schema:
+ *               type: object
+ *               properties:
+ *                message:
+ *                  type: string
+ *                  example: Signup success. Please login to continue.
+ */
 router.post("/account-activation", async (req, res, next) => {
   try {
     const { token, password } = req.body;
+
     if (!token) {
       throw new ApiError(
         httpStatus.BAD_REQUEST,
@@ -240,6 +243,7 @@ router.post("/account-activation", async (req, res, next) => {
         throw new ApiError(httpStatus.BAD_REQUEST, "User already activated.");
       }
 
+      //Activate user's account in DB
       user.account.isActivated=true;
 
       // Encrypt the password

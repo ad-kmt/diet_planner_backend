@@ -13,6 +13,7 @@ const { startPhasePlan } = require("./phaseService");
 const ApiError = require("../../../utils/ApiError");
 const { http } = require("winston");
 const httpStatus = require("http-status");
+const { INTERNAL_SERVER_ERROR } = require("http-status");
 
 exports.paymentViaStripe = async (userId, plan, token) => {
   let user = await User.findById(userId).select("id email");
@@ -33,9 +34,12 @@ exports.paymentViaStripe = async (userId, plan, token) => {
     description: `Purchase of ${plan.name}`,
   });
 
-  if (!charge) throw Error("Payment failed");
+  if (!charge) throw new ApiError(INTERNAL_SERVER_ERROR, "Payment failed from Stripe");
   if (charge) {
     let payment = await this.postPaymentUpdate(user.id, plan);
+    if(!payment){
+      throw new ApiError(INTERNAL_SERVER_ERROR, "Payment could not be updated in database");
+    } 
     return payment;
   }
 };

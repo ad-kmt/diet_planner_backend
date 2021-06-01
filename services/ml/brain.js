@@ -29,6 +29,8 @@ var evaluateQuizResult = function(input){
     return conclusions;
 }
 
+
+/// DEPRECATED CAN BE DELETED
 var trainModelOld = function(){
   var net = new brain.NeuralNetwork();
   net.train([
@@ -50,14 +52,15 @@ var trainModelOld = function(){
   // return output;
 };
 
+
+/// DEPRECATED
 var getTrainingDataSetFromExcel = async function(){
   var rows = await readXlsxFile("data/quiz-data.xlsx", {sheet: "Training"});
     // `rows` is an array of rows
     // each row being an array of cells.
-  let columnNames = [];
-  var trainingData = [];
-  var limits=[];
-  var weight=[]
+  const columnNames = rows[0];
+  var trainingDataSet = [];
+
   /**
    * col1: Ques. no.
    * col2: Symptoms
@@ -71,27 +74,32 @@ var getTrainingDataSetFromExcel = async function(){
    *  output: {"ResultCategory": "1"}
    * }
    */
-  for(let i=2;i<rows.length;i++){
-    weight.push(rows[i][2]);
-  }
-  for (let j = 3; j < rows[0].length; j++) {
-    columnNames.push(rows[0][j]);
-    limits.push(rows[1][j]);
 
+  for (let j = 2; j < columnNames.length; j++) {
+    
     //setting input
     var input = [];
-    for (let i = 2; i < rows.length; i++) {
+    for (let i = 1; i < rows.length; i++) {
       input.push(rows[i][j]);
     }
 
+    //setting output
+    var output = {};
+    output[columnNames[j]] = 1;
+
+    //setting training data
+    var trainingData = {
+      input,
+      output
+    }
     //pushing to training data set
-    trainingData.push(input);
+    trainingDataSet.push(trainingData);
   }
-  let trainingDataSet = {trainingData, columnNames, limits, weight};
   // console.log(trainingDataSet);
   return trainingDataSet;
 }
 
+/// DEPRECATED
 var trainModelAndSave = function(trainingDataSet){
     //Training Neural Network Model
     var net = new brain.NeuralNetwork();
@@ -101,6 +109,7 @@ var trainModelAndSave = function(trainingDataSet){
     fs.writeFileSync('data/quiz-evaluation-ml-model.json', JSON.stringify(net.toJSON()));
 }
 
+/// DEPRECATED
 var trainModelFromExcel = async function(){
   var trainingDataSet = await getTrainingDataSetFromExcel();
   // console.log(trainingDataSet);

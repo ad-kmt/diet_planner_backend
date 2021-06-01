@@ -17,7 +17,7 @@ router.post("/", async (req, res, next) => {
         
         if(plan){
             var payment = await paymentViaStripe(user.id, plan, token);
-            
+
             if(user.account.isActivated){
                 //Starting Phase Plan
                 await startPhasePlan(user);

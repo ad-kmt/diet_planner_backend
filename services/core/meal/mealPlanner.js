@@ -6,8 +6,12 @@ const {
   ERROR_MARGIN,
   GET_MEAL_MARGIN,
   RANDOM_ITERATION_COUNT,
-  RANDOM_MEAL_LIST_SIZE
+  RANDOM_MEAL_LIST_SIZE,
 } = require("../../constants/mealPlannerConstants");
+const { SHUFFLE_MEAL_LIMIT } = require("../../constants/mealLimit");
+const ApiError = require("../../../utils/ApiError");
+const { INTERNAL_SERVER_ERROR } = require("http-status");
+// const {getComboWithMealData} =require("./mealShuffler")
 
 const getRandom = (arr, n) => {
   var result = new Array(n),
@@ -21,62 +25,6 @@ const getRandom = (arr, n) => {
     taken[x] = --len in taken ? taken[len] : len;
   }
   return result;
-};
-
-const getComboListA = (
-  primaryMealList,
-  secondaryMealList,
-  dailyRequirement,
-  margin
-) => {
-  let comboList = [];
-
-  primaryMealList.forEach((primaryMeal) => {
-    if (
-      primaryMeal.calories >= dailyRequirement.calories * (1 - margin) &&
-      primaryMeal.calories <= dailyRequirement.calories * (1 + margin)
-      // primaryMeal.proteins >= dailyRequirement.proteins * (1 - margin) &&
-      // primaryMeal.proteins <= dailyRequirement.proteins * (1 + margin)
-    ) {
-      let combo = [];
-      combo.push(primaryMeal);
-      comboList.push(combo);
-    }
-
-    primaryMealList.forEach((primaryMeal2) => {
-      if (
-        primaryMeal.calories + primaryMeal2.calories >=
-          dailyRequirement.calories * (1 - margin) &&
-        primaryMeal.calories + primaryMeal2.calories <=
-          dailyRequirement.calories * (1 + margin)
-        // primaryMeal.proteins + primaryMeal2.proteins >= dailyRequirement.proteins * (1 - margin) &&
-        // primaryMeal.proteins + primaryMeal2.proteins <= dailyRequirement.proteins * (1 + margin)
-      ) {
-        let combo = [];
-        combo.push(primaryMeal);
-        combo.push(primaryMeal2);
-        comboList.push(combo);
-      }
-    });
-
-    secondaryMealList.forEach((secondaryMeal) => {
-      if (
-        primaryMeal.calories + secondaryMeal.calories >=
-          dailyRequirement.calories * (1 - margin) &&
-        primaryMeal.calories + secondaryMeal.calories <=
-          dailyRequirement.calories * (1 + margin)
-        // primaryMeal.proteins + secondaryMeal.proteins >= dailyRequirement.proteins * (1 - margin) &&
-        // primaryMeal.proteins + secondaryMeal.proteins <= dailyRequirement.proteins * (1 + margin)
-      ) {
-        let combo = [];
-        combo.push(primaryMeal);
-        combo.push(secondaryMeal);
-        comboList.push(combo);
-      }
-    });
-  });
-
-  return comboList;
 };
 
 const getComboList = (
@@ -201,7 +149,7 @@ const getMealPlan = async (params) => {
     userId,                     // {mongoose.objectId} user for which meal plan is generated
     mealMaxLimit,               // {number} max times a single meal can repeat in whole meal plan
     days,                       // {number} number of days of meal plan
-    foodTag,                    // {string} test food to be present in meal plan
+    foodTest,                    // {string} test food to be present in meal plan
     testMeals,                  // {object} an object of format {breakfast: boolean, lunch: boolean, snacks: boolean, dinner: boolean}
                                 // which will make sure where to add test food
     extraFoodRestrictions,      // {array} array of extra foodTags to be excluded
@@ -225,9 +173,9 @@ const getMealPlan = async (params) => {
 
   const user = await User.findById(userId);
 
-  if (user.healthRecords.foodRestrictions.includes(foodTag)) {
+  if (user.healthRecords.foodRestrictions.includes(foodTest)) {
     throw new Error(
-      `Food tag - ${foodTag}, is restricted for user - ${user.id}`
+      `Food tag - ${foodTest}, is restricted for user - ${user.id}`
     );
   }
 
@@ -279,153 +227,181 @@ const getMealPlan = async (params) => {
   }
 
   var breakfastList;
-    if (foodTag != null && testMeals != null && testMeals.breakfast) {
-      breakfastList = await Meal.find({
-        mealType: mealType.BREAKFAST,
-        calories: { $lte: dailyBreakfastRequirement.calories * (1 + GET_MEAL_MARGIN) },
-        gutHealing: gutHealingQueryCondition,
-        $and: [{ gutTags: foodTag }, { gutTags: { $nin: foodRestrictions } }],
-        //protein //fats //carbs
-      });
-    } else {
-      breakfastList = await Meal.find({
-        mealType: mealType.BREAKFAST,
-        calories: { $lte: dailyBreakfastRequirement.calories * (1 + GET_MEAL_MARGIN) },
-        gutHealing: gutHealingQueryCondition,
-        gutTags: { $nin: foodRestrictions },
-        //protein //fats //carbs
-      });
-    }
-
-    var lunchList;
-    if (foodTag != null && testMeals != null && testMeals.lunch) {
-      lunchList = await Meal.find({
-        mealType: mealType.MAIN_MEAL,
-        calories: { $lte: dailyLunchRequirement.calories * (1 + GET_MEAL_MARGIN) },
-        gutHealing: gutHealingQueryCondition,
-        $and: [{ gutTags: foodTag }, { gutTags: { $nin: foodRestrictions } }],
-        //protein //fats //carbs
-      });
-    } else {
-      lunchList = await Meal.find({
-        mealType: mealType.MAIN_MEAL,
-        calories: { $lte: dailyLunchRequirement.calories * (1 + GET_MEAL_MARGIN) },
-        gutHealing: gutHealingQueryCondition,
-        gutTags: { $nin: foodRestrictions },
-        //protein //fats //carbs
-      });
-    }
-    var snacksList;
-    if (foodTag != null && testMeals != null && testMeals.snacks) {
-      snacksList = await Meal.find({
-        mealType: mealType.SNACKS,
-        calories: { $lte: dailySnacksRequirement.calories * (1 + GET_MEAL_MARGIN) },
-        gutHealing: gutHealingQueryCondition,
-        $and: [{ gutTags: foodTag }, { gutTags: { $nin: foodRestrictions } }],
-        //protein //fats //carbs
-      });
-    } else {
-      snacksList = await Meal.find({
-        mealType: mealType.SNACKS,
-        calories: { $lte: dailySnacksRequirement.calories * (1 + GET_MEAL_MARGIN) },
-        gutHealing: gutHealingQueryCondition,
-        gutTags: { $nin: foodRestrictions },
-        //protein //fats //carbs
-      });
-    }
-
-    var dinnerList;
-    if (foodTag != null && testMeals != null && testMeals.dinner) {
-      dinnerList = await Meal.find({
-        mealType: mealType.MAIN_MEAL,
-        calories: { $lte: dailyDinnerRequirement.calories * (1 + GET_MEAL_MARGIN) },
-        gutHealing: gutHealingQueryCondition,
-        $and: [{ gutTags: foodTag }, { gutTags: { $nin: foodRestrictions } }],
-        //protein //fats //carbs
-      });
-    } else {
-      dinnerList = await Meal.find({
-        mealType: mealType.MAIN_MEAL,
-        calories: { $lte: dailyDinnerRequirement.calories * (1 + GET_MEAL_MARGIN) },
-        gutHealing: gutHealingQueryCondition,
-        gutTags: { $nin: foodRestrictions },
-        //protein //fats //carbs
-      });
-    }
-
-    const fillerLightList = await Meal.find({
-      mealType: mealType.FILLER_LIGHT,
-      calories: { $lte: dailyBreakfastRequirement.calories * (1 + GET_MEAL_MARGIN) },
+  if (foodTest != null && testMeals != null && testMeals.breakfast) {
+    breakfastList = await Meal.find({
+      mealType: mealType.BREAKFAST,
+      calories: {
+        $lte: dailyBreakfastRequirement.calories * (1 + GET_MEAL_MARGIN),
+      },
+      gutHealing: gutHealingQueryCondition,
+      $and: [{ gutTags: foodTest }, { gutTags: { $nin: foodRestrictions } }],
+      //protein //fats //carbs
+    });
+  } else {
+    breakfastList = await Meal.find({
+      mealType: mealType.BREAKFAST,
+      calories: {
+        $lte: dailyBreakfastRequirement.calories * (1 + GET_MEAL_MARGIN),
+      },
       gutHealing: gutHealingQueryCondition,
       gutTags: { $nin: foodRestrictions },
       //protein //fats //carbs
     });
+  }
 
-    const fillerMainList = await Meal.find({
-      mealType: mealType.FILLER_MAIN,
-      calories: { $lte: dailyLunchRequirement.calories * (1 + GET_MEAL_MARGIN) },
+  var lunchList;
+  if (foodTest != null && testMeals != null && testMeals.lunch) {
+    lunchList = await Meal.find({
+      mealType: mealType.MAIN_MEAL,
+      calories: {
+        $lte: dailyLunchRequirement.calories * (1 + GET_MEAL_MARGIN),
+      },
+      gutHealing: gutHealingQueryCondition,
+      $and: [{ gutTags: foodTest }, { gutTags: { $nin: foodRestrictions } }],
+      //protein //fats //carbs
+    });
+  } else {
+    lunchList = await Meal.find({
+      mealType: mealType.MAIN_MEAL,
+      calories: {
+        $lte: dailyLunchRequirement.calories * (1 + GET_MEAL_MARGIN),
+      },
       gutHealing: gutHealingQueryCondition,
       gutTags: { $nin: foodRestrictions },
       //protein //fats //carbs
     });
+  }
+  var snacksList;
+  if (foodTest != null && testMeals != null && testMeals.snacks) {
+    snacksList = await Meal.find({
+      mealType: mealType.SNACKS,
+      calories: {
+        $lte: dailySnacksRequirement.calories * (1 + GET_MEAL_MARGIN),
+      },
+      gutHealing: gutHealingQueryCondition,
+      $and: [{ gutTags: foodTest }, { gutTags: { $nin: foodRestrictions } }],
+      //protein //fats //carbs
+    });
+  } else {
+    snacksList = await Meal.find({
+      mealType: mealType.SNACKS,
+      calories: {
+        $lte: dailySnacksRequirement.calories * (1 + GET_MEAL_MARGIN),
+      },
+      gutHealing: gutHealingQueryCondition,
+      gutTags: { $nin: foodRestrictions },
+      //protein //fats //carbs
+    });
+  }
 
-  for (; margin <= 0.5; margin = margin + 0.02) {
+  var dinnerList;
+  if (foodTest != null && testMeals != null && testMeals.dinner) {
+    dinnerList = await Meal.find({
+      mealType: mealType.MAIN_MEAL,
+      calories: {
+        $lte: dailyDinnerRequirement.calories * (1 + GET_MEAL_MARGIN),
+      },
+      gutHealing: gutHealingQueryCondition,
+      $and: [{ gutTags: foodTest }, { gutTags: { $nin: foodRestrictions } }],
+      //protein //fats //carbs
+    });
+  } else {
+    dinnerList = await Meal.find({
+      mealType: mealType.MAIN_MEAL,
+      calories: {
+        $lte: dailyDinnerRequirement.calories * (1 + GET_MEAL_MARGIN),
+      },
+      gutHealing: gutHealingQueryCondition,
+      gutTags: { $nin: foodRestrictions },
+      //protein //fats //carbs
+    });
+  }
 
-    let breakfastComboList = getComboList(
-      breakfastList,
-      fillerLightList,
-      dailyBreakfastRequirement,
-      margin
-    );
-    let lunchComboList = getComboList(
-      lunchList,
-      fillerMainList,
-      dailyLunchRequirement,
-      margin
-    );
-    let snacksComboList = getComboList(
-      snacksList,
-      fillerLightList,
-      dailySnacksRequirement,
-      margin
-    );
-    let dinnerComboList = getComboList(
-      dinnerList,
-      fillerMainList,
-      dailyDinnerRequirement,
-      margin
-    );
+  const fillerLightList = await Meal.find({
+    mealType: mealType.FILLER_LIGHT,
+    calories: {
+      $lte: dailyBreakfastRequirement.calories * (1 + GET_MEAL_MARGIN),
+    },
+    gutHealing: gutHealingQueryCondition,
+    gutTags: { $nin: foodRestrictions },
+    //protein //fats //carbs
+  });
 
+  const fillerMainList = await Meal.find({
+    mealType: mealType.FILLER_MAIN,
+    calories: { $lte: dailyLunchRequirement.calories * (1 + GET_MEAL_MARGIN) },
+    gutHealing: gutHealingQueryCondition,
+    gutTags: { $nin: foodRestrictions },
+    //protein //fats //carbs
+  });
+
+  let breakfastComboList = getComboList(
+    breakfastList,
+    fillerLightList,
+    dailyBreakfastRequirement,
+    GET_MEAL_MARGIN
+  );
+  let lunchComboList = getComboList(
+    lunchList,
+    fillerMainList,
+    dailyLunchRequirement,
+    GET_MEAL_MARGIN
+  );
+  let snacksComboList = getComboList(
+    snacksList,
+    fillerLightList,
+    dailySnacksRequirement,
+    GET_MEAL_MARGIN
+  );
+  let dinnerComboList = getComboList(
+    dinnerList,
+    fillerMainList,
+    dailyDinnerRequirement,
+    GET_MEAL_MARGIN
+  );
+
+  console.log("Received data from database");
+
+
+  for (; margin <= 0.5; margin = margin + 0.01) {
     for (let i = 0; i < RANDOM_ITERATION_COUNT; i++) {
       let breakfastComboListRandom = getRandom(
         breakfastComboList,
-        RANDOM_MEAL_LIST_SIZE < breakfastComboList.length ? RANDOM_MEAL_LIST_SIZE : breakfastComboList.length
+        RANDOM_MEAL_LIST_SIZE < breakfastComboList.length
+          ? RANDOM_MEAL_LIST_SIZE
+          : breakfastComboList.length
       );
       let lunchComboListRandom = getRandom(
         lunchComboList,
-        RANDOM_MEAL_LIST_SIZE < lunchComboList.length ? RANDOM_MEAL_LIST_SIZE : lunchComboList.length
+        RANDOM_MEAL_LIST_SIZE < lunchComboList.length
+          ? RANDOM_MEAL_LIST_SIZE
+          : lunchComboList.length
       );
       let snacksComboListRandom = getRandom(
         snacksComboList,
-        RANDOM_MEAL_LIST_SIZE < snacksComboList.length ? RANDOM_MEAL_LIST_SIZE : snacksComboList.length
+        RANDOM_MEAL_LIST_SIZE < snacksComboList.length
+          ? RANDOM_MEAL_LIST_SIZE
+          : snacksComboList.length
       );
       let dinnerComboListRandom = getRandom(
         dinnerComboList,
-        RANDOM_MEAL_LIST_SIZE < dinnerComboList.length ? RANDOM_MEAL_LIST_SIZE : dinnerComboList.length
+        RANDOM_MEAL_LIST_SIZE < dinnerComboList.length
+          ? RANDOM_MEAL_LIST_SIZE
+          : dinnerComboList.length
       );
 
       // breakfastComboListRandom.forEach((breakfastCombo) => {
-        for(let bi in breakfastComboListRandom){
-          let breakfastCombo = breakfastComboListRandom[bi];
+      for (let bi in breakfastComboListRandom) {
+        let breakfastCombo = breakfastComboListRandom[bi];
         // lunchComboListRandom.forEach((lunchCombo) => {
-          for(let li in lunchComboListRandom){
-            let lunchCombo = lunchComboListRandom[li];
+        for (let li in lunchComboListRandom) {
+          let lunchCombo = lunchComboListRandom[li];
           // dinnerComboListRandom.forEach((dinnerCombo) => {
-            for(let di in dinnerComboListRandom){
-              let dinnerCombo = dinnerComboListRandom[di];
+          for (let di in dinnerComboListRandom) {
+            let dinnerCombo = dinnerComboListRandom[di];
             // snacksComboListRandom.forEach((snacksCombo) => {
-              for(let si in snacksComboListRandom){
-                let snacksCombo = snacksComboListRandom[si];
+            for (let si in snacksComboListRandom) {
+              let snacksCombo = snacksComboListRandom[si];
               if (
                 !checkMealLimitStatusInMealMap(
                   breakfastCombo,
@@ -471,12 +447,12 @@ const getMealPlan = async (params) => {
                   s.proteins -
                   dailyProteins
               );
-              const fErr = Math.abs(
-                b.fats + l.fats + d.fats + s.fats - dailyFats
-              );
-              const cErr = Math.abs(
-                b.carbs + l.carbs + d.carbs + s.carbs - dailyCarbs
-              );
+              // const fErr = Math.abs(
+              //   b.fats + l.fats + d.fats + s.fats - dailyFats
+              // );
+              // const cErr = Math.abs(
+              //   b.carbs + l.carbs + d.carbs + s.carbs - dailyCarbs
+              // );
               const calErr = Math.abs(
                 b.calories + l.calories + d.calories + s.calories - dailyCals
               );
@@ -491,8 +467,8 @@ const getMealPlan = async (params) => {
 
               if (mealPlan.length < days) {
                 if (
-                  calErr <= margin * dailyCals 
-                  // pErr <= margin * dailyProteins &&
+                  calErr <= margin * dailyCals &&
+                  pErr <= 2 * margin * dailyProteins
                   // fErr <= margin * dailyFats &&
                   // cErr <= margin * dailyCarbs
                 ) {
@@ -502,28 +478,18 @@ const getMealPlan = async (params) => {
               } else if (mealPlan.length == days) {
                 break;
               }
-
-              // need to consider protein error also for top meals.
-              // else {
-              //   var max = 0;
-              //   for (var i = 0; i < mealPlan.length; i++) {
-              //     if (mealPlan[i].err > mealPlan[max].err) max = i;
-              //   }
-              //   if(mealPlan[max].err > dayMealCombo.err){
-              //     mealPlan.splice(max, 1);
-              //     mealPlan.push(dayMealCombo);
-              //   }
-              // }
-            };
-          };
-        };
-      };
+            }
+          }
+        }
+      }
 
       if (mealPlan.length == days) break;
     }
-    console.log(`Margin: ${margin * 100}%`);
+    console.log(`Margin: ${margin * 100}% Random Iteration Count:  ${RANDOM_ITERATION_COUNT} Random meal combo size: ${RANDOM_MEAL_LIST_SIZE}`);
     console.log(
-      `Test Food: ${foodTag} | Food Restrictions: ${user.healthRecords.foodRestrictions} | Gut Healing: ${gutHealing};`
+      `Test Food: ${foodTest || "-"} | Food Restrictions: ${
+        user.healthRecords.foodRestrictions
+      } | Gut Healing: ${gutHealing || "-"};`
     );
     console.log(
       `Breakfast: ${breakfastList.length} | Main Meal: ${lunchList.length} | Snacks: ${snacksList.length} | Filler A : ${fillerLightList.length} | Filler B: ${fillerMainList.length} `
@@ -536,12 +502,17 @@ const getMealPlan = async (params) => {
     console.log(
       `Breakfast combos : ${breakfastComboList.length} | Lunch combos : ${lunchComboList.length} | Snacks combos : ${snacksComboList.length} | Dinner combos : ${dinnerComboList.length}`
     );
-    console.log(`Meal Plan Length: ${mealPlan.length}`);
+    console.log(
+      `Meal Plan Length: ${mealPlan.length} / ${days} | Meal Max Limit: ${mealMaxLimit}`
+    );
     console.log("-----------------------------------");
 
     if (mealPlan.length == days) break;
   }
 
+  if(mealPlan.length !== days){
+    throw new ApiError(INTERNAL_SERVER_ERROR, "Meal Plan could not be generated");
+  }
   for (let [key, value] of mealMap) {
     console.log(key + " = " + value);
   }
@@ -572,7 +543,9 @@ const getMealListForTestPhase = async (
   let mealObjectDay1to2 = await getMealPlan({
     userId,
     mealMaxLimit: mealMaxLimit,
-    extraFoodRestrictions: extraFoodRestrictions ? extraFoodRestrictions.concat([foodTest]) : [foodTest],
+    extraFoodRestrictions: extraFoodRestrictions
+      ? extraFoodRestrictions.concat([foodTest])
+      : [foodTest],
     days: 2,
     gutHealing: true,
   });
@@ -613,7 +586,9 @@ const getMealListForTestPhase = async (
     userId,
     mealMaxLimit: mealMaxLimit,
     days: 2,
-    extraFoodRestrictions: extraFoodRestrictions ? extraFoodRestrictions.concat([foodTest]) : [foodTest],
+    extraFoodRestrictions: extraFoodRestrictions
+      ? extraFoodRestrictions.concat([foodTest])
+      : [foodTest],
     mealMap: mealObjectDay5.mealMap,
   });
 

@@ -75,11 +75,11 @@
                 "options": [
                     {
                         "option": "Celiac Disease",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Crohn’s Disease",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "IBS",
@@ -87,23 +87,23 @@
                     },
                     {
                         "option": "Belching after you eat, \r\nAcid reflux, Heartburn",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Diabetes",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Chronic low grade inflammation",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Weight issue",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Indigestion",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Nausea",
@@ -111,7 +111,7 @@
                     },
                     {
                         "option": "Constipation",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Gas",
@@ -137,15 +137,15 @@
                 "options": [
                     {
                         "option": "Bad breath",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Skin issues, eczema, psoriasis, rosacea",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Chronic sinus trouble /always stuffy",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Headaches/Migraines",
@@ -157,31 +157,31 @@
                     },
                     {
                         "option": "frequent colds or flu",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Food Allergies",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Weak Bones/ Osteoporosis",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Irregular/Stopped Periods",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Low Blood Pressure",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Anemia",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Fluid retention/Edema/Swelling",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Loss of appetite",
@@ -189,7 +189,7 @@
                     },
                     {
                         "option": "Dry damaged hair/brittle nails",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "None of these",
@@ -203,11 +203,11 @@
                 "options": [
                     {
                         "option": "Slow metabolism/Metabolic Syndrome",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Unexplained/unintended weight loss",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "None of these",
@@ -221,15 +221,15 @@
                 "options": [
                     {
                         "option": "Feeling of fullness for a long time after",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Still feeling hungry after you just ate",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Not hungry in the morning",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Normal",
@@ -243,15 +243,15 @@
                 "options": [
                     {
                         "option": "Lactose intolerant",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Gluten intolerant",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Intolerant to certain vegetables",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "None of these",
@@ -269,54 +269,70 @@
                     },
                     {
                         "option": "Blood in stools",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Floating",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Foul smelling",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Stick to sides of toilet bowl",
-                        "selected": true
+                        "selected": false
+                    },
+                    {
+                        "option": "None of the above",
+                        "selected": false
                     },
                     {
                         "option": "Shiny",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Light Coloured",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Green",
-                        "selected": true
+                        "selected": false
                     },
                     {
-                        "option": "Soft & Bulky",
-                        "selected": true
+                        "option": "Brown / chocolate coloured",
+                        "selected": false
                     },
                     {
-                        "option": "Lumpy & Sausage like",
-                        "selected": true
-                    },
-                    {
-                        "option": "Mushy",
+                        "option": "Dark Coloured",
                         "selected": true
                     },
                     {
                         "option": "Separate hard lumps",
-                        "selected": true
+                        "selected": false
+                    },
+                    {
+                        "option": "Soft blobs with clear-cut edges",
+                        "selected": false
+                    },
+                    {
+                        "option": "Lumpy & Sausage like",
+                        "selected": false
+                    },
+                    {
+                        "option": "Like a sausage but with cracks",
+                        "selected": false
                     },
                     {
                         "option": "Smooth and long sausage like",
-                        "selected": true
+                        "selected": false
                     },
                     {
-                        "option": "Brown / chocolate coloured",
+                        "option": "Mushy",
+                        "selected": false
+                    },
+                    {
+                        "option": "Watery, no solid pieces",
                         "selected": true
                     }
                 ],
@@ -333,15 +349,15 @@
                 "options": [
                     {
                         "option": "Fazzled, scatterbrained or distracted.",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Moody mopey or grumpy",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Feeling down or depressed / low mood",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Low energy",
@@ -349,7 +365,7 @@
                     },
                     {
                         "option": "Anxiety",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "None of these",
@@ -363,7 +379,7 @@
                 "options": [
                     {
                         "option": "Sugar",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Carbs",
@@ -379,7 +395,7 @@
                     },
                     {
                         "option": "I’ve no cravings",
-                        "selected": false
+                        "selected": true
                     }
                 ],
                 "question": "What do you crave ? (pick one.)",
@@ -389,11 +405,11 @@
                 "options": [
                     {
                         "option": "Trouble sleeping",
-                        "selected": true
+                        "selected": false
                     },
                     {
-                        "option": "It’s alright",
-                        "selected": false
+                        "option": "I sleep like a baby",
+                        "selected": true
                     }
                 ],
                 "question": "How’s your sleep ? (pick one)",
@@ -403,43 +419,43 @@
                 "options": [
                     {
                         "option": "Excess sugar intake",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Stressed",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Netflix and chill",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Inactive",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Smoking",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Antibiotics",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "NSAIDs",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Consume Alcohol",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "Fitness enthusiast",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "None of these",
-                        "selected": false
+                        "selected": true
                     }
                 ],
                 "question": "Which of these apply to you?",
@@ -471,7 +487,7 @@
                     },
                     {
                         "option": "No Milk & Dairy products",
-                        "selected": true
+                        "selected": false
                     },
                     {
                         "option": "No Eggs",

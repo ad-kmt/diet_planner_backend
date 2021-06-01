@@ -46,7 +46,9 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
         user.phases.phase3.crustacean.status = phaseStatus.DONE;
     } else if (completedPhase.phase == 3 && completedPhase.foodTest == gutTags.SEA_FOOD){
         user.phases.phase3.seaFood.status = phaseStatus.DONE;
-    } 
+    } else {
+      throw new ApiError(httpStatus.BAD_REQUEST, "Completed Phase is not in correct format");
+    }
 
     if (nextPhase.phase == 1 && nextPhase.week == 2) {
     
@@ -367,7 +369,9 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
           endDate: newWeekEndDate,
           meals,
         };
-    } 
+    } else {
+      throw new ApiError(httpStatus.BAD_REQUEST, "Next Phase is not in correct format");
+    }
 
     // console.log(user.phases.phase1.week1);
 
