@@ -379,7 +379,7 @@ exports.goToNextPhase = async (userId, completedPhase, nextPhase, mealMaxLimit) 
 };
 
 exports.startPhasePlan = async (user) => {
-  //PHASE 1
+  //Setting PHASE 1 Data
   let phaseStartDate = DateTime.now().plus({ days: 1 });
   let phaseEndDate = phaseStartDate.plus({ days: 20 });
   let weekEndDate = phaseStartDate.plus({ days: 6 });
@@ -416,10 +416,10 @@ exports.startPhasePlan = async (user) => {
     meals,
   };
 
-  user.currentPlan.startDate = phaseStartDate;
   if(!user.currentPlan){
     throw new ApiError(httpStatus.BAD_REQUEST, "User doesn't have any upcoming plans!")
   }
+  user.currentPlan.startDate = phaseStartDate;
   let planExpiryDate = phaseStartDate.plus({ days: user.currentPlan.duration });
   user.currentPlan.expiryDate = planExpiryDate;
   
