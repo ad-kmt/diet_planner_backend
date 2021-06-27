@@ -2,9 +2,6 @@
 
 SAMPLE .env:
 
-NODEMAILER_EMAIL=kumawat.hitesh743@gmail.com
-NODEMAILER_PASSWORD=password
-
 JWT_ACCOUNT_ACTIVATION=accountActivationSecretKey12345
 JWT_SECRET=mySecretToken
 JWT_RESET_PASSWORD=resetPasswordSecretKey12345
@@ -20,3 +17,9 @@ CLIENT_URL=http://localhost:3000
 MONGO_URI=mongodb+srv://fitgut4lifeadmin:Atlantic1904@fitgut4life.x3jbe.mongodb.net/project?retryWrites=true&w=majority
 
 STRIPE_SECRET_KEY=sk_test_51IUb5BGODzbn4dY6MTsi7kqrVg8NEVR5N47rk3sjsClZDMw2bT17hkpl0XLx6KQXYqM6Q7FyHG8cwna3twMwfeup00m79asTYb
+
+OAUTH_CLIENT_ID=26881759918-l3hddnfpi47lnas755f27hvog8rbp4gq.apps.googleusercontent.com
+OAUTH_CLIENT_SECRET=o56LS83UGNAvmj8GmIJEBLv9
+OAUTH_REFRESH_TOKEN=1//04uAcVC-2fXnfCgYIARAAGAQSNwF-L9IrMqxlmVAYr8ngXuC3prsk2S6vAwLtCX8ckyPJepEmR27DkAzDxtD0U1iUdJaRBdaD1NM
+MAIL_USERNAME=kumawat.aditya.vedit@gmail.com
+MAIL_PASSWORD=videoediting@123#
