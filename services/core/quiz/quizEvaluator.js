@@ -28,11 +28,11 @@ var quizEvaluator = async (input, userId) => {
   let weight = section1.questions[4].answer;
   let desiredWeight = section1.questions[5].answer;
 
-  //BASAL METABOLIC RATE
+  //BASAL METABOLIC RATE (BMR)
   let bmr = 10 * weight + 6.25 * height - 5 * age;
   gender === GENDER.MALE ? (bmr += 5) : (bmr -= 161);
 
-  //TOTAL DAILY ENERGY EXPENDITURE
+  //TOTAL DAILY ENERGY EXPENDITURE (TDEE)
   let tdee;
 
   if (activity === ACTIVITY.SEDENTARY) {
@@ -61,40 +61,52 @@ var quizEvaluator = async (input, userId) => {
   //WEIGHT GAIN
   if (weight - desiredWeight < 0) {
     desiredCalories = tdee + 250;
-    estimatedWeightInAMonth = weight + (desiredCalories * 30) / 7700;
+
+    estimatedWeightInAMonth = weight + (0.15 * tdee * 90)/7700;
+    estimatedDays = ((desiredWeight - weight) * 7700) / (0.15 * tdee * 3);
+    
     if (activity === ACTIVITY.SEDENTARY) proteins = 1.32 * weight;
     else if (activity === ACTIVITY.LIGHT) proteins = 1.76 * weight;
     else if (activity === ACTIVITY.MODERATE) proteins = 2.2 * weight;
     else if (activity === ACTIVITY.ACTIVE) proteins = 2.42 * weight;
     else if (activity === ACTIVITY.EXTREMELY_ACTIVE) proteins = 2.64 * weight;
+    
     fats = ((desiredCalories - proteins * 4) * 0.45) / 9;
     carbs = ((desiredCalories - proteins * 4) * 0.55) / 4;
   }
   //WEIGHT LOSS
   else if (weight - desiredWeight > 0) {
     desiredCalories = tdee - 500;
-    estimatedWeightInAMonth = weight - (desiredCalories * 30) / 7700;
+    
+    estimatedWeightInAMonth = weight - (0.25 * tdee * 90) / 7700;
+    estimatedDays = ((weight - desiredWeight) * 7700) / (0.25 * tdee * 3);
+    
     if (activity === ACTIVITY.SEDENTARY) proteins = 1.54 * weight;
     else if (activity === ACTIVITY.LIGHT) proteins = 1.98 * weight;
     else if (activity === ACTIVITY.MODERATE) proteins = 2.42 * weight;
     else if (activity === ACTIVITY.ACTIVE) proteins = 2.64 * weight;
     else if (activity === ACTIVITY.EXTREMELY_ACTIVE) proteins = 3.39 * weight;
+    
     fats = ((desiredCalories - proteins * 4) * 0.55) / 9;
     carbs = ((desiredCalories - proteins * 4) * 0.45) / 4;
   }
   //WEIGHT MAINTENENCE
   else if (weight - desiredWeight === 0) {
     desiredCalories = tdee;
+    
+    estimatedWeightInAMonth = weight;
+    estimatedDays = 0;
+    
     if (activity === ACTIVITY.SEDENTARY) proteins = 1.1 * weight;
     else if (activity === ACTIVITY.LIGHT) proteins = 1.54 * weight;
     else if (activity === ACTIVITY.MODERATE) proteins = 1.98 * weight;
     else if (activity === ACTIVITY.ACTIVE) proteins = 2.2 * weight;
     else if (activity === ACTIVITY.EXTREMELY_ACTIVE) proteins = 2.42 * weight;
+    
     fats = ((desiredCalories - proteins * 4) * 0.45) / 9;
     carbs = ((desiredCalories - proteins * 4) * 0.55) / 4;
   }
-  estimatedDays =
-    ((Math.abs(weight - desiredWeight) * 1100) / desiredCalories) * 7;
+  
 
   // ------------------------- SECTION 2 & 3 - ABOUT YOUR GUT & LIFESTYLE -----------------------------
 
