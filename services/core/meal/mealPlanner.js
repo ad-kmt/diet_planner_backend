@@ -161,12 +161,6 @@ const getMealPlan = async (params) => {
     gutHealing,                 // {boolean}, true if only gut healing meals have to be included
   } = params;
 
-  // if (mealMap != null) {
-  //   for (let [key, value] of mealMap) {
-  //     console.log(key + " = " + value);
-  //   }
-  // }
-
   let gutHealingQueryCondition;
 
   if (gutHealing) {
@@ -364,131 +358,200 @@ const getMealPlan = async (params) => {
     GET_MEAL_MARGIN
   );
 
+  /**
+   * Map to find the perfect snack combo to meet the daily nutritional requirement.
+   * Key : Combination of Calorie and protein requirements
+   * Value : List of snack combos nearby calorie and protein requirements 
+   * 
+   * NOTE: This can be changed to Breakfast, Lunch or Dinner according to requirement
+   */ 
+  let snackNutriMap = new Map();
+  for(let mealCombo of snacksComboList){
+    let nutriFacts = getNutriFactsFromCombo(mealCombo);
+    let calorieKey = Math.floor(nutriFacts.calories / 50);
+    let proteinKey = Math.floor(nutriFacts.proteins / 5);
+    let key = `${calorieKey}_${proteinKey}`;
+    if(snackNutriMap.has(key)){
+      let list = snackNutriMap.get(key);
+      list.push(mealCombo)
+      snackNutriMap.set(key, list);
+    } else{
+      snackNutriMap.set(key, [mealCombo]);
+    }
+  }
+  console.log(`Snack Map size ${snackNutriMap.size}`);
   console.log("Received data from database");
 
 
   for (; margin <= 0.5; margin = margin + 0.01) {
     for (let i = 0; i < RANDOM_ITERATION_COUNT; i++) {
-      let breakfastComboListRandom = getRandom(
+      var breakfastComboListRandom = getRandom(
         breakfastComboList,
         RANDOM_MEAL_LIST_SIZE < breakfastComboList.length
           ? RANDOM_MEAL_LIST_SIZE
           : breakfastComboList.length
       );
-      let lunchComboListRandom = getRandom(
+      var lunchComboListRandom = getRandom(
         lunchComboList,
         RANDOM_MEAL_LIST_SIZE < lunchComboList.length
           ? RANDOM_MEAL_LIST_SIZE
           : lunchComboList.length
       );
-      let snacksComboListRandom = getRandom(
-        snacksComboList,
-        RANDOM_MEAL_LIST_SIZE < snacksComboList.length
-          ? RANDOM_MEAL_LIST_SIZE
-          : snacksComboList.length
-      );
-      let dinnerComboListRandom = getRandom(
+      var dinnerComboListRandom = getRandom(
         dinnerComboList,
         RANDOM_MEAL_LIST_SIZE < dinnerComboList.length
           ? RANDOM_MEAL_LIST_SIZE
           : dinnerComboList.length
       );
 
-      // breakfastComboListRandom.forEach((breakfastCombo) => {
-      for (let bi in breakfastComboListRandom) {
-        let breakfastCombo = breakfastComboListRandom[bi];
-        // lunchComboListRandom.forEach((lunchCombo) => {
-        for (let li in lunchComboListRandom) {
-          let lunchCombo = lunchComboListRandom[li];
-          // dinnerComboListRandom.forEach((dinnerCombo) => {
-          for (let di in dinnerComboListRandom) {
+      for (let bi = 0; bi < breakfastComboListRandom.length; bi++) {
+        
+        for (let li=0; li < lunchComboListRandom.length; li++) {
+         
+          for (let di=0; di < dinnerComboListRandom.length; di++) {
+
+            let breakfastCombo = breakfastComboListRandom[bi];
+            let lunchCombo = lunchComboListRandom[li];
             let dinnerCombo = dinnerComboListRandom[di];
-            // snacksComboListRandom.forEach((snacksCombo) => {
-            for (let si in snacksComboListRandom) {
-              let snacksCombo = snacksComboListRandom[si];
-              if (
-                !checkMealLimitStatusInMealMap(
-                  breakfastCombo,
-                  mealMaxLimit,
-                  mealMap
-                )
+            if (
+              !checkMealLimitStatusInMealMap(
+                breakfastCombo,
+                mealMaxLimit,
+                mealMap
               )
-                continue;
-              if (
-                !checkMealLimitStatusInMealMap(
-                  lunchCombo,
-                  mealMaxLimit,
-                  mealMap
-                )
+            )
+              continue;
+            if (
+              !checkMealLimitStatusInMealMap(
+                lunchCombo,
+                mealMaxLimit,
+                mealMap
               )
-                continue;
-              if (
-                !checkMealLimitStatusInMealMap(
-                  dinnerCombo,
-                  mealMaxLimit,
-                  mealMap
-                )
+            )
+              continue;
+            if (
+              !checkMealLimitStatusInMealMap(
+                dinnerCombo,
+                mealMaxLimit,
+                mealMap
               )
-                continue;
-              if (
-                !checkMealLimitStatusInMealMap(
-                  snacksCombo,
-                  mealMaxLimit,
-                  mealMap
-                )
-              )
-                continue;
+            )
+              continue;
 
-              let b = getNutriFactsFromCombo(breakfastCombo);
-              let l = getNutriFactsFromCombo(lunchCombo);
-              let s = getNutriFactsFromCombo(snacksCombo);
-              let d = getNutriFactsFromCombo(dinnerCombo);
 
-              const pErr = Math.abs(
-                b.proteins +
-                  l.proteins +
-                  d.proteins +
-                  s.proteins -
-                  dailyProteins
-              );
-              // const fErr = Math.abs(
-              //   b.fats + l.fats + d.fats + s.fats - dailyFats
-              // );
-              // const cErr = Math.abs(
-              //   b.carbs + l.carbs + d.carbs + s.carbs - dailyCarbs
-              // );
-              const calErr = Math.abs(
-                b.calories + l.calories + d.calories + s.calories - dailyCals
-              );
+            let b = getNutriFactsFromCombo(breakfastCombo);
+            let l = getNutriFactsFromCombo(lunchCombo);
+            let d = getNutriFactsFromCombo(dinnerCombo);
 
-             
+            let snackCalReq = dailyCals - b.calories - l.calories - d.calories;
+            let snackProteinReq = dailyProteins - b.proteins - l.proteins - d.proteins;
+            let calorieKey = Math.floor(snackCalReq / 50);
+            let proteinKey = Math.floor(snackProteinReq / 5);  
+            
+            let snackMapKey = `${calorieKey}_${proteinKey}`;
 
-              if (mealPlan.length < days) {
+            if(!snackNutriMap.has(snackMapKey)){
+              continue;
+            } else {
+              var snacksComboListInCalRange = snackNutriMap.get(snackMapKey);
+              for (let si=0; si < snacksComboListInCalRange.length; si++) {
+              
+                let breakfastCombo = breakfastComboListRandom[bi];
+                let lunchCombo = lunchComboListRandom[li];
+                let dinnerCombo = dinnerComboListRandom[di];
+                let snacksCombo = snacksComboListInCalRange[si];
                 if (
-                  calErr <= margin * dailyCals &&
-                  pErr <= 2 * margin * dailyProteins
-                  // fErr <= margin * dailyFats &&
-                  // cErr <= margin * dailyCarbs
-                ) {
-                  const dayMealCombo = {
-                    breakfast: breakfastCombo.map((meal) => meal.id),
-                    lunch: lunchCombo.map((meal) => meal.id),
-                    snacks: snacksCombo.map((meal) => meal.id),
-                    dinner: dinnerCombo.map((meal) => meal.id),
-                    err: calErr,
-                  };
-                  
-                  mealPlan.push(dayMealCombo);
-                  addDayMealComboToMealMap(dayMealCombo, mealMap);
-                }
-              } else if (mealPlan.length == days) {
-                break;
-              }
-            }
-          }
-        }
-      }
+                  !checkMealLimitStatusInMealMap(
+                    breakfastCombo,
+                    mealMaxLimit,
+                    mealMap
+                  )
+                )
+                  continue;
+                if (
+                  !checkMealLimitStatusInMealMap(
+                    lunchCombo,
+                    mealMaxLimit,
+                    mealMap
+                  )
+                )
+                  continue;
+                if (
+                  !checkMealLimitStatusInMealMap(
+                    dinnerCombo,
+                    mealMaxLimit,
+                    mealMap
+                  )
+                )
+                  continue;
+                if (
+                  !checkMealLimitStatusInMealMap(
+                    snacksCombo,
+                    mealMaxLimit,
+                    mealMap
+                  )
+                )
+                  continue;
 
+                let s = getNutriFactsFromCombo(snacksCombo);
+  
+                const pErr = Math.abs(
+                  b.proteins +
+                    l.proteins +
+                    d.proteins +
+                    s.proteins -
+                    dailyProteins
+                );
+                // const fErr = Math.abs(
+                //   b.fats + l.fats + d.fats + s.fats - dailyFats
+                // );
+                // const cErr = Math.abs(
+                //   b.carbs + l.carbs + d.carbs + s.carbs - dailyCarbs
+                // );
+                const calErr = Math.abs(
+                  b.calories + l.calories + d.calories + s.calories - dailyCals
+                );
+  
+                if (mealPlan.length < days) {
+                  if (
+                    calErr <= margin * dailyCals &&
+                    pErr <= 1 * margin * dailyProteins 
+                    // fErr <= 3 * margin * dailyFats &&
+                    // cErr <= 3 * margin * dailyCarbs
+                  ) {
+                    const dayMealCombo = {
+                      breakfast: breakfastCombo.map((meal) => meal.id),
+                      lunch: lunchCombo.map((meal) => meal.id),
+                      snacks: snacksCombo.map((meal) => meal.id),
+                      dinner: dinnerCombo.map((meal) => meal.id),
+                      err: calErr,
+                    };
+                    
+                    mealPlan.push(dayMealCombo);
+                    addDayMealComboToMealMap(dayMealCombo, mealMap);
+                    console.log(`MEAL FOUND | meal plan length : ${mealPlan.length} | Iteration no. : ${i} | `);
+                    console.log(`${bi}, ${li}, ${di}, ${si}-${snacksComboListInCalRange.length}`);
+
+                    breakfastComboListRandom.splice(bi,1);
+                    lunchComboListRandom.splice(li,1);
+                    dinnerComboListRandom.splice(di,1);
+                    snacksComboListInCalRange.splice(si,1);
+                    console.log(`${breakfastComboListRandom.length}, ${lunchComboListRandom.length}, ${dinnerComboListRandom.length}, ${si}-${snacksComboListInCalRange.length}`);
+                    bi=0;li=0;di=0;si=-1;
+                  }
+                } else if (mealPlan.length == days) {
+                  break;
+                }
+                if (mealPlan.length == days) break;
+              }
+              if (mealPlan.length == days) break;
+            }
+            if (mealPlan.length == days) break;
+          }
+          if (mealPlan.length == days) break;
+        }
+        if (mealPlan.length == days) break;
+      }
       if (mealPlan.length == days) break;
     }
     console.log(`Margin: ${margin * 100}% Random Iteration Count:  ${RANDOM_ITERATION_COUNT} Random meal combo size: ${RANDOM_MEAL_LIST_SIZE}`);
