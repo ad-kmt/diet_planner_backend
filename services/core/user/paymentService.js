@@ -27,7 +27,7 @@ exports.paymentViaStripe = async (userId, plan, token) => {
   });
 
   const charge = await stripe.charges.create({
-    amount: plan.sellingPrice * 100, //by default price comes in cents
+    amount: plan.onsalePrice * 100, //by default price comes in cents
     currency: "inr",
     receipt_email: user.email,
     customer: customer.id,
