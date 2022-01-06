@@ -3,18 +3,6 @@ const app = require('./app');
 const logger = require('./config/logger');
 require("dotenv").config();
 
-
-const {  trainModelFromExcel } = require('./services/ml/brain');
-const { populateMealDb } = require('./services/core/meal/mealExcelToDb');
-const { populateQuizDb } = require('./services/core/quiz/quizExcelToDb');
-const test = require('./services/test');
-const { getMealPlan } = require('./services/core/meal/mealPlanner');
-const {DateTime} = require('luxon');
-const { postPaymentUpdate } = require('./services/core/user/paymentService');
-const { GLUTEN, EGG, DAIRY_LACTOSE, DAIRY, GRAIN } = require('./services/constants/gutTags');
-const Meal = require('./models/Meal');
-
-
 let server;
 const PORT = process.env.PORT || 8000;
 mongoose.connect(process.env.MONGO_URI, {

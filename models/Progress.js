@@ -6,9 +6,10 @@ const Progress = new mongoose.Schema({
     height: { type: Number }, 
     weight: { type: Number},
     mealsConsumed: {
-        breakfastId: {type: mongoose.Schema.Types.ObjectId},
-        lunchId: {type: mongoose.Schema.Types.ObjectId},
-        dinnerId: {type: mongoose.Schema.Types.ObjectId}
+        breakfast: {type: mongoose.Schema.Types.ObjectId},
+        lunch: {type: mongoose.Schema.Types.ObjectId},
+        snacks: {type: mongoose.Schema.Types.ObjectId},
+        dinner: {type: mongoose.Schema.Types.ObjectId}
     },
     waterIntake: {type: Number},
     activity: {type: Number},
