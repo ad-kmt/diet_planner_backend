@@ -1,7 +1,7 @@
 {
-  "name": "fg4l",
+  "name": "fg4ldietplanner",
   "version": "1.0.0",
-  "description": "FitGut4Life",
+  "description": "FitGut4Life - Diet Planner",
   "main": "server.js",
   "scripts": {
     "start": "node server",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/FitGirls4Life/Project-Backend.git"
+    "url": "git+https://github.com/ad-kmt/diet_planner_backend.git"
   },
-  "author": "Hitesh Kumawat",
+  "author": "Aditya Kumawat",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/FitGirls4Life/Project-Backend/issues"
+    "url": "https://github.com/ad-kmt/diet_planner_backend/issues"
   },
-  "homepage": "https://github.com/FitGirls4Life/Project-Backend#readme",
+  "homepage": "https://github.com/ad-kmt/diet_planner_backend#readme",
   "dependencies": {
     "babel": "^6.23.0",
     "bcryptjs": "^2.4.3",
